@@ -54,6 +54,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
         
         [parameterDic setObject:phone forKey:@"phone"];
         [parameterDic setObject:accesstoken forKey:@"social_media_access_token"];
+        [parameterDic setObject:[UserAccount sharedManager].gcmRegKey forKey:@"gcm_registration_key"];
         [parameterDic setObject:@"2" forKey:@"user_type_id"];
 
        

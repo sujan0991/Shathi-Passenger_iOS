@@ -125,6 +125,8 @@
     
     NSLog(@"complete with access token: %@",accessToken.tokenString);
     
+    [UserAccount sharedManager].accessToken =accessToken.tokenString;
+    
     [self userLogin:accessToken.tokenString];
     
 }

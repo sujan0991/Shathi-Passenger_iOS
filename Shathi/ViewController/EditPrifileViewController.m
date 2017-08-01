@@ -96,6 +96,7 @@
             [self.profilePicture sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",BASE_API_URL,[userInfo objectForKey:@"profile_picture"]]]];
 
             [self.editProfileTableView reloadData];
+            
 
         }else{
             

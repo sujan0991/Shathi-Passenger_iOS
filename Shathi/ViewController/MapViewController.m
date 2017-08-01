@@ -39,7 +39,7 @@
     //NSMutableDictionary *reverseGeoResult;
     NSMutableDictionary *rideInfo;
     
-    NSMutableDictionary*riderInfo;
+   // NSMutableDictionary*riderInfo;
     
     NSMutableArray *homeWorkArray;
     
@@ -68,6 +68,8 @@
     //demo access token
     
     [UserAccount sharedManager].accessToken = @"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjBlNWU0NWQyZjJhZTU5OWYyYTJmNzlhYjZlNzNhNjQ3MWQyZDA4YTY1M2Q5M2E2NmFmZTY0ZDIwNTFmYTVjNDc0ZDI0OWEyZmQ5ZmVjYjcyIn0.eyJhdWQiOiIxIiwianRpIjoiMGU1ZTQ1ZDJmMmFlNTk5ZjJhMmY3OWFiNmU3M2E2NDcxZDJkMDhhNjUzZDkzYTY2YWZlNjRkMjA1MWZhNWM0NzRkMjQ5YTJmZDlmZWNiNzIiLCJpYXQiOjE0OTYzMDQ2ODIsIm5iZiI6MTQ5NjMwNDY4MiwiZXhwIjoxNTI3ODQwNjgyLCJzdWIiOiI4Iiwic2NvcGVzIjpbXX0.mxVI2uHlq8Mt5czIiNd6vov1bwdhodKjU2TL9ym97fgQ3qSerc7o4p1zL-sbieTTqUCeMTRqwFegILCB6yw0XE7pHS4cVNVYQanAxKlqy2JJC8P-giNJz06qjGzfbrsDV16o5IY8mU5BZaDHFwUkcl4WX1Jl0Um3UvW3fgDLEVG6JmMetWl2je-EfZWesnwSfdEsVKXP8hTedOi3t7m3cy24vRvIjDBZ2tLmVhj6bKPR9I5yEyidp5nDfu5eEeCMNUjWYKodosdD37VEXH4pdVPzrFmrhSihmyRfB4wkNMjqMBOMIACUqVH4m0G8hqAogsDjfHvje9LSJZKDJOYB5snXELVa9iToKzqJXEEA7SMrzpVtKwmnLeSUwOf6sgxSQn9oVmffhoLv349x4gX8B4zN319sJIV8cjCFD3vvOH9xNSVBE3Be21ihjZdpHxdEwlMAfTRUuOAYJ4aXX3h-BaZN9gltIK2nDx0ysO5ezZqG-tYAQx1kxNUT_NEsiUEqGpdhq9zp0SFrXl31OqNZIdaeXuDO_TRMK_uh1NGONF5i2UnzcqxVBr0e0BLrN-zPtits8wTRY8XGGDpyE2naR2SFegKixpeQPfo9pbzNmkILTu3polO__pAGfBofS3Rs-7znfWgJcItRzpQkLNFLQEx6zWerXZ9Mi5Ako4xq8Dc";
+    
+    [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(riderInfo:) name:@"riderNotification" object:nil];
     
     
     isUpdateCameraPosition = 1;
@@ -807,6 +809,8 @@
     NSLog(@"origin.coordinate.latitude  %f  longitude%f",origin.coordinate.latitude,origin.coordinate.longitude);
     NSLog(@"destination.coordinate.latitude %f  longitude%f",destination.coordinate.latitude,destination.coordinate.longitude);
     
+    
+    
     [self fetchPolylineWithOrigin:origin destination:destination completionHandler:^(GMSPolyline *polyline)
      {
          
@@ -1229,6 +1233,32 @@
     
     //NSLog(@"ride info  %@",rideInfo);
     
+    
+    [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            NSLog(@"  info  %@",responseObject);
+            
+            //                                 riderInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+            //
+            //                                 NSLog(@"responseObject %@",riderInfo);
+            
+            
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no  info");
+                
+                
+            });
+            
+        }
+    }];
+    
     [UIView animateWithDuration:.5
                           delay:0
                         options: UIViewAnimationOptionCurveEaseIn
@@ -1247,33 +1277,7 @@
                           [self timer];
                          
 
-                         
-                         [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
-                             
-                             
-                             if ( responseObject!=nil) {
-                                 
-                                 
-                                 
-                                 riderInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
-                                 
-                                 NSLog(@"responseObject %@",riderInfo);
-                                 
-                                 self.timerSupewView.hidden = YES;
-                                 
-                                 [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
-                                 
-                             }else{
-                                 
-                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                     
-                                     NSLog(@"no  info");
-                                     
-                                     
-                                 });
-                                 
-                             }
-                         }];
+
 
                          
                      }];
@@ -1304,14 +1308,53 @@
     }
 }
 
--(void) showDriverSuggestionView{
+-(void)riderInfo: (NSNotification *)notification
+{
     
+    NSDictionary* riderInfo = [notification userInfo];
+    
+    NSLog(@"ride info %@",riderInfo);
+    
+    
+    NSData *webData = [[riderInfo objectForKey:@"gcm.notification.data" ] dataUsingEncoding:NSUTF8StringEncoding];
+    
+    NSError *error;
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:webData options:0 error:&error];
+    NSLog(@"JSON DIct: %@", jsonDict);
+
+    self.driverNameLabel.text = [jsonDict objectForKey:@"name"];
+
+    NSString * riderlat =[[jsonDict objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
+    NSString * riderlong = [[jsonDict objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
+    
+    self.timerSupewView.hidden = YES;
+    
+    [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+ 
+    CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+    CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
+    
+    //GMSMarker *riderMarker = [[GMSMarker alloc] init];
+    
+    CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
+    
+    GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
+    
+    riderMarker.icon = [UIImage imageNamed:@"bike.png"];
+    
+    riderMarker.map = self.googleMapView;
+
     
     isUpdateCameraPosition = 0;
     isPolyLineBlue = 0;
     
-    self.driverNameLabel.text = [NSString stringWithFormat:@"%@", [[riderInfo objectForKey:@"data"] objectForKey:@"name"]];
     
+    [self drawpoliline:passengerLocation destination:riderLocation];
+    
+}
+
+
+-(void) showDriverSuggestionView{
     
 
     self.driverSuggestionView.hidden = NO;
@@ -1332,30 +1375,7 @@
                          
                      }];
     
-    
-    
-    
-    NSString * riderlat =[[riderInfo objectForKey:@"data"] objectForKey:@"current_latitude"];
-    NSString * riderlong = [[riderInfo objectForKey:@"data"] objectForKey:@"current_longitude"];
-
-    CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:currentLocation.latitude longitude:currentLocation.longitude];
-    CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
- 
-    //GMSMarker *riderMarker = [[GMSMarker alloc] init];
-    
-    CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
-    
-    GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
-    
-    riderMarker.icon = [UIImage imageNamed:@"bike.png"];
-    
-    riderMarker.map = self.googleMapView;
-    
-    
-    
-    [self drawpoliline:passengerLocation destination:riderLocation];
-    
-    
+  
 }
 
 - (IBAction)paymentButtonAction:(id)sender {
