@@ -32,12 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-
-    
-    
-    
-
-    
+ 
 
 }
 

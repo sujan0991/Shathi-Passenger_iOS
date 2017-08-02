@@ -14,7 +14,7 @@
 #import "ServerManager.h"
 #import "NSDictionary+NullReplacement.h"
 #import "UserAccount.h"
-
+#import "CancelReasonTableViewCell.h"
 
 @interface MapViewController (){
 
@@ -36,7 +36,7 @@
     
     NSMutableArray *searchResults;
     NSMutableArray *searchResultsPlaceId;
-    //NSMutableDictionary *reverseGeoResult;
+    NSMutableArray *cancelReasonArray;
     NSMutableDictionary *rideInfo;
     
    // NSMutableDictionary*riderInfo;
@@ -140,6 +140,10 @@
     self.searchLocationTableView.delegate = self;
     self.searchLocationTableView.dataSource = self;
     
+    self.cancelReasonTableView.delegate = self;
+    self.cancelReasonTableView.dataSource = self;
+    self.cancelReasonTextView.delegate = self;
+    
     self.pickUpTextView.delegate = self;
     self.destinationTextView.delegate = self;
     
@@ -160,6 +164,8 @@
     self.fareView.hidden = YES;
     self.driverSuggestionView.hidden = YES;
     
+    self.cancelReasonView.hidden = YES;
+    
     self.timerSupewView.hidden = YES;
     
     self.driverPhoto.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
@@ -170,8 +176,11 @@
     
     
     
+    self.cancelReasonTableView.estimatedRowHeight = 40.0;
+    self.cancelReasonTableView.rowHeight = UITableViewAutomaticDimension;
     
     self.searchLocationTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.searchLocationTableView.frame.size.width, 1)];
+    self.cancelReasonTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.cancelReasonTableView.frame.size.width, 1)];
     
     
     [UIView animateWithDuration:2.5
@@ -430,6 +439,11 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
 
+    if (tableView == self.cancelReasonTableView) {
+        
+        return cancelReasonArray.count;
+        
+    }else if(tableView == self.searchLocationTableView){
         
         if ([self.pickUpTextView isFirstResponder] ) {
             
@@ -463,18 +477,37 @@
         else
             return 0;
 
-    
-
-    
+    }else
+        return 0;
+ 
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ([self.pickUpTextView isFirstResponder] ) {
+    if (tableView == self.cancelReasonTableView) {
         
-        if(self.pickUpTextView.text.length == 0 )
-        {
-            if(indexPath.row == 0){
+        static NSString *CellIdentifier = @"reasonCell";
+        
+        CancelReasonTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        
+        if (!cell)
+            cell = [[CancelReasonTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        
+        
+         cell.reasonLabel.text = [[cancelReasonArray objectAtIndex:indexPath.row] objectForKey:@"reason"];
+        
+        
+        
+        return cell;
+        
+        
+    }else{
+        
+      if ([self.pickUpTextView isFirstResponder] ) {
+        
+          if(self.pickUpTextView.text.length == 0 )
+          {
+             if(indexPath.row == 0){
                 
                 static NSString *CellIdentifier = @"Cell";
                 UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -505,8 +538,8 @@
                 
                 return cell;
             }
-        } else
-        {
+         } else
+         {
             static NSString *CellIdentifier = @"Cell";
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
             
@@ -517,15 +550,15 @@
             
             
             return cell;
-        }
+         }
 
 
-    }
-    else if ([self.destinationTextView isFirstResponder]){
+      }
+      else if ([self.destinationTextView isFirstResponder]){
         
-        if(self.destinationTextView.text.length == 0 )
-        {
-            if(indexPath.row == 0){
+         if(self.destinationTextView.text.length == 0 )
+         {
+             if(indexPath.row == 0){
                 
                 static NSString *CellIdentifier = @"Cell";
                 UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
@@ -583,47 +616,61 @@
         return cell;
     }
     
-
+    }
     
+    return nil;
 }
 
 #pragma mark - UITableView Delegate
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (tableView == self.cancelReasonTableView) {
+        
+        NSLog(@"selected index  %ld",(long)indexPath.row);
+        NSLog(@"selected index  %u",(cancelReasonArray.count - 1));
+        
+        if (indexPath.row == (cancelReasonArray.count - 1)) {
+            
+            [self.cancelReasonTextView becomeFirstResponder];
+        }
+        
+        
+    }
+    else{
+        
+        self.searchLocationTableView.hidden = YES;
     
-    self.searchLocationTableView.hidden = YES;
-    
-    if ([self.pickUpTextView isFirstResponder]) {
+        if ([self.pickUpTextView isFirstResponder]) {
         
-        [self.pickUpTextView resignFirstResponder];
+          [self.pickUpTextView resignFirstResponder];
         
         
         
-        if(self.pickUpTextView.text.length == 0 )
-        {
-            if (indexPath.row == 0) {
+           if(self.pickUpTextView.text.length == 0 )
+           {
+             if (indexPath.row == 0) {
                 
                 NSLog(@"set pin for picup");
                 
                 self.staticPin.hidden = NO;
                 
-            }
-            else if (indexPath.row == 1){
+             }
+             else if (indexPath.row == 1){
                 
                 NSLog(@"Home or work");
                 
-            }
-            else if (indexPath.row == 2){
+             }
+             else if (indexPath.row == 2){
                 
                 NSLog(@"work or home");
                 
-            }
+             }
             
             
 
-        }else
-        {
+         }else
+         {
             
             self.setPinPointButton.hidden = NO;
             self.pickUpTextView.text=[NSString stringWithFormat:@"%@",[searchResults objectAtIndex:indexPath.row]];
@@ -669,33 +716,21 @@
                 } else {
                     NSLog(@"No place details for ");
                 }
-            }];
+             }];
 
           
             
-        }
+          }
         
-     
-
-        //after integrating home/work
-//        if (self.destinationTextView.text.length > 0) {
-//            
-//            [self getPositionOfTheMarkerForIndex:indexPath.row];
-//            
-//        }else{
-//            
-//            [self.destinationTextView becomeFirstResponder];
-//            
-//        }
         
-    }
-    else if([self.destinationTextView isFirstResponder])
-    {
-        [self.destinationTextView resignFirstResponder];
+       }
+       else if([self.destinationTextView isFirstResponder])
+       {
+          [self.destinationTextView resignFirstResponder];
         
-         if(self.destinationTextView.text.length == 0) {
+          if(self.destinationTextView.text.length == 0) {
            
-             if (indexPath.row == 0) {
+              if (indexPath.row == 0) {
                  
                  NSLog(@"set pin for des");
                  
@@ -713,8 +748,8 @@
                  NSLog(@"work or home");
              }
 
-         }else
-         {
+          }else
+          {
              self.destinationTextView.text=[NSString stringWithFormat:@"%@",[searchResults objectAtIndex:indexPath.row]];
              
              NSLog(@"[searchResults objectAtIndex:indexPath.row] %@",[searchResults objectAtIndex:indexPath.row]);
@@ -775,11 +810,22 @@
             
              
 
-         }
+           }
         
+        }
+    
     }
     
-    
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    if (!self.cancelReasonView.isHidden) {
+        
+        [self.cancelReasonTextView resignFirstResponder];
+        
+        NSLog(@"Is it called");
+    }
     
 }
 
@@ -1141,6 +1187,17 @@
     return YES;
 }
 
+-(void)textViewDidBeginEditing:(UITextView *)textView{
+ 
+    NSLog(@"Did begin editing");
+    
+    self.otherReasonLabel.hidden = YES;
+    
+}
+
+
+
+
 - (IBAction)textFieldCrossButtonAction:(UIButton*)sender {
     
     //self.searchLocationTableView.hidden=YES;
@@ -1193,12 +1250,34 @@
 
 - (void)keyboardDidShow: (NSNotification *) notif{
    
-     self.searchLocationTableView.hidden = NO;
+    if (!self.cancelReasonView.isHidden) {
+        
+         self.searchLocationTableView.hidden = YES;
+
+        
+        NSDictionary* info = [notif userInfo];
+        
+        CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+
+        NSLog(@"keyboard height %f",kbSize.height);
+        
+
+        
+    }else{
+        
+         self.searchLocationTableView.hidden = NO;
+    }
 }
 
 - (void)keyboardDidHide: (NSNotification *) notif{
     
-    self.searchLocationTableView.hidden = YES;
+     if (!self.cancelReasonView.isHidden) {
+         
+         
+     }else{
+         
+       self.searchLocationTableView.hidden = YES;
+     }
 }
 
 
@@ -1234,30 +1313,30 @@
     //NSLog(@"ride info  %@",rideInfo);
     
     
-    [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
-        
-        
-        if ( responseObject!=nil) {
-            
-            NSLog(@"  info  %@",responseObject);
-            
-            //                                 riderInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
-            //
-            //                                 NSLog(@"responseObject %@",riderInfo);
-            
-            
-            
-        }else{
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                NSLog(@"no  info");
-                
-                
-            });
-            
-        }
-    }];
+//    [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
+//        
+//        
+//        if ( responseObject!=nil) {
+//            
+//            NSLog(@"  info  %@",responseObject);
+//            
+//            //                                 riderInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+//            //
+//            //                                 NSLog(@"responseObject %@",riderInfo);
+//            
+//            
+//            
+//        }else{
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                
+//                NSLog(@"no  info");
+//                
+//                
+//            });
+//            
+//        }
+//    }];
     
     [UIView animateWithDuration:.5
                           delay:0
@@ -1358,6 +1437,7 @@
     
 
     self.driverSuggestionView.hidden = NO;
+    
     self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width,self.driverSuggestionView.frame.size.height);
     
     [UIView animateWithDuration:.5
@@ -1393,7 +1473,43 @@
 - (IBAction)cancelRideButtonAction:(id)sender {
     
 
-    [UIView animateWithDuration:.5
+    cancelReasonArray = [[NSMutableArray alloc]init];
+    
+    [[ServerManager sharedManager] getRideCancelReasosnsWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+
+            cancelReasonArray = [responseObject objectForKey:@"data"];
+            NSLog(@"reasons in mapview  %@",cancelReasonArray);
+            
+            [self.cancelReasonTableView reloadData];
+            
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
+
+    
+    if (!self.timerSupewView.isHidden ) {
+        
+        self.timerSupewView.hidden = YES;
+  
+        self.backButton.hidden = YES;
+        
+        
+    }else{
+    
+       [UIView animateWithDuration:.5
                           delay:0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
@@ -1406,25 +1522,34 @@
                      completion:^(BOOL finished){
                          
                          self.driverSuggestionView.hidden = YES;
-                         
-                         self.whereToButton.hidden = NO;
+ 
                          self.backButton.hidden = YES;
                          
-                         [self.googleMapView clear];
                          
-                         GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
-                         
-                         [self.googleMapView animateToCameraPosition:camera];
                          
                          
                      }];
+        
+    }
+    
+    self.cancelReasonView.hidden = NO;
+    
+    
 }
 
-- (IBAction)timerViewCrossButtonAction:(id)sender {
+- (IBAction)cancelReasonSubmitButtonAction:(id)sender {
     
-    self.timerSupewView.hidden = YES;
+    self.whereToButton.hidden = NO;
+    self.cancelReasonView.hidden = YES;
+    
+    [self.googleMapView clear];
+    
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+    
+    [self.googleMapView animateToCameraPosition:camera];
     
 }
+
 
 
 - (IBAction)backButtonAction:(id)sender {

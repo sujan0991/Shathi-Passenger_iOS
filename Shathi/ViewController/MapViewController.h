@@ -12,7 +12,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <GooglePlaces/GooglePlaces.h>
 
-@interface MapViewController : UIViewController<CLLocationManagerDelegate, UITableViewDataSource,UITableViewDelegate,GMSMapViewDelegate,GMSAutocompleteFetcherDelegate,UITextFieldDelegate>
+@interface MapViewController : UIViewController<CLLocationManagerDelegate, UITableViewDataSource,UITableViewDelegate,GMSMapViewDelegate,GMSAutocompleteFetcherDelegate,UITextFieldDelegate,UITextViewDelegate>
 
 
 
@@ -56,6 +56,11 @@
 //@property (weak, nonatomic) IBOutlet UIView *timewView;
 @property (weak, nonatomic) IBOutlet UIView *timerSupewView;
 
+@property (weak, nonatomic) IBOutlet UIView *cancelReasonView;
+@property (weak, nonatomic) IBOutlet UITableView *cancelReasonTableView;
+@property (weak, nonatomic) IBOutlet UITextView *cancelReasonTextView;
+@property (weak, nonatomic) IBOutlet UIButton *cancelReasonSubmitButton;
+@property (weak, nonatomic) IBOutlet UILabel *otherReasonLabel;
 
 
 @end

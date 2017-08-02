@@ -272,6 +272,43 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
     
 }
 
+- (void)getRideCancelReasosnsWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/get-cancel-reasons",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        NSLog(@"reasons %@",responseDictionary);
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+
 #pragma mark - Server Request
 -(void)postServerRequestWithParams:(NSDictionary*)params forUrl:(NSString*)url withResponseCallback:(void (^)(NSDictionary *responseDictionary))callback
 {

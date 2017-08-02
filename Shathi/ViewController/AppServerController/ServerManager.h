@@ -42,4 +42,8 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //ride request
 -(void) postRequestRideWithInfo:(NSMutableDictionary*)rideInfo completion:(api_Completion_Handler_Data)completion;
 
+
+//get current user info
+- (void)getRideCancelReasosnsWithCompletion:(api_Completion_Handler_Data)completion;
+
 @end

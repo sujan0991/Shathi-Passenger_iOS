@@ -13,6 +13,7 @@
 		64773A9D1EF1441300DFB9FE /* DDHTimerControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 64773A9C1EF1441300DFB9FE /* DDHTimerControl.m */; };
 		6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */; };
 		648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 648733F81EE9370900D42237 /* PromotionsViewController.m */; };
+		648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */; };
 		649739191EE40F4A00062A4B /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 649738E41EE40F4A00062A4B /* FLAnimatedImage.m */; };
 		6497391A1EE40F4A00062A4B /* FLAnimatedImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 649738E61EE40F4A00062A4B /* FLAnimatedImageView+WebCache.m */; };
 		6497391B1EE40F4A00062A4B /* FLAnimatedImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 649738E81EE40F4A00062A4B /* FLAnimatedImageView.m */; };
@@ -72,6 +73,8 @@
 		6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPrifileViewController.m; sourceTree = "<group>"; };
 		648733F71EE9370900D42237 /* PromotionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromotionsViewController.h; sourceTree = "<group>"; };
 		648733F81EE9370900D42237 /* PromotionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PromotionsViewController.m; sourceTree = "<group>"; };
+		648F61761F31D9660057EAB6 /* CancelReasonTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CancelReasonTableViewCell.h; sourceTree = "<group>"; };
+		648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CancelReasonTableViewCell.m; sourceTree = "<group>"; };
 		649738E31EE40F4A00062A4B /* FLAnimatedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLAnimatedImage.h; sourceTree = "<group>"; };
 		649738E41EE40F4A00062A4B /* FLAnimatedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLAnimatedImage.m; sourceTree = "<group>"; };
 		649738E51EE40F4A00062A4B /* FLAnimatedImageView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "FLAnimatedImageView+WebCache.h"; sourceTree = "<group>"; };
@@ -188,6 +191,8 @@
 			children = (
 				6435E2831EE5376200EE93FE /* EditProfileTableViewCell.h */,
 				6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */,
+				648F61761F31D9660057EAB6 /* CancelReasonTableViewCell.h */,
+				648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */,
 			);
 			name = Cell;
 			sourceTree = "<group>";
@@ -572,6 +577,7 @@
 				6497392B1EE40F4A00062A4B /* SDNetworkActivityIndicator.m in Sources */,
 				6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */,
 				6497391B1EE40F4A00062A4B /* FLAnimatedImageView.m in Sources */,
+				648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */,
 				6497391D1EE40F4A00062A4B /* NSData+ImageContentType.m in Sources */,
 				649739251EE40F4A00062A4B /* SDWebImageManager.m in Sources */,
 				649739221EE40F4A00062A4B /* SDWebImageDecoder.m in Sources */,
