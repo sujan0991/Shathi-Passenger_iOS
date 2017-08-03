@@ -46,4 +46,8 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //get current user info
 - (void)getRideCancelReasosnsWithCompletion:(api_Completion_Handler_Data)completion;
 
+//cancel ride with rason
+
+-(void) cancelRideWithReason:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Status)completion;
+
 @end

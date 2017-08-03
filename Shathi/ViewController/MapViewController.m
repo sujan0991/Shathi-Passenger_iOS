@@ -47,6 +47,8 @@
     BOOL isPolyLineBlue;
     BOOL isEditPictupText;
     
+    NSString* cancelReasonId;
+    NSString* rideId;
     
 }
 
@@ -165,6 +167,7 @@
     self.driverSuggestionView.hidden = YES;
     
     self.cancelReasonView.hidden = YES;
+    self.shadeView.hidden = YES;
     
     self.timerSupewView.hidden = YES;
     
@@ -627,12 +630,18 @@
 {
     if (tableView == self.cancelReasonTableView) {
         
-        NSLog(@"selected index  %ld",(long)indexPath.row);
+        
+        cancelReasonId = [[cancelReasonArray objectAtIndex:indexPath.row] objectForKey:@"id"];
+        
+        NSLog(@"cancelReasonId  %@",cancelReasonId);
         NSLog(@"selected index  %u",(cancelReasonArray.count - 1));
         
         if (indexPath.row == (cancelReasonArray.count - 1)) {
             
             [self.cancelReasonTextView becomeFirstResponder];
+        }else{
+        
+            [self.cancelReasonTextView resignFirstResponder];
         }
         
         
@@ -1195,6 +1204,16 @@
     
 }
 
+-(void) textViewDidEndEditing:(UITextView *)textView{
+
+
+    if (textView.text.length == 0) {
+        
+        self.otherReasonLabel.hidden = NO;
+    }
+
+
+}
 
 
 
@@ -1261,6 +1280,9 @@
 
         NSLog(@"keyboard height %f",kbSize.height);
         
+        self.cancelReasonViewCenterConstraint.constant = -kbSize.height * 0.6;
+        
+        NSLog(@"cancelReasonViewCenterConstraint %f",self.cancelReasonViewCenterConstraint.constant);
 
         
     }else{
@@ -1273,6 +1295,7 @@
     
      if (!self.cancelReasonView.isHidden) {
          
+        self.cancelReasonViewCenterConstraint.constant = 0;
          
      }else{
          
@@ -1313,30 +1336,30 @@
     //NSLog(@"ride info  %@",rideInfo);
     
     
-//    [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
-//        
-//        
-//        if ( responseObject!=nil) {
-//            
-//            NSLog(@"  info  %@",responseObject);
-//            
-//            //                                 riderInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
-//            //
-//            //                                 NSLog(@"responseObject %@",riderInfo);
-//            
-//            
-//            
-//        }else{
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                
-//                NSLog(@"no  info");
-//                
-//                
-//            });
-//            
-//        }
-//    }];
+    [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            NSLog(@"  info  %@",responseObject);
+            
+            rideId = [responseObject objectForKey:@"data"];
+            
+            NSLog(@"rideId %@",rideId);
+            
+            
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no  info");
+                
+                
+            });
+            
+        }
+    }];
     
     [UIView animateWithDuration:.5
                           delay:0
@@ -1533,7 +1556,8 @@
     }
     
     self.cancelReasonView.hidden = NO;
-    
+    self.shadeView.hidden = NO;
+
     
 }
 
@@ -1541,7 +1565,49 @@
     
     self.whereToButton.hidden = NO;
     self.cancelReasonView.hidden = YES;
+    self.shadeView.hidden = YES;
+    [self.cancelReasonTextView resignFirstResponder];
     
+    NSMutableDictionary* reasons=[[NSMutableDictionary alloc] init];
+    
+    [reasons setObject:rideId forKey:@"ride_id"];
+    [reasons setObject:cancelReasonId forKey:@"ride_cancel_reason_id"];
+    
+     if (self.cancelReasonTextView.text.length>0) {
+        
+       [reasons setObject:self.cancelReasonTextView.text forKey:@"other_cancel_reason"];
+
+     }
+
+    
+    NSLog(@"post data %@",reasons);
+    
+    [[ServerManager sharedManager] cancelRideWithReason:reasons withCompletion:^(BOOL success) {
+        
+        
+        if (success) {
+            
+            NSLog(@"successfully");
+            
+        }
+        else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failed!"
+                                                                message:@"Please try again"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles: nil];
+                [alert show];
+                
+            });
+        }
+        
+    }];
+
+
     [self.googleMapView clear];
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
