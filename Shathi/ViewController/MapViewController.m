@@ -29,7 +29,7 @@
     CLLocationCoordinate2D googleSearchLocation;
     
     
-    CLLocation *picupPoint ;
+    CLLocation *pickupPoint ;
     CLLocation *destinationPoint;
     
     GMSAutocompleteFetcher *fetcher;
@@ -49,6 +49,9 @@
     
     NSString* cancelReasonId;
     NSString* rideId;
+    
+    GMSMarker *pickUpMarker;
+    GMSMarker *destinationMarker;
     
 }
 
@@ -681,7 +684,7 @@
          }else
          {
             
-            self.setPinPointButton.hidden = NO;
+            //self.setPinPointButton.hidden = NO;
             self.pickUpTextView.text=[NSString stringWithFormat:@"%@",[searchResults objectAtIndex:indexPath.row]];
             
             GMSPlacesClient *placesClient = [[GMSPlacesClient alloc]init];
@@ -698,13 +701,7 @@
                     [rideInfo setObject:[NSString stringWithFormat:@"%f",place.coordinate.latitude] forKey:@"pickup_latitude"];
                     [rideInfo setObject:[NSString stringWithFormat:@"%f", place.coordinate.longitude] forKey:@"pickup_longitude"];
                    
-                    GMSMarker *searchMarker = [[GMSMarker alloc] init];
-                    
-                    searchMarker.position = CLLocationCoordinate2DMake(place.coordinate.latitude, place.coordinate.longitude);
-                    
-                    searchMarker.icon = [UIImage imageNamed:@"Pin.png"];
-                    
-                    searchMarker.map = self.googleMapView;
+
                     
                     
                     //remove after home /work integration
@@ -746,6 +743,7 @@
                  self.staticPin.hidden = NO;
                  [self.destinationTextView resignFirstResponder];
                  self.setPinPointButton.hidden = NO;
+                  
                  
              }
              else if (indexPath.row == 1){
@@ -781,13 +779,6 @@
                      [rideInfo setObject:[NSString stringWithFormat:@"%f",place.coordinate.latitude] forKey:@"destination_latitude"];
                      [rideInfo setObject:[NSString stringWithFormat:@"%f", place.coordinate.longitude] forKey:@"destination_longitude"];
                      
-                     GMSMarker *searchMarker = [[GMSMarker alloc] init];
-                     
-                     searchMarker.position = CLLocationCoordinate2DMake(place.coordinate.latitude, place.coordinate.longitude);
-                     
-                     searchMarker.icon = [UIImage imageNamed:@"Pin.png"];
-                     
-                     searchMarker.map = self.googleMapView;
                      
                      
                      if (self.pickUpTextView.text.length > 0) {
@@ -841,6 +832,10 @@
 -(void) getPositionOfTheMarkerForIndex:(NSInteger) index
 {
     
+    if (![self.staticPin isHidden]) {
+        
+        self.staticPin.hidden = YES;
+    }
     
     NSLog(@"ride info array %@",rideInfo);
     
@@ -848,11 +843,39 @@
     self.locationView.hidden = YES;
     self.searchLocationTableView.hidden = YES;
     
-    picupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+    pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
     destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
     
+    //set picup marker
+    
+    if (pickUpMarker) {
+        
+        pickUpMarker.map = nil;
+    }
+    pickUpMarker = [[GMSMarker alloc] init];
+    
+    pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+    
+    pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+    
+    pickUpMarker.map = self.googleMapView;
+    
+    // set destination pin
+    if (destinationMarker) {
+        
+        destinationMarker.map = nil;
+    }
+    
+    destinationMarker= [[GMSMarker alloc] init];
+    
+    destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+    
+    destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+    
+    destinationMarker.map = self.googleMapView;
+    
 
-    [self drawpoliline:picupPoint destination:destinationPoint];
+    [self drawpoliline:pickupPoint destination:destinationPoint];
 
 }
 
@@ -1038,29 +1061,59 @@
 
 - (IBAction)setPinPointButtonAction:(id)sender {
     
-    self.staticPin.hidden = YES;
-    self.setPinPointButton.hidden = YES;
-    self.locationView.hidden = YES;
+    if(self.destinationTextView.text.length == 0)
+    {
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please enter your destination." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        
+        [alert show];
+        
+        
+    }else{
     
-    picupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
-    destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
+        self.staticPin.hidden = YES;
+        self.setPinPointButton.hidden = YES;
+        self.locationView.hidden = YES;
+        
+        pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+        destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
+        
+        
+        NSLog(@"ride info array in setPinPointButtonAction %@",rideInfo);
+        
+        //set picup marker
+        
+        if (pickUpMarker) {
+            
+            pickUpMarker.map = nil;
+        }
+        pickUpMarker = [[GMSMarker alloc] init];
+        
+        pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+        
+        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+        
+        pickUpMarker.map = self.googleMapView;
+        
+        // set destination pin
+        if (destinationMarker) {
+            
+            destinationMarker.map = nil;
+        }
+        
+        destinationMarker= [[GMSMarker alloc] init];
+        
+        destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+        
+        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+        
+        destinationMarker.map = self.googleMapView;
+        
+        
+        
+        [self drawpoliline:pickupPoint destination:destinationPoint];
     
-    
-    NSLog(@"ride info array in setPinPointButtonAction %@",rideInfo);
-    
-    GMSMarker *searchMarker = [[GMSMarker alloc] init];
-    
-    searchMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-    
-    searchMarker.icon = [UIImage imageNamed:@"Pin.png"];
-    
-    searchMarker.map = self.googleMapView;
-    
-    
-    
-    [self drawpoliline:picupPoint destination:destinationPoint];
-    
-    
+    }
 }
 
 -(void) showFareView{
@@ -1622,6 +1675,8 @@
     
     self.backButton.hidden= YES;
     self.staticPin.hidden =YES;
+    self.setPinPointButton.hidden = YES;
+    
     //self.fareView.hidden = YES;
     
     self.whereToButton.hidden = NO;
