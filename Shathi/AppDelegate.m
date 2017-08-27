@@ -11,7 +11,7 @@
 @import GooglePlaces;
 @import Firebase;
 #import "UserAccount.h"
-
+#import "ServerManager.h"
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -20,7 +20,7 @@
 // Implement UNUserNotificationCenterDelegate to receive display notification via APNS for devices
 // running iOS 10 and above.
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-@interface AppDelegate () <UNUserNotificationCenterDelegate>
+@interface AppDelegate () <UNUserNotificationCenterDelegate,FIRMessagingDelegate>
 @end
 #endif
 
@@ -39,6 +39,8 @@
     
     // Use Firebase library to configure APIs
     [FIRApp configure];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
     
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.
@@ -82,19 +84,19 @@
     return YES;
 }
 
--(void) askForNotificationPermission
-{
-    UIUserNotificationType allNotificationTypes =
-    (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-    UIUserNotificationSettings *settings =
-    [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
-    
-    
-    
-}
+//-(void) askForNotificationPermission
+//{
+//    UIUserNotificationType allNotificationTypes =
+//    (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+//    UIUserNotificationSettings *settings =
+//    [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+//    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+//    [[UIApplication sharedApplication] registerForRemoteNotifications];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
+//    
+//    
+//    
+//}
 
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -114,10 +116,21 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"deviceToken %@",deviceTokenString);
     NSLog(@"refreshedToken %@",refreshedToken);
     
-   
+    
     
     [UserAccount sharedManager].gcmRegKey=refreshedToken;
     
+//    NSLog(@" [UserAccount sharedManager].gcmRegKey %@", [UserAccount sharedManager].gcmRegKey);
+//    
+//    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+//    
+//    [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
+//    
+//    
+//    [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+//        
+//        
+//    }];
     
 }
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
@@ -136,6 +149,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
+
 - (void)tokenRefreshNotification:(NSNotification *)notification {
     // Note that this callback will be fired everytime a new token is generated, including the first
     // time. So if you need to retrieve the token as soon as it is available this is where that
@@ -144,13 +158,26 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"InstanceID token: %@", refreshedToken);
     
     
-    [UserAccount sharedManager].gcmRegKey=refreshedToken;
     
     
     // Connect to FCM since connection may have failed when attempted before having a token.
     [self connectToFcm];
     
     // TODO: If necessary send token to application server.
+    
+    
+    [UserAccount sharedManager].gcmRegKey=refreshedToken;
+    
+    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+    
+    [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
+    
+    
+    [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+        
+        
+    }];
+    
 }
 
 - (void)connectToFcm {

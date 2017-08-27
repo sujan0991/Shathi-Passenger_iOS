@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0536A3CB2B85B52C849C597F /* libPods-Shathi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B674724086766D3677E5F6 /* libPods-Shathi.a */; };
+		643106991F4985FE00F6C4D0 /* RideHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 643106981F4985FE00F6C4D0 /* RideHistoryViewController.m */; };
+		6431069C1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6431069B1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m */; };
+		6431069F1F498AB800F6C4D0 /* DetailHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */; };
 		6435E2851EE5376200EE93FE /* EditProfileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */; };
 		64615ED51F29B3EB00984685 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 64615ED41F29B3EB00984685 /* GoogleService-Info.plist */; };
 		64773A9D1EF1441300DFB9FE /* DDHTimerControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 64773A9C1EF1441300DFB9FE /* DDHTimerControl.m */; };
@@ -56,6 +59,7 @@
 		64C4D4AE1EC9AE6200A3C119 /* AccountKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64C4D4AD1EC9AE6200A3C119 /* AccountKit.framework */; };
 		64C4D4B01EC9AE7E00A3C119 /* AccountKitStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 64C4D4AF1EC9AE7E00A3C119 /* AccountKitStrings.bundle */; };
 		64CDA1351ED5A22200229274 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64CDA1341ED5A22200229274 /* SettingViewController.m */; };
+		64DD5FD41F3C56A100650E3E /* RateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DD5FD31F3C56A100650E3E /* RateView.m */; };
 		64FD0CAA1EDEB2E400070F0F /* HexColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 64FD0CA91EDEB2E400070F0F /* HexColors.m */; };
 		BBD7834094A05C78EE5722A3 /* libPods-Shathi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D3B4BD7376AAB2BA77D3CCC /* libPods-Shathi.a */; };
 /* End PBXBuildFile section */
@@ -63,6 +67,12 @@
 /* Begin PBXFileReference section */
 		3D3B4BD7376AAB2BA77D3CCC /* libPods-Shathi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Shathi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		56B674724086766D3677E5F6 /* libPods-Shathi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Shathi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		643106971F4985FE00F6C4D0 /* RideHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RideHistoryViewController.h; sourceTree = "<group>"; };
+		643106981F4985FE00F6C4D0 /* RideHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RideHistoryViewController.m; sourceTree = "<group>"; };
+		6431069A1F4986EC00F6C4D0 /* RideHistoryTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RideHistoryTableViewCell.h; sourceTree = "<group>"; };
+		6431069B1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RideHistoryTableViewCell.m; sourceTree = "<group>"; };
+		6431069D1F498AB800F6C4D0 /* DetailHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailHistoryViewController.h; sourceTree = "<group>"; };
+		6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailHistoryViewController.m; sourceTree = "<group>"; };
 		6435E2831EE5376200EE93FE /* EditProfileTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProfileTableViewCell.h; sourceTree = "<group>"; };
 		6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProfileTableViewCell.m; sourceTree = "<group>"; };
 		64615ED41F29B3EB00984685 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -158,6 +168,8 @@
 		64C4D4AF1EC9AE7E00A3C119 /* AccountKitStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AccountKitStrings.bundle; sourceTree = "<group>"; };
 		64CDA1331ED5A22200229274 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		64CDA1341ED5A22200229274 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		64DD5FD21F3C56A100650E3E /* RateView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateView.h; sourceTree = "<group>"; };
+		64DD5FD31F3C56A100650E3E /* RateView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RateView.m; sourceTree = "<group>"; };
 		64FD0CA81EDEB2E400070F0F /* HexColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexColors.h; sourceTree = "<group>"; };
 		64FD0CA91EDEB2E400070F0F /* HexColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HexColors.m; sourceTree = "<group>"; };
 		B22F93EF693E7BE1806F9B0D /* Pods-Shathi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Shathi.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Shathi/Pods-Shathi.debug.xcconfig"; sourceTree = "<group>"; };
@@ -189,6 +201,8 @@
 		6435E2821EE5371700EE93FE /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				6431069A1F4986EC00F6C4D0 /* RideHistoryTableViewCell.h */,
+				6431069B1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m */,
 				6435E2831EE5376200EE93FE /* EditProfileTableViewCell.h */,
 				6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */,
 				648F61761F31D9660057EAB6 /* CancelReasonTableViewCell.h */,
@@ -294,6 +308,7 @@
 		64B4781D1EDC7695006C6301 /* Helper Classes */ = {
 			isa = PBXGroup;
 			children = (
+				64DD5FD11F3C56A100650E3E /* RateView */,
 				64773A9A1EF1441300DFB9FE /* DDHTimerControl */,
 				649738E11EE40F4A00062A4B /* SDWebImage */,
 				64B478451EDC7695006C6301 /* Constants.h */,
@@ -415,8 +430,21 @@
 				6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */,
 				648733F71EE9370900D42237 /* PromotionsViewController.h */,
 				648733F81EE9370900D42237 /* PromotionsViewController.m */,
+				643106971F4985FE00F6C4D0 /* RideHistoryViewController.h */,
+				643106981F4985FE00F6C4D0 /* RideHistoryViewController.m */,
+				6431069D1F498AB800F6C4D0 /* DetailHistoryViewController.h */,
+				6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */,
 			);
 			path = ViewController;
+			sourceTree = "<group>";
+		};
+		64DD5FD11F3C56A100650E3E /* RateView */ = {
+			isa = PBXGroup;
+			children = (
+				64DD5FD21F3C56A100650E3E /* RateView.h */,
+				64DD5FD31F3C56A100650E3E /* RateView.m */,
+			);
+			path = RateView;
 			sourceTree = "<group>";
 		};
 		64FD0CA71EDEB2E400070F0F /* HexColors */ = {
@@ -572,6 +600,7 @@
 			files = (
 				64B4781C1EDC762E006C6301 /* ServerManager.m in Sources */,
 				649739321EE40F4A00062A4B /* UIView+WebCacheOperation.m in Sources */,
+				6431069C1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m in Sources */,
 				64773A9D1EF1441300DFB9FE /* DDHTimerControl.m in Sources */,
 				64B478631EDC7695006C6301 /* NSArray+NullReplacement.m in Sources */,
 				6497392B1EE40F4A00062A4B /* SDNetworkActivityIndicator.m in Sources */,
@@ -590,6 +619,7 @@
 				64FD0CAA1EDEB2E400070F0F /* HexColors.m in Sources */,
 				64C223281ECAFFE200B20E64 /* MapViewController.m in Sources */,
 				649739281EE40F4A00062A4B /* UIImage+GIF.m in Sources */,
+				64DD5FD41F3C56A100650E3E /* RateView.m in Sources */,
 				6497392D1EE40F4A00062A4B /* UIImage+Resize.m in Sources */,
 				6497392E1EE40F4A00062A4B /* UIImage+RoundedCorner.m in Sources */,
 				6497392A1EE40F4A00062A4B /* UIImage+WebP.m in Sources */,
@@ -608,6 +638,8 @@
 				6497391C1EE40F4A00062A4B /* MKAnnotationView+WebCache.m in Sources */,
 				649739241EE40F4A00062A4B /* SDWebImageDownloaderOperation.m in Sources */,
 				6497392C1EE40F4A00062A4B /* UIImage+Alpha.m in Sources */,
+				643106991F4985FE00F6C4D0 /* RideHistoryViewController.m in Sources */,
+				6431069F1F498AB800F6C4D0 /* DetailHistoryViewController.m in Sources */,
 				64B478651EDC7695006C6301 /* NSDictionary+NullReplacement.m in Sources */,
 				648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */,
 				64B478661EDC7695006C6301 /* Reachability.m in Sources */,

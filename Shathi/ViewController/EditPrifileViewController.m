@@ -20,8 +20,7 @@
     NSArray *titleList;
     UIImage *chosenImage;
     
-    NSMutableDictionary *userInfo;
-
+   
 }
 
 @end
@@ -35,7 +34,7 @@
     [self setUpView];
     [self drawShadow:self.navView];
 
-    [self getUserInfo];
+   
 }
 
 - (void)didReceiveMemoryWarning {
@@ -79,39 +78,6 @@
     
 }
 
--(void) getUserInfo{
-
-
-    [[ServerManager sharedManager] getUserInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
-        
-        
-        if ( responseObject!=nil) {
-            
-            
-            
-            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
-
-            NSLog(@"user info %@",userInfo);
-            
-            [self.profilePicture sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",BASE_API_URL,[userInfo objectForKey:@"profile_picture"]]]];
-
-            [self.editProfileTableView reloadData];
-            
-
-        }else{
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                NSLog(@"no user info");
-
-               
-            });
-            
-        }
-    }];
-   
-
-}
 
 #pragma mark - UITableView DataSource
 
@@ -147,12 +113,12 @@
     
      if (indexPath.row == 0) {
         
-         NSLog(@"user name %@",[userInfo objectForKey:@"name"]);
-        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"name"]];
+         NSLog(@"user name %@",[self.userInfo objectForKey:@"name"]);
+        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"name"]];
         
     }else if (indexPath.row == 1)
     {
-        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"phone"]];
+        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"phone"]];
         cell.userInfoTextField.userInteractionEnabled = NO;
         
     }else if (indexPath.row == 2)
@@ -161,7 +127,7 @@
     }else if (indexPath.row == 3)
     {
         
-        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"email"]];
+        cell.userInfoTextField.text = [NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"email"]];
         
 
     }
@@ -323,8 +289,8 @@
     
     NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
     
-    [postData setObject:[userInfo objectForKey:@"name"] forKey:@"name"];
-    [postData setObject:[userInfo objectForKey:@"email"] forKey:@"email"];
+    [postData setObject:[self.userInfo objectForKey:@"name"] forKey:@"name"];
+    [postData setObject:[self.userInfo objectForKey:@"email"] forKey:@"email"];
     //[postData setObject:[userInfo objectForKey:@"phone"] forKey:@"phone"];
     //[postData setObject:[userInfo objectForKey:@"sex"] forKey:@"sex"];
 
@@ -394,7 +360,7 @@
             break;
     }
     
-    [userInfo setObject:textField.text forKey:keyName];
+    [self.userInfo setObject:textField.text forKey:keyName];
     //NSLog(@"text %@",textField.text);
 }
 

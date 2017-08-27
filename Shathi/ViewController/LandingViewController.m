@@ -145,13 +145,14 @@
         }
         else if (account.accountID !=nil){
             
+//            AppDelegate *appDelegateTemp = [[UIApplication sharedApplication]delegate];
+//            
+//            [appDelegateTemp askForNotificationPermission];
             
             [[ServerManager sharedManager] postLoginWithPhone:[account.phoneNumber stringRepresentation] accessToken:accessToken completion:^(BOOL success) {
                 
                
-                AppDelegate *appDelegateTemp = [[UIApplication sharedApplication]delegate];
                 
-                [appDelegateTemp askForNotificationPermission];
                 
                 
                 MapViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"MapViewController"];

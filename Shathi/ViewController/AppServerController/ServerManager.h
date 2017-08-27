@@ -50,4 +50,11 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 
 -(void) cancelRideWithReason:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Status)completion;
 
+//update gcm key
+-(void)patchUpdateGcmKey:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion;
+
+//get history info
+- (void)getHistoryInfoWithCompletion:(api_Completion_Handler_Data)completion;
+
+
 @end

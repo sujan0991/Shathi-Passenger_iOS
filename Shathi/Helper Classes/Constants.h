@@ -1,7 +1,7 @@
 
 
 //#define SERVER_BASE_API_URL @"http://52.15.139.172"
-#define BASE_API_URL @"http://192.168.0.100"
+#define BASE_API_URL @"http://174.138.64.95"
 
 
 

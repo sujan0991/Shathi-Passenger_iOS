@@ -53,6 +53,8 @@
     GMSMarker *pickUpMarker;
     GMSMarker *destinationMarker;
     
+    NSString* totalRating;
+    
 }
 
 @property (nonatomic, strong) DDHTimerControl *timerControl;
@@ -70,9 +72,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    //demo access token
-    
-    [UserAccount sharedManager].accessToken = @"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjBlNWU0NWQyZjJhZTU5OWYyYTJmNzlhYjZlNzNhNjQ3MWQyZDA4YTY1M2Q5M2E2NmFmZTY0ZDIwNTFmYTVjNDc0ZDI0OWEyZmQ5ZmVjYjcyIn0.eyJhdWQiOiIxIiwianRpIjoiMGU1ZTQ1ZDJmMmFlNTk5ZjJhMmY3OWFiNmU3M2E2NDcxZDJkMDhhNjUzZDkzYTY2YWZlNjRkMjA1MWZhNWM0NzRkMjQ5YTJmZDlmZWNiNzIiLCJpYXQiOjE0OTYzMDQ2ODIsIm5iZiI6MTQ5NjMwNDY4MiwiZXhwIjoxNTI3ODQwNjgyLCJzdWIiOiI4Iiwic2NvcGVzIjpbXX0.mxVI2uHlq8Mt5czIiNd6vov1bwdhodKjU2TL9ym97fgQ3qSerc7o4p1zL-sbieTTqUCeMTRqwFegILCB6yw0XE7pHS4cVNVYQanAxKlqy2JJC8P-giNJz06qjGzfbrsDV16o5IY8mU5BZaDHFwUkcl4WX1Jl0Um3UvW3fgDLEVG6JmMetWl2je-EfZWesnwSfdEsVKXP8hTedOi3t7m3cy24vRvIjDBZ2tLmVhj6bKPR9I5yEyidp5nDfu5eEeCMNUjWYKodosdD37VEXH4pdVPzrFmrhSihmyRfB4wkNMjqMBOMIACUqVH4m0G8hqAogsDjfHvje9LSJZKDJOYB5snXELVa9iToKzqJXEEA7SMrzpVtKwmnLeSUwOf6sgxSQn9oVmffhoLv349x4gX8B4zN319sJIV8cjCFD3vvOH9xNSVBE3Be21ihjZdpHxdEwlMAfTRUuOAYJ4aXX3h-BaZN9gltIK2nDx0ysO5ezZqG-tYAQx1kxNUT_NEsiUEqGpdhq9zp0SFrXl31OqNZIdaeXuDO_TRMK_uh1NGONF5i2UnzcqxVBr0e0BLrN-zPtits8wTRY8XGGDpyE2naR2SFegKixpeQPfo9pbzNmkILTu3polO__pAGfBofS3Rs-7znfWgJcItRzpQkLNFLQEx6zWerXZ9Mi5Ako4xq8Dc";
+   
     
     [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(riderInfo:) name:@"riderNotification" object:nil];
     
@@ -93,6 +93,11 @@
     
     homeWorkArray = [[NSMutableArray alloc]init];
     rideInfo = [[NSMutableDictionary alloc]init];
+    
+    
+    
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -174,10 +179,23 @@
     
     self.timerSupewView.hidden = YES;
     
+    self.submitFareView.hidden = YES;
+    
     self.driverPhoto.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
     self.driverPhoto.clipsToBounds = YES;
     self.driverPhoto.layer.borderWidth = 5.0f;
     self.driverPhoto.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
+    
+    self.ratingInDriverSuggestionView.layer.cornerRadius = self.ratingInDriverSuggestionView.frame.size.width/2;
+    self.ratingInDriverSuggestionView.layer.masksToBounds= YES;
+    
+    self.driverPhotoInSubmitFareView.layer.cornerRadius = self.driverPhotoInSubmitFareView.frame.size.width / 2;
+    self.driverPhotoInSubmitFareView.clipsToBounds = YES;
+    self.driverPhotoInSubmitFareView.layer.borderWidth = 5.0f;
+    self.driverPhotoInSubmitFareView.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
+    
+    self.ratingLabelInSubmitFareView.layer.cornerRadius = self.ratingLabelInSubmitFareView.frame.size.width/2;
+    self.ratingLabelInSubmitFareView.layer.masksToBounds= YES;
     
     
     
@@ -288,15 +306,20 @@
 //    self.googleMapView.settings.zoomGestures = YES;
     
     
-    currentLocation = locationManager.location.coordinate;
-    
-    NSLog(@"Current Location = %f, %f",currentLocation.latitude,currentLocation.longitude);
-    
-    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
-    
-    [self.googleMapView animateToCameraPosition:camera];
-    
-    self.googleMapView.settings.consumesGesturesInView = YES;
+//    currentLocation = locationManager.location.coordinate;
+//    
+//    if (locationManager.location == nil) {
+//        
+//         [locationManager startUpdatingLocation];
+//    }
+//    
+//    NSLog(@"Current Location = %f, %f",currentLocation.latitude,currentLocation.longitude);
+//    
+//    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+//    
+//    [self.googleMapView animateToCameraPosition:camera];
+//    
+//    self.googleMapView.settings.consumesGesturesInView = YES;
     
     
     
@@ -313,6 +336,34 @@
     
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
+    
+    
+    CLLocation *currentPostion=locations.lastObject;
+    
+    //CLLocation *currentPostion=locations.lastObject;
+    currentLocation.latitude=currentPostion.coordinate.latitude;
+    currentLocation.longitude=currentPostion.coordinate.longitude;
+    
+    NSLog(@"got the location");
+    
+    
+    
+    NSLog(@"Current Location = %f, %f",currentLocation.latitude,currentLocation.longitude);
+    
+    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+    
+    [self.googleMapView animateToCameraPosition:camera];
+    
+    
+    
+    [manager stopUpdatingLocation];
+    
+    
+
+    
+    
+}
 
 
 -(void)setGooglePlacefetcher{
@@ -360,6 +411,7 @@
         [resultsStr appendFormat:@"%@\n", [prediction.attributedPrimaryText string]];
         
         [searchResults addObject:prediction.attributedFullText.string];
+        
         [searchResultsPlaceId addObject:prediction.placeID];
         
 //        NSLog(@"searchResults place ID ::::: %@",prediction.placeID);
@@ -642,6 +694,7 @@
         if (indexPath.row == (cancelReasonArray.count - 1)) {
             
             [self.cancelReasonTextView becomeFirstResponder];
+            
         }else{
         
             [self.cancelReasonTextView resignFirstResponder];
@@ -846,36 +899,81 @@
     pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
     destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
     
-    //set picup marker
+   
+//    NSString *bal = @"%7C";
+//    
+//    NSString *urlString =[NSString stringWithFormat:@"http://maps.google.com/maps/api/staticmap?size=350x200&maptype=roadmap&markers=size:mid%@color:purple%@label:P%@%f,%f&markers=size:mid%@color:red%@label:D%@%f,%f",bal,bal,bal,[[rideInfo objectForKey:@"pickup_latitude"] floatValue],[[rideInfo objectForKey:@"pickup_longitude"] floatValue],bal,bal,bal,[[rideInfo objectForKey:@"destination_latitude"] floatValue], [[rideInfo objectForKey:@"destination_longitude"] floatValue]];
+//    
+//    urlString = [urlString stringByAppendingString:@"&key=AIzaSyDh0V-13fNhKpvJaMF-kvfTFEE-tpOZJJk"];
+//    
+//    NSLog(@"static map url  %@",urlString);
+//    
+//    self.testStaticMap.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]]];
     
-    if (pickUpMarker) {
+    
+    if ((pickupPoint.coordinate.latitude != 0.0 || pickupPoint.coordinate.longitude != 0.0) && (destinationPoint.coordinate.latitude != 0.0 || destinationPoint.coordinate.longitude != 0.0)) {
         
-        pickUpMarker.map = nil;
-    }
-    pickUpMarker = [[GMSMarker alloc] init];
-    
-    pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
-    
-    pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
-    
-    pickUpMarker.map = self.googleMapView;
-    
-    // set destination pin
-    if (destinationMarker) {
-        
-        destinationMarker.map = nil;
-    }
-    
-    destinationMarker= [[GMSMarker alloc] init];
-    
-    destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-    
-    destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
-    
-    destinationMarker.map = self.googleMapView;
-    
+        NSLog(@"rpickupPoint %@",pickupPoint);
+ 
+        NSLog(@"destinationPoint %@",destinationPoint);
 
-    [self drawpoliline:pickupPoint destination:destinationPoint];
+        //set picup marker
+        
+        if (pickUpMarker) {
+            
+            pickUpMarker.map = nil;
+        }
+        pickUpMarker = [[GMSMarker alloc] init];
+        
+        pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+        
+        pickUpMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]];
+        
+        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+        
+        pickUpMarker.map = self.googleMapView;
+        
+        // set destination pin
+        if (destinationMarker) {
+            
+            destinationMarker.map = nil;
+        }
+        
+        destinationMarker= [[GMSMarker alloc] init];
+        
+        destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+        
+        destinationMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]];
+        
+        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+        
+        destinationMarker.map = self.googleMapView;
+        
+        
+        [self drawpoliline:pickupPoint destination:destinationPoint];
+    }else
+    {
+    
+    
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please give valid address." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+        
+        [alert show];
+        
+        self.backButton.hidden= YES;
+        self.staticPin.hidden =YES;
+        self.setPinPointButton.hidden = YES;
+        
+        //self.fareView.hidden = YES;
+        
+        self.whereToButton.hidden = NO;
+        
+        self.locationView.hidden = YES;
+        self.searchLocationTableView.hidden = YES;
+        
+        [self.googleMapView clear];
+    
+    
+    }
 
 }
 
@@ -1004,11 +1102,13 @@
     GMSCameraUpdate *update = [GMSCameraUpdate fitBounds:bounds
                                              withPadding:100.0f];
     [self.googleMapView moveCamera:update];
-    //[self.googleMapView animateToZoom:14];
+    [self.googleMapView animateToZoom:14];
     [self.googleMapView animateToViewingAngle:35];
     
     
-    [self performSelector:@selector(showFareView) withObject:self afterDelay:2.0 ];
+   // [self performSelector:@selector(showFareView) withObject:self afterDelay:2.0 ];
+    
+    [self showFareView];
 
 }
 
@@ -1081,37 +1181,62 @@
         
         NSLog(@"ride info array in setPinPointButtonAction %@",rideInfo);
         
-        //set picup marker
-        
-        if (pickUpMarker) {
+        if ((pickupPoint.coordinate.latitude != 0.0 || pickupPoint.coordinate.longitude != 0.0) && (destinationPoint.coordinate.latitude != 0.0 || destinationPoint.coordinate.longitude != 0.0)) {
             
-            pickUpMarker.map = nil;
-        }
-        pickUpMarker = [[GMSMarker alloc] init];
-        
-        pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
-        
-        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
-        
-        pickUpMarker.map = self.googleMapView;
-        
-        // set destination pin
-        if (destinationMarker) {
+            //set picup marker
             
-            destinationMarker.map = nil;
+            if (pickUpMarker) {
+                
+                pickUpMarker.map = nil;
+            }
+            pickUpMarker = [[GMSMarker alloc] init];
+            
+            pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+            
+            pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+            
+            pickUpMarker.map = self.googleMapView;
+            
+            // set destination pin
+            if (destinationMarker) {
+                
+                destinationMarker.map = nil;
+            }
+            
+            destinationMarker= [[GMSMarker alloc] init];
+            
+            destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+            
+            destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+            
+            destinationMarker.map = self.googleMapView;
+            
+            
+            
+            [self drawpoliline:pickupPoint destination:destinationPoint];
+            
+        }else
+        {
+            
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please give valid address." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+            
+            [alert show];
+            
+            self.backButton.hidden= YES;
+            self.staticPin.hidden =YES;
+            self.setPinPointButton.hidden = YES;
+            
+            //self.fareView.hidden = YES;
+            
+            self.whereToButton.hidden = NO;
+            
+            self.locationView.hidden = YES;
+            self.searchLocationTableView.hidden = YES;
+            
+            [self.googleMapView clear];
+            
         }
-        
-        destinationMarker= [[GMSMarker alloc] init];
-        
-        destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-        
-        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
-        
-        destinationMarker.map = self.googleMapView;
-        
-        
-        
-        [self drawpoliline:pickupPoint destination:destinationPoint];
     
     }
 }
@@ -1476,35 +1601,43 @@
     NSError *error;
     NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:webData options:0 error:&error];
     NSLog(@"JSON DIct: %@", jsonDict);
+    
+    int notificationType = [[jsonDict objectForKey:@"notification_type"]intValue];
+    
+    if (notificationType == 2) {
 
-    self.driverNameLabel.text = [jsonDict objectForKey:@"name"];
-
-    NSString * riderlat =[[jsonDict objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
-    NSString * riderlong = [[jsonDict objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
-    
-    self.timerSupewView.hidden = YES;
-    
-    [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
- 
-    CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
-    CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
-    
-    //GMSMarker *riderMarker = [[GMSMarker alloc] init];
-    
-    CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
-    
-    GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
-    
-    riderMarker.icon = [UIImage imageNamed:@"bike.png"];
-    
-    riderMarker.map = self.googleMapView;
-
-    
-    isUpdateCameraPosition = 0;
-    isPolyLineBlue = 0;
-    
-    
-    [self drawpoliline:passengerLocation destination:riderLocation];
+        //driver found
+        
+        self.driverNameLabel.text = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"name"];
+        
+        NSString * riderlat =[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
+        NSString * riderlong = [[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
+        
+        self.timerSupewView.hidden = YES;
+        
+        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+        
+        CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+        CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
+        
+        //GMSMarker *riderMarker = [[GMSMarker alloc] init];
+        
+        CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
+        
+        GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
+        
+        riderMarker.icon = [UIImage imageNamed:@"bike.png"];
+        
+        riderMarker.map = self.googleMapView;
+        
+        
+        isUpdateCameraPosition = 0;
+        isPolyLineBlue = 0;
+        
+        
+        [self drawpoliline:passengerLocation destination:riderLocation];
+        
+    }
     
 }
 
@@ -1533,6 +1666,53 @@
     
   
 }
+
+-(void) showSubmitFareView{
+
+
+    
+    self.submitFareView.hidden = NO;
+    self.submitFareView.frame = CGRectMake(20,self.view.frame.size.height ,self.submitFareView.frame.size.width,self.submitFareView.frame.size.height);
+    
+    [UIView animateWithDuration:.5
+                          delay:0
+                        options: UIViewAnimationOptionCurveEaseIn
+                     animations:^{
+                         
+                         
+                         self.submitFareView.frame = CGRectMake(20,(self.view.frame.size.height - self.submitFareView.frame.size.height-20) ,self.submitFareView.frame.size.width,self.submitFareView.frame.size.height);
+                         
+                         
+                     }
+     
+                     completion:^(BOOL finished){
+                         
+                         
+                     }];
+    
+    self.driverNameLabelInSubmitFareView.text = self.driverNameLabel.text;
+    
+    self.rateView.notSelectedImage = [UIImage imageNamed:@"Star_deactive.png"];
+    self.rateView.halfSelectedImage = [UIImage imageNamed:@"Star_active_half.png"];
+    self.rateView.fullSelectedImage = [UIImage imageNamed:@"Star_active.png"];
+    self.rateView.rating = 0;
+    self.rateView.editable = YES;
+    self.rateView.maxRating = 5;
+    self.rateView.delegate = self;
+
+
+}
+
+- (void)rateView:(RateView *)rateView ratingDidChange:(float)rating {
+    
+    
+    
+    totalRating =[NSString stringWithFormat:@"%.1f", rating];
+    
+    NSLog(@"RATING is :)%@",totalRating);
+    
+}
+
 
 - (IBAction)paymentButtonAction:(id)sender {
     
@@ -1668,6 +1848,12 @@
     [self.googleMapView animateToCameraPosition:camera];
     
 }
+
+- (IBAction)submitButtonActionInFareView:(id)sender {
+
+
+}
+
 
 
 

@@ -151,6 +151,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UserAccount)
 
 - (void)setGcmRegKey:(NSString *)value
 {
+    
     [self.userDefaults setObject:value forKey:@"gcmRegKey"];
     [self.userDefaults synchronize];
 }

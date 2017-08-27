@@ -12,6 +12,11 @@
 #import "EditPrifileViewController.h"
 #import "PromotionsViewController.h"
 #import "UserAccount.h"
+#import "ServerManager.h"
+#import "NSDictionary+NullReplacement.h"
+#import "Constants.h"
+#import "RideHistoryViewController.h"
+
 
 @interface SettingViewController (){
 
@@ -20,7 +25,7 @@
     NSArray *settingList;
     NSArray *imageArray;
 
-
+    NSDictionary * userInfo;
 }
 
 @end
@@ -36,6 +41,8 @@
     }
     [self setUpView];
     [self drawShadow:self.navView];
+    
+    [self getUserInfo];
 
 }
 
@@ -137,6 +144,12 @@
         
         [self presentViewController:vc animated:YES completion:nil];
         
+    }else if (indexPath.row ==5)
+    {
+        RideHistoryViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"RideHistoryViewController"];
+        
+       [self.navigationController pushViewController:vc animated:YES];
+        
     }else if (indexPath.row ==7)
     {
     
@@ -155,10 +168,48 @@
     
 }
 
+-(void) getUserInfo{
+    
+    
+    [[ServerManager sharedManager] getUserInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            
+            
+            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+            
+            NSLog(@"user info %@",userInfo);
+            
+            [self.profilePicture sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",BASE_API_URL,[userInfo objectForKey:@"profile_picture"]]]];
+            self.userNameLabel.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"name"]];
+            self.phoneNoLabel.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"phone"]];
+           
+            
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
+    
+    
+}
+
+
 - (IBAction)editProfileAction:(id)sender {
     
     
     EditPrifileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPrifileViewController"];
+    
+    vc.userInfo = userInfo;
     
     [self.navigationController pushViewController:vc animated:YES];
     

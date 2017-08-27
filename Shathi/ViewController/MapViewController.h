@@ -11,8 +11,8 @@
 #import <GoogleMaps/GoogleMaps.h>
 #import <CoreLocation/CoreLocation.h>
 #import <GooglePlaces/GooglePlaces.h>
-
-@interface MapViewController : UIViewController<CLLocationManagerDelegate, UITableViewDataSource,UITableViewDelegate,GMSMapViewDelegate,GMSAutocompleteFetcherDelegate,UITextFieldDelegate,UITextViewDelegate>
+#import "RateView.h"
+@interface MapViewController : UIViewController<CLLocationManagerDelegate, UITableViewDataSource,UITableViewDelegate,GMSMapViewDelegate,GMSAutocompleteFetcherDelegate,UITextFieldDelegate,UITextViewDelegate,RateViewDelegate>
 
 
 
@@ -51,6 +51,18 @@
 @property (weak, nonatomic) IBOutlet UILabel *driverNameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *driverPhoto;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButtonInDriverSuggestionView;
+@property (weak, nonatomic) IBOutlet UILabel *ratingInDriverSuggestionView;
+
+
+@property (weak, nonatomic) IBOutlet UIView *submitFareView;
+@property (weak, nonatomic) IBOutlet UIImageView *driverPhotoInSubmitFareView;
+@property (weak, nonatomic) IBOutlet UILabel *driverNameLabelInSubmitFareView;
+@property (weak, nonatomic) IBOutlet UILabel *bikeModelLabelInSubmitFareView;
+@property (weak, nonatomic) IBOutlet RateView *rateView;
+@property (weak, nonatomic) IBOutlet UILabel *rideCostLabel;
+@property (weak, nonatomic) IBOutlet UIButton *submitButton;
+@property (weak, nonatomic) IBOutlet UILabel *ratingLabelInSubmitFareView;
+
 
 
 //@property (weak, nonatomic) IBOutlet UIView *timewView;
@@ -64,6 +76,9 @@
 @property (weak, nonatomic) IBOutlet UIView *shadeView;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *cancelReasonViewCenterConstraint;
+
+
+
 
 
 
