@@ -48,7 +48,7 @@
         <scene sceneID="eqR-Dt-iJu">
             <objects>
                 <navigationController navigationBarHidden="YES" id="qtR-mS-R6R" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Ke6-cf-bWb">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ke6-cf-bWb">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -64,7 +64,7 @@
         <scene sceneID="oS0-yf-439">
             <objects>
                 <navigationController navigationBarHidden="YES" id="1j3-cC-Tiz" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="fmJ-SW-O0D">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fmJ-SW-O0D">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -267,7 +267,7 @@
                                         <rect key="frame" x="0.0" y="28" width="335" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xkm-nA-e3r" id="SzA-gk-Icu">
-                                            <rect key="frame" x="0.0" y="0.0" width="335" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="335" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -597,7 +597,7 @@
                                                 <rect key="frame" x="0.0" y="28" width="283" height="61"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7UQ-Dm-mEV" id="q65-Gd-sw9">
-                                                    <rect key="frame" x="0.0" y="0.0" width="283" height="60.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="283" height="60"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Ry-mW-1gW">
@@ -1110,7 +1110,7 @@
                                         <rect key="frame" x="0.0" y="28" width="315" height="49"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="AXa-RL-Pcg" id="Rqz-BB-t5p">
-                                            <rect key="frame" x="0.0" y="0.0" width="315" height="48.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="315" height="49"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" tag="1" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OoN-sv-gM9">

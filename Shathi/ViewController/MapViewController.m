@@ -1851,6 +1851,34 @@
 
 - (IBAction)submitButtonActionInFareView:(id)sender {
 
+    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+    
+    [postData setObject:[NSString stringWithFormat:@"%@",rideId] forKey:@"ride_id"];
+    [postData setObject:[NSString stringWithFormat:@"%@",totalRating] forKey:@"rating"];
+    
+    [[ServerManager sharedManager] patchRating:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+        
+        if ( resultDataDictionary!=nil) {
+            
+            NSLog(@"  info  %@",resultDataDictionary);
+            
+
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no  info");
+                
+                
+            });
+            
+        }
+
+        
+        
+    }];
+    
 
 }
 
