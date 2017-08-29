@@ -55,6 +55,8 @@
     
     NSString* totalRating;
     
+    float estimatedTime;
+    float totalDistance;
 }
 
 @property (nonatomic, strong) DDHTimerControl *timerControl;
@@ -1079,6 +1081,9 @@
                                                          
                                                          NSLog(@"duration   %@",time);
                                                          
+                                                         totalDistance = [distance floatValue];
+                                                         estimatedTime = [time floatValue] ;
+                                                         
                                                          
                                                      }
                                                      
@@ -1087,6 +1092,14 @@
                                                          
                                                          if(completionHandler)
                                                              completionHandler(polyline);
+                                                         
+                                                         NSLog(@"totalDistance main thread %.1f",totalDistance);
+                                                         NSLog(@"estimatedTime main thread %.1f",estimatedTime);
+                                                         
+                                                         
+                                                         [self calculateFare];
+                                                         
+                                                         
                                                          
                                                      });
                                                  }];
@@ -1108,7 +1121,8 @@
     
    // [self performSelector:@selector(showFareView) withObject:self afterDelay:2.0 ];
     
-    [self showFareView];
+    
+    
 
 }
 
@@ -1240,13 +1254,50 @@
     
     }
 }
+-(void)calculateFare{
 
+    [[ServerManager sharedManager] getFareInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            
+            NSMutableDictionary *userInfo;
+            
+            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+            
+            NSLog(@"totalDistance in fareCalculation %f",totalDistance);
+            
+            self.estimatedTimeLabel.text = [NSString stringWithFormat:@"Estimated time %.1f", estimatedTime ];
+            
+            float estimatedFare = [[userInfo objectForKey:@"base_fare"]floatValue] + ( [[userInfo objectForKey:@"per_kilometer_fare"]floatValue] * totalDistance )+ ([[userInfo objectForKey:@"per_minute_fare"]floatValue] * estimatedTime);
+            
+            NSLog(@"estimatedFare %.2f",estimatedFare);
+            
+            self.fareLabel.text = [NSString stringWithFormat:@"%.2f",estimatedFare];
+            
+            [self showFareView];
+
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
+
+}
 -(void) showFareView{
 
 
     self.fareView.hidden = NO;
     self.fareView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width,self.fareView.frame.size.height);
     
+
     [UIView animateWithDuration:.5
                           delay:0
                         options: UIViewAnimationOptionCurveEaseIn
@@ -1258,6 +1309,8 @@
                          
                      }
                      completion:^(BOOL finished){
+                         
+                        
                          
                      }];
 

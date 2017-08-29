@@ -59,4 +59,7 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //rating
 -(void)patchRating:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion;
 
+//get fare info
+- (void)getFareInfoWithCompletion:(api_Completion_Handler_Data)completion;
+
 @end

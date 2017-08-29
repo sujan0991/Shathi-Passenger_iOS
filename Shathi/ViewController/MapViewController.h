@@ -42,7 +42,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *enterPicupButton;
 
 @property (weak, nonatomic) IBOutlet UIView *fareView;
-@property (weak, nonatomic) IBOutlet UIView *estimatedPicupTimeLabel;
+@property (weak, nonatomic) IBOutlet UILabel *estimatedTimeLabel;
 @property (weak, nonatomic) IBOutlet UIButton *requestRideButton;
 @property (weak, nonatomic) IBOutlet UILabel *fareLabel;
 
