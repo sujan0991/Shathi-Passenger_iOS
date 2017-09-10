@@ -74,8 +74,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *cancelReasonSubmitButton;
 @property (weak, nonatomic) IBOutlet UILabel *otherReasonLabel;
 @property (weak, nonatomic) IBOutlet UIView *shadeView;
+@property (weak, nonatomic) IBOutlet UIView *otherReasonsView;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *cancelReasonViewCenterConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *otherReasonsBottomConstraint;
 
 
 

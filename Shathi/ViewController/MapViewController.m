@@ -57,6 +57,8 @@
     
     float estimatedTime;
     float totalDistance;
+    
+    NSString *phoneNo;
 }
 
 @property (nonatomic, strong) DDHTimerControl *timerControl;
@@ -1511,7 +1513,9 @@
 
         NSLog(@"keyboard height %f",kbSize.height);
         
-        self.cancelReasonViewCenterConstraint.constant = -kbSize.height * 0.6;
+        //self.cancelReasonViewCenterConstraint.constant = -kbSize.height * 0.6;
+        
+         self.otherReasonsBottomConstraint.constant = kbSize.height * 0.6;
         
         NSLog(@"cancelReasonViewCenterConstraint %f",self.cancelReasonViewCenterConstraint.constant);
 
@@ -1526,7 +1530,9 @@
     
      if (!self.cancelReasonView.isHidden) {
          
-        self.cancelReasonViewCenterConstraint.constant = 0;
+        //self.cancelReasonViewCenterConstraint.constant = 0;
+         self.otherReasonsBottomConstraint.constant = 0;
+         
          
      }else{
          
@@ -1663,10 +1669,13 @@
         
         self.driverNameLabel.text = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"name"];
         
+        phoneNo = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"phone"];
+        
         NSString * riderlat =[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
         NSString * riderlong = [[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
         
         self.timerSupewView.hidden = YES;
+        
         
         [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
         
@@ -1697,7 +1706,7 @@
 
 -(void) showDriverSuggestionView{
     
-
+    self.fareView.hidden = YES;
     self.driverSuggestionView.hidden = NO;
     
     self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width,self.driverSuggestionView.frame.size.height);
@@ -1773,11 +1782,36 @@
 }
 - (IBAction)smsDriverButtonAction:(id)sender {
     
+    if([[UIDevice currentDevice].systemVersion floatValue] >= 10.0){
+        
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"sms:%@", phoneNo]] options:@{} completionHandler:^(BOOL success) {
+            if (success) {
+                
+                NSLog(@"Opened url sms");
+            }
+        }];
+    }else{
+        
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"sms:%@", phoneNo]]];
+        
+    }
     
 }
 - (IBAction)phoneDriverButtonAction:(id)sender {
     
+    if([[UIDevice currentDevice].systemVersion floatValue] >= 10.0){
+        
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNo]] options:@{} completionHandler:^(BOOL success) {
+            if (success) {
+                
+                NSLog(@"Opened url");
+            }
+        }];
+    }else{
     
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNo]]];
+    
+    }
 }
 - (IBAction)cancelRideButtonAction:(id)sender {
     
@@ -1852,6 +1886,7 @@
     self.whereToButton.hidden = NO;
     self.cancelReasonView.hidden = YES;
     self.shadeView.hidden = YES;
+    self.fareView.hidden = YES;
     [self.cancelReasonTextView resignFirstResponder];
     
     NSMutableDictionary* reasons=[[NSMutableDictionary alloc] init];
@@ -1915,6 +1950,24 @@
             
             NSLog(@"  info  %@",resultDataDictionary);
             
+            [UIView animateWithDuration:.5
+                                  delay:0
+                                options: UIViewAnimationOptionCurveEaseIn
+                             animations:^{
+                                 
+                                 
+                                 self.submitFareView.frame = CGRectMake(20,self.view.frame.size.height ,self.submitFareView.frame.size.width, 0);
+                                 
+                                 
+                             }
+                             completion:^(BOOL finished){
+                                 
+                                 
+                                 self.submitFareView.hidden = YES;
+                                 
+                                 
+                                 
+                             }];
 
             
         }else{
@@ -1944,7 +1997,7 @@
     self.staticPin.hidden =YES;
     self.setPinPointButton.hidden = YES;
     
-    //self.fareView.hidden = YES;
+    self.fareView.hidden = YES;
     
     self.whereToButton.hidden = NO;
     
