@@ -144,7 +144,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 {
     NSLog(@"userInfo %@",userInfo);
     
-     [[NSNotificationCenter defaultCenter] postNotificationName:@"riderNotification" object:self userInfo:userInfo];
+     [[NSNotificationCenter defaultCenter] postNotificationName:@"rideNotification" object:self userInfo:userInfo];
     
     completionHandler(UIBackgroundFetchResultNoData);
 }

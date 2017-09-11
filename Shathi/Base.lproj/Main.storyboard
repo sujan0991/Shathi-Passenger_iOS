@@ -48,7 +48,7 @@
         <scene sceneID="eqR-Dt-iJu">
             <objects>
                 <navigationController navigationBarHidden="YES" id="qtR-mS-R6R" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ke6-cf-bWb">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Ke6-cf-bWb">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -64,7 +64,7 @@
         <scene sceneID="oS0-yf-439">
             <objects>
                 <navigationController navigationBarHidden="YES" id="1j3-cC-Tiz" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="fmJ-SW-O0D">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="fmJ-SW-O0D">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -561,8 +561,8 @@
                                 <rect key="frame" x="1000" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hhg-de-Uh0">
-                                <rect key="frame" x="46" y="123.5" width="283" height="420"/>
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hhg-de-Uh0">
+                                <rect key="frame" x="1046" y="123.5" width="283" height="420"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="61" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hab-sz-f9c">
                                         <rect key="frame" x="0.0" y="0.0" width="283" height="315"/>

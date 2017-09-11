@@ -78,7 +78,7 @@
 
    
     
-    [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(riderInfo:) name:@"riderNotification" object:nil];
+    [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(rideInfo:) name:@"rideNotification" object:nil];
     
     
     isUpdateCameraPosition = 1;
@@ -955,6 +955,7 @@
         
         
         [self drawpoliline:pickupPoint destination:destinationPoint];
+        
     }else
     {
     
@@ -1063,6 +1064,7 @@
                                                          if (isPolyLineBlue) {
 
                                                            polyline.strokeColor = [UIColor hx_colorWithHexString:@"262C4E"];
+                                                             
                                                          }else
                                                          {
                                                             polyline.strokeColor = [UIColor lightGrayColor];
@@ -1099,7 +1101,20 @@
                                                          NSLog(@"estimatedTime main thread %.1f",estimatedTime);
                                                          
                                                          
-                                                         [self calculateFare];
+                                                         if (isPolyLineBlue) {
+                                                             
+                                                            [self calculateFare];
+                                                             
+                                                         }else
+                                                         {
+                                                             
+                                                             isPolyLineBlue = 1;
+                                                             
+                                                         }
+                                                         
+                                                             
+                                                         
+                                                         
                                                          
                                                          
                                                          
@@ -1647,7 +1662,7 @@
     }
 }
 
--(void)riderInfo: (NSNotification *)notification
+-(void)rideInfo: (NSNotification *)notification
 {
     
     NSDictionary* riderInfo = [notification userInfo];
@@ -1699,6 +1714,59 @@
         
         [self drawpoliline:passengerLocation destination:riderLocation];
         
+    }else if (notificationType == 3){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"Rider cancel the request"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"Rider cancel the request");
+        
+    }else if (notificationType == 5){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"Trip started"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"ride steat");
+        
+    }else if (notificationType == 6){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"Trip ended"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"trip end");
+        
+    }else if (notificationType == 7){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"Rider arrived"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"rider arrived");
+        
+    }else if (notificationType == 11){
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"eneric"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"generic");
     }
     
 }
