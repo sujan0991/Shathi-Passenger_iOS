@@ -12,8 +12,8 @@
 		6431069C1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6431069B1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m */; };
 		6431069F1F498AB800F6C4D0 /* DetailHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */; };
 		6435E2851EE5376200EE93FE /* EditProfileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */; };
+		643D36E41F6A5ECE001066D9 /* UIView+SimpleRipple.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D36E31F6A5ECE001066D9 /* UIView+SimpleRipple.m */; };
 		64615ED51F29B3EB00984685 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 64615ED41F29B3EB00984685 /* GoogleService-Info.plist */; };
-		64773A9D1EF1441300DFB9FE /* DDHTimerControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 64773A9C1EF1441300DFB9FE /* DDHTimerControl.m */; };
 		6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */; };
 		648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 648733F81EE9370900D42237 /* PromotionsViewController.m */; };
 		648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */; };
@@ -75,10 +75,10 @@
 		6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailHistoryViewController.m; sourceTree = "<group>"; };
 		6435E2831EE5376200EE93FE /* EditProfileTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProfileTableViewCell.h; sourceTree = "<group>"; };
 		6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProfileTableViewCell.m; sourceTree = "<group>"; };
+		643D36E21F6A5ECE001066D9 /* UIView+SimpleRipple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+SimpleRipple.h"; sourceTree = "<group>"; };
+		643D36E31F6A5ECE001066D9 /* UIView+SimpleRipple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SimpleRipple.m"; sourceTree = "<group>"; };
 		64615ED41F29B3EB00984685 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		64615ED61F29C2CA00984685 /* Shathi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shathi.entitlements; sourceTree = "<group>"; };
-		64773A9B1EF1441300DFB9FE /* DDHTimerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DDHTimerControl.h; sourceTree = "<group>"; };
-		64773A9C1EF1441300DFB9FE /* DDHTimerControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DDHTimerControl.m; sourceTree = "<group>"; };
 		6482F6B61EDEA77800506B72 /* EditPrifileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPrifileViewController.h; sourceTree = "<group>"; };
 		6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPrifileViewController.m; sourceTree = "<group>"; };
 		648733F71EE9370900D42237 /* PromotionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromotionsViewController.h; sourceTree = "<group>"; };
@@ -211,13 +211,13 @@
 			name = Cell;
 			sourceTree = "<group>";
 		};
-		64773A9A1EF1441300DFB9FE /* DDHTimerControl */ = {
+		643D36E11F6A5ECE001066D9 /* SimpleRipple */ = {
 			isa = PBXGroup;
 			children = (
-				64773A9B1EF1441300DFB9FE /* DDHTimerControl.h */,
-				64773A9C1EF1441300DFB9FE /* DDHTimerControl.m */,
+				643D36E21F6A5ECE001066D9 /* UIView+SimpleRipple.h */,
+				643D36E31F6A5ECE001066D9 /* UIView+SimpleRipple.m */,
 			);
-			path = DDHTimerControl;
+			path = SimpleRipple;
 			sourceTree = "<group>";
 		};
 		649738E11EE40F4A00062A4B /* SDWebImage */ = {
@@ -308,8 +308,8 @@
 		64B4781D1EDC7695006C6301 /* Helper Classes */ = {
 			isa = PBXGroup;
 			children = (
+				643D36E11F6A5ECE001066D9 /* SimpleRipple */,
 				64DD5FD11F3C56A100650E3E /* RateView */,
-				64773A9A1EF1441300DFB9FE /* DDHTimerControl */,
 				649738E11EE40F4A00062A4B /* SDWebImage */,
 				64B478451EDC7695006C6301 /* Constants.h */,
 				64FD0CA71EDEB2E400070F0F /* HexColors */,
@@ -601,13 +601,13 @@
 				64B4781C1EDC762E006C6301 /* ServerManager.m in Sources */,
 				649739321EE40F4A00062A4B /* UIView+WebCacheOperation.m in Sources */,
 				6431069C1F4986EC00F6C4D0 /* RideHistoryTableViewCell.m in Sources */,
-				64773A9D1EF1441300DFB9FE /* DDHTimerControl.m in Sources */,
 				64B478631EDC7695006C6301 /* NSArray+NullReplacement.m in Sources */,
 				6497392B1EE40F4A00062A4B /* SDNetworkActivityIndicator.m in Sources */,
 				6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */,
 				6497391B1EE40F4A00062A4B /* FLAnimatedImageView.m in Sources */,
 				648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */,
 				6497391D1EE40F4A00062A4B /* NSData+ImageContentType.m in Sources */,
+				643D36E41F6A5ECE001066D9 /* UIView+SimpleRipple.m in Sources */,
 				649739251EE40F4A00062A4B /* SDWebImageManager.m in Sources */,
 				649739221EE40F4A00062A4B /* SDWebImageDecoder.m in Sources */,
 				64C4D4971EC99DAF00A3C119 /* AppDelegate.m in Sources */,

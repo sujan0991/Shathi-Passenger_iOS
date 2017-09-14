@@ -10,7 +10,7 @@
 #import <AccountKit/AccountKit.h>
 #import "SettingViewController.h"
 #import "HexColors.h"
-#import "DDHTimerControl.h"
+#import "UIView+SimpleRipple.h"
 #import "ServerManager.h"
 #import "NSDictionary+NullReplacement.h"
 #import "UserAccount.h"
@@ -59,10 +59,12 @@
     float totalDistance;
     
     NSString *phoneNo;
+    
+    NSTimer *countDown;
 }
 
-@property (nonatomic, strong) DDHTimerControl *timerControl;
-@property (nonatomic, strong) NSDate *endDate;
+
+@property (nonatomic, strong) NSDate *endTime;
 
 
 
@@ -76,7 +78,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-   
+    //[self timer];
     
     [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(rideInfo:) name:@"rideNotification" object:nil];
     
@@ -190,6 +192,11 @@
     self.driverPhoto.layer.borderWidth = 5.0f;
     self.driverPhoto.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
     
+//    self.enterPicupButton.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
+//    self.driverPhoto.clipsToBounds = YES;
+    self.enterPicupButton.layer.borderWidth = 3.0f;
+    self.enterPicupButton.layer.borderColor = [[UIColor hx_colorWithHexString:@"#323B61"]CGColor];
+    
     self.ratingInDriverSuggestionView.layer.cornerRadius = self.ratingInDriverSuggestionView.frame.size.width/2;
     self.ratingInDriverSuggestionView.layer.masksToBounds= YES;
     
@@ -239,34 +246,7 @@
                                                  name:UIKeyboardDidHideNotification
                                                object:nil];
     
-    
-    
-
-    _timerControl = [DDHTimerControl timerControlWithType:DDHTimerTypeEqualElements];
-    _timerControl.translatesAutoresizingMaskIntoConstraints = NO;
-    _timerControl.color = [UIColor orangeColor];
-    _timerControl.highlightColor = [UIColor redColor];
-    _timerControl.minutesOrSeconds = 9;
-    _timerControl.titleLabel.text = @"sec";
-    _timerControl.userInteractionEnabled = NO;
-    [self.timerSupewView addSubview:_timerControl];
-    
-
-    
-    
-    [self.timerSupewView addConstraint:[NSLayoutConstraint constraintWithItem:_timerControl attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.timerSupewView attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0.0f]];
-    
-    [self.timerSupewView addConstraint:[NSLayoutConstraint constraintWithItem:_timerControl attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.timerSupewView attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0.0f]];
-    
-    [self.timerSupewView addConstraint:[NSLayoutConstraint constraintWithItem:_timerControl attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_timerControl attribute:NSLayoutAttributeHeight multiplier:1.0f constant:0.0f]];
-
-    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_timerControl);
-    
-    
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"[_timerControl(100)]" options:NSLayoutFormatAlignAllCenterY metrics:nil views:viewsDictionary]];
-    
-   
-    
+ 
     
 }
 
@@ -1628,7 +1608,9 @@
                          self.fareView.hidden = YES;
                          self.timerSupewView.hidden = NO;
                          
-                          [self timer];
+                         countDown =  [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(continuoousripples) userInfo:nil repeats:YES];
+                         
+                         self.endTime = [NSDate dateWithTimeIntervalSinceNow:60.0f];
                          
 
 
@@ -1640,27 +1622,48 @@
     
 }
 
--(void) timer{
-    
-    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(changeTimer:) userInfo:nil repeats:YES];
-    self.endDate = [NSDate dateWithTimeIntervalSinceNow:60.0f];
-    
-}
 
 
-- (void)changeTimer:(NSTimer*)timer {
+-(void)continuoousripples{
     
-    NSTimeInterval timeInterval = [self.endDate timeIntervalSinceNow];
+    CGPoint origin = CGPointMake(self.timerSupewView.frame.size.width / 2,
+                                 self.timerSupewView.frame.size.height / 2);
     
-    self.timerControl.minutesOrSeconds = ((NSInteger)timeInterval)%60;
     
-    if (self.timerControl.minutesOrSeconds == 0) {
+    float radius = self.timerSupewView.frame.size.width / 2 - 50;
+    float duration = 2;
+    float fadeAfter = duration * 0.75f;
+
+    [self.timerSupewView rippleStartingAt:origin withColor:[UIColor whiteColor] duration:duration radius:radius fadeAfter:fadeAfter];
+    
+    
+    
+    NSInteger secondsSinceStart = -(NSInteger)[self.endTime timeIntervalSinceNow];
+    NSLog(@"%d", secondsSinceStart);
+    
+    if (secondsSinceStart >= 0) {
+       
+        [countDown invalidate];
         
-        self.timerSupewView.hidden = YES;
+        if (!self.timerSupewView.hidden) {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"No rider found"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles: nil];
+            [alert show];
+            
+            
+            self.timerSupewView.hidden = YES;
+        }
         
-        
+
     }
+    
 }
+
+
 
 -(void)rideInfo: (NSNotification *)notification
 {
@@ -1756,6 +1759,20 @@
         [alert show];
         
         NSLog(@"rider arrived");
+        
+    }else if (notificationType == 8){
+        
+        [countDown invalidate];
+        self.timerSupewView.hidden = YES;
+        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                        message:@"No rider found"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+        NSLog(@"rider not found");
         
     }else if (notificationType == 11){
         

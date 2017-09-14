@@ -40,7 +40,6 @@
     // Use Firebase library to configure APIs
     [FIRApp configure];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
     
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.
@@ -81,6 +80,9 @@
 
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
+    
+    
     return YES;
 }
 
@@ -120,17 +122,27 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     
     [UserAccount sharedManager].gcmRegKey=refreshedToken;
     
-//    NSLog(@" [UserAccount sharedManager].gcmRegKey %@", [UserAccount sharedManager].gcmRegKey);
-//    
-//    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
-//    
-//    [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
-//    
-//    
-//    [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
-//        
-//        
-//    }];
+    if ([refreshedToken isEqualToString:@"<null>"] || [refreshedToken isEqualToString:@"(null)"] || [refreshedToken isEqual:[NSNull null]] || refreshedToken==nil ) {
+        
+        NSLog(@"refreshedToken is null");
+        
+    }else{
+        
+        [UserAccount sharedManager].gcmRegKey=refreshedToken;
+        
+        NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+        
+        [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
+        
+        
+        [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+            
+            
+            NSLog(@"didRegisterForRemoteNotificationsWithDeviceToken method");
+            
+        }];
+        
+    }
     
 }
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
