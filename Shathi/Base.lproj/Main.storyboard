@@ -48,7 +48,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-495" y="-76"/>
+            <point key="canvasLocation" x="-401" y="-76"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="eqR-Dt-iJu">
@@ -328,8 +328,8 @@
                                     <constraint firstItem="G6E-SY-4Tg" firstAttribute="centerY" secondItem="xJI-JM-MCV" secondAttribute="centerY" constant="10" id="uJ1-p5-aKU"/>
                                 </constraints>
                             </view>
-                            <view alpha="0.94999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D9i-Uz-cbI">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <view alpha="0.94999999999999996" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D9i-Uz-cbI">
+                                <rect key="frame" x="1000" y="0.0" width="320" height="568"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H5Y-aM-LKT">
                                         <rect key="frame" x="20" y="423" width="280" height="40"/>

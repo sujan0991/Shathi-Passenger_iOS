@@ -141,7 +141,7 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     DetailHistoryViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailHistoryViewController"];
     

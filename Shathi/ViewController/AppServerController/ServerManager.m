@@ -533,6 +533,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
         
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         NSLog(@"error %@ error %@",operation.response,error);
+        
+        NSLog(@"operation  response %@",operation.response);
+        
         callback(nil);
     }];
     

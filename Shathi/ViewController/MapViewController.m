@@ -45,6 +45,7 @@
     
     BOOL isUpdateCameraPosition;
     BOOL isPolyLineBlue;
+    BOOL isCalculateFare;
     BOOL isEditPictupText;
     
     NSString* cancelReasonId;
@@ -85,6 +86,7 @@
     
     isUpdateCameraPosition = 1;
     isPolyLineBlue = 1;
+    isCalculateFare = 1;
     
     [self checkLocationService];
     
@@ -669,6 +671,7 @@
 {
     if (tableView == self.cancelReasonTableView) {
         
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
         cancelReasonId = [[cancelReasonArray objectAtIndex:indexPath.row] objectForKey:@"id"];
         
@@ -687,6 +690,8 @@
         
     }
     else{
+        
+        [tableView deselectRowAtIndexPath:indexPath animated:NO];
         
         self.searchLocationTableView.hidden = YES;
     
@@ -1006,6 +1011,8 @@
 
 - (void)fetchPolylineWithOrigin:(CLLocation *)origin destination:(CLLocation *)destination completionHandler:(void (^)(GMSPolyline *))completionHandler
 {
+    
+    
     NSString *originString = [NSString stringWithFormat:@"%f,%f", origin.coordinate.latitude, origin.coordinate.longitude];
     NSString *destinationString = [NSString stringWithFormat:@"%f,%f", destination.coordinate.latitude, destination.coordinate.longitude];
     NSString *directionsAPI = @"https://maps.googleapis.com/maps/api/directions/json?";
@@ -1047,7 +1054,7 @@
                                                              
                                                          }else
                                                          {
-                                                            polyline.strokeColor = [UIColor lightGrayColor];
+                                                            polyline.strokeColor = [UIColor redColor];
                                                             isPolyLineBlue = 1;
                                                              
                                                          }
@@ -1081,15 +1088,15 @@
                                                          NSLog(@"estimatedTime main thread %.1f",estimatedTime);
                                                          
                                                          
-                                                         if (isPolyLineBlue) {
+                                                         if (isCalculateFare) {
                                                              
                                                             [self calculateFare];
-                                                             
+                                                             NSLog(@"calculateFare");
                                                          }else
                                                          {
                                                              
-                                                             isPolyLineBlue = 1;
-                                                             
+                                                             isCalculateFare = 1;
+                                                             NSLog(@"not calculateFare");
                                                          }
                                                          
                                                              
@@ -1565,7 +1572,7 @@
 }
 - (IBAction)requestRideButtonAction:(id)sender {
     
-    //NSLog(@"ride info  %@",rideInfo);
+    NSLog(@"ride info in request ride %@",rideInfo);
     
     
     [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
@@ -1584,6 +1591,9 @@
         }else{
             
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [countDown invalidate];
+                self.timerSupewView.hidden = YES;
                 
                 NSLog(@"no  info");
                 
@@ -1639,7 +1649,7 @@
     
     
     NSInteger secondsSinceStart = -(NSInteger)[self.endTime timeIntervalSinceNow];
-    NSLog(@"%d", secondsSinceStart);
+    NSLog(@"secondsSinceStart %ld", secondsSinceStart);
     
     if (secondsSinceStart >= 0) {
        
@@ -1683,7 +1693,7 @@
     
     if (notificationType == 2) {
 
-        //driver found
+        //driver found or driver accept
         
         self.driverNameLabel.text = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"name"];
         
@@ -1713,11 +1723,21 @@
         
         isUpdateCameraPosition = 0;
         isPolyLineBlue = 0;
-        
+        isCalculateFare = 0;
         
         [self drawpoliline:passengerLocation destination:riderLocation];
         
     }else if (notificationType == 3){
+        
+        self.whereToButton.hidden = NO;
+        self.driverSuggestionView.hidden = YES;
+        self.fareView.hidden = YES;
+        
+        [self.googleMapView clear];
+        
+        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+        
+        [self.googleMapView animateToCameraPosition:camera];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Rider cancel the request"
@@ -1730,6 +1750,22 @@
         
     }else if (notificationType == 5){
         
+        [UIView animateWithDuration:.5
+                              delay:0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             
+                             
+                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+                             
+                             
+                         }
+                         completion:^(BOOL finished){
+                             
+                             self.driverSuggestionView.hidden = YES;
+   
+                         }];
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Trip started"
                                                        delegate:nil
@@ -1740,6 +1776,9 @@
         NSLog(@"ride steat");
         
     }else if (notificationType == 6){
+        
+        [self showSubmitFareView];
+        
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Trip ended"
                                                        delegate:nil
@@ -1900,7 +1939,7 @@
 }
 - (IBAction)cancelRideButtonAction:(id)sender {
     
-
+    [countDown invalidate];
     cancelReasonArray = [[NSMutableArray alloc]init];
     
     [[ServerManager sharedManager] getRideCancelReasosnsWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
@@ -2050,6 +2089,11 @@
                                  
                                  self.submitFareView.hidden = YES;
                                  
+                                 [self.googleMapView clear];
+                                 
+                                 GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+                                 
+                                 [self.googleMapView animateToCameraPosition:camera];
                                  
                                  
                              }];
