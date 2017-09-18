@@ -2135,79 +2135,11 @@
     
     if (status == 2) {
         
-        self.whereToButton.hidden = YES;
-        
-        rideId = [[info objectForKey:@"data"]objectForKey:@"id"];
-        
-        NSLog(@"rider coming");
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_address"] forKey:@"pickup_address"];
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] forKey:@"pickup_latitude"];
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_longitude"] forKey:@"pickup_longitude"];
-
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_address"]forKey:@"destination_address"];
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_latitude"] forKey:@"destination_latitude"];
-        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_longitude"] forKey:@"destination_longitude"];
-        
-        NSLog(@"ride info in when status 2 %@",rideInfo);
-        
-        
-        
-     if (self.driverSuggestionView.isHidden) {
-        
-         isCalculateFare = 0;
-         
-         pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
-         destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
-         
-         NSLog(@"pickupPoint %@",pickupPoint);
-         
-         //set picup marker
-         
-         if (pickUpMarker) {
-             
-             pickUpMarker.map = nil;
-         }
-         pickUpMarker = [[GMSMarker alloc] init];
-         
-         pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
-         
-         pickUpMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]];
-         
-         pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
-         
-         pickUpMarker.map = self.googleMapView;
-         
-         // set destination pin
-         if (destinationMarker) {
-             
-             destinationMarker.map = nil;
-         }
-         
-         destinationMarker= [[GMSMarker alloc] init];
-         
-         destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-         
-         destinationMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]];
-         
-         destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
-         
-         destinationMarker.map = self.googleMapView;
-         
-         [self drawpoliline:pickupPoint destination:destinationPoint];
-         
-         
-         
-        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
-        
-        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
+        [self reSetViewWhenActive:info];
         
         NSString * riderlat =[[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
         NSString * riderlong = [[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
         
-        self.timerSupewView.hidden = YES;
-        
-        
-        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
         
         CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] floatValue] longitude:[[[info objectForKey:@"data"]objectForKey:@"pickup_longitude"] floatValue]];
         CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
@@ -2226,13 +2158,18 @@
         isUpdateCameraPosition = 0;
         isPolyLineBlue = 0;
         
-        
-         
-         [self drawpoliline:passengerLocation destination:riderLocation];
-      }
+        [self drawpoliline:passengerLocation destination:riderLocation];
+      
         
     }else if (status == 3){
         
+        if (driverPolyline) {
+            
+            [driverPolyline setMap:nil];
+        }
+        [self reSetViewWhenActive:info];
+        
+        NSLog(@"ride info in when status 3 %@",rideInfo);
         
         
     }else if (status == 4){
@@ -2241,6 +2178,85 @@
         
     }
     
+}
+
+-(void)reSetViewWhenActive:(NSDictionary*)info{
+    
+    
+    self.whereToButton.hidden = YES;
+    
+    rideId = [[info objectForKey:@"data"]objectForKey:@"id"];
+    
+    NSLog(@"rider coming");
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_address"] forKey:@"pickup_address"];
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] forKey:@"pickup_latitude"];
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_longitude"] forKey:@"pickup_longitude"];
+    
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_address"]forKey:@"destination_address"];
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_latitude"] forKey:@"destination_latitude"];
+    [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_longitude"] forKey:@"destination_longitude"];
+    
+    NSLog(@"ride info in when status 2 %@",rideInfo);
+    
+    
+    
+    if (self.driverSuggestionView.isHidden) {
+        
+        isCalculateFare = 0;
+        
+        pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+        destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
+        
+        NSLog(@"pickupPoint %@",pickupPoint);
+        
+        //set picup marker
+        
+        if (pickUpMarker) {
+            
+            pickUpMarker.map = nil;
+        }
+        pickUpMarker = [[GMSMarker alloc] init];
+        
+        pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+        
+        pickUpMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]];
+        
+        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+        
+        pickUpMarker.map = self.googleMapView;
+        
+        // set destination pin
+        if (destinationMarker) {
+            
+            destinationMarker.map = nil;
+        }
+        
+        destinationMarker= [[GMSMarker alloc] init];
+        
+        destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+        
+        destinationMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]];
+        
+        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+        
+        destinationMarker.map = self.googleMapView;
+        
+        [self drawpoliline:pickupPoint destination:destinationPoint];
+        
+        
+        
+        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
+        
+        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
+        
+        
+        
+        self.timerSupewView.hidden = YES;
+        
+        
+        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+    
+    }
 }
 
 
