@@ -62,6 +62,9 @@
     NSString *phoneNo;
     
     NSTimer *countDown;
+    
+    GMSPolyline *ridePolyline;
+    GMSPolyline *driverPolyline;
 }
 
 
@@ -82,7 +85,7 @@
     //[self timer];
     
     [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(rideInfo:) name:@"rideNotification" object:nil];
-    
+    [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(appBecomeActive:) name:@"becomeActiveNotification" object:nil];
     
     isUpdateCameraPosition = 1;
     isPolyLineBlue = 1;
@@ -671,7 +674,7 @@
 {
     if (tableView == self.cancelReasonTableView) {
         
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+        //[tableView deselectRowAtIndexPath:indexPath animated:NO];
         
         cancelReasonId = [[cancelReasonArray objectAtIndex:indexPath.row] objectForKey:@"id"];
         
@@ -1035,7 +1038,9 @@
                                                      
                                                     
                                                      
-                                                     GMSPolyline *polyline = nil;
+                                                     ridePolyline = nil;
+                                                     driverPolyline = nil;
+                                                     
                                                      if ([routesArray count] > 0)
                                                      {
                                                          NSDictionary *routeDict = [routesArray objectAtIndex:0];
@@ -1045,19 +1050,22 @@
                                                          NSDictionary *routeOverviewPolyline = [routeDict objectForKey:@"overview_polyline"];
                                                          NSString *points = [routeOverviewPolyline objectForKey:@"points"];
                                                          GMSPath *path = [GMSPath pathFromEncodedPath:points];
-                                                         polyline = [GMSPolyline polylineWithPath:path];
-                                                         polyline.strokeWidth = 3.f;
                                                          
-                                                         if (isPolyLineBlue) {
-
-                                                           polyline.strokeColor = [UIColor hx_colorWithHexString:@"262C4E"];
+                                                         if (isCalculateFare) {
                                                              
-                                                         }else
-                                                         {
-                                                            polyline.strokeColor = [UIColor redColor];
-                                                            isPolyLineBlue = 1;
+                                                             ridePolyline = [GMSPolyline polylineWithPath:path];
+                                                             ridePolyline.strokeWidth = 3.f;
+                                                             ridePolyline.strokeColor = [UIColor hx_colorWithHexString:@"262C4E"];
                                                              
+                                                         }else{
+                                                             
+                                                             driverPolyline = [GMSPolyline polylineWithPath:path];
+                                                             driverPolyline.strokeWidth = 3.f;
+                                                             driverPolyline.strokeColor = [UIColor blueColor];
                                                          }
+                                                         
+                                                             
+                                                         
                                                          NSArray * legs = [[NSArray alloc]init];
                                                          
                                                          legs = [routeDict objectForKey:@"legs"];
@@ -1080,31 +1088,29 @@
                                                      
                                                      // run completionHandler on main thread                                           
                                                      dispatch_sync(dispatch_get_main_queue(), ^{
-                                                         
-                                                         if(completionHandler)
-                                                             completionHandler(polyline);
-                                                         
-                                                         NSLog(@"totalDistance main thread %.1f",totalDistance);
-                                                         NSLog(@"estimatedTime main thread %.1f",estimatedTime);
-                                                         
-                                                         
+                                                        
                                                          if (isCalculateFare) {
                                                              
-                                                            [self calculateFare];
-                                                             NSLog(@"calculateFare");
-                                                         }else
-                                                         {
+                                                             if(completionHandler)
+                                                                 
+                                                                 completionHandler(ridePolyline);
                                                              
-                                                             isCalculateFare = 1;
-                                                             NSLog(@"not calculateFare");
-                                                         }
-                                                         
+                                                             NSLog(@"totalDistance main thread %.1f",totalDistance);
+                                                             NSLog(@"estimatedTime main thread %.1f",estimatedTime);
                                                              
-                                                         
-                                                         
-                                                         
-                                                         
-                                                         
+                                                                 [self calculateFare];
+                                                                 NSLog(@"calculateFare");
+                                                                 
+                                                          }else{
+                                                                 
+                                                                 if(completionHandler)
+                                                                     
+                                                                     completionHandler(driverPolyline);
+                                                                 
+                                                                     NSLog(@"not calculateFare");
+                                                           }
+                                                      
+
                                                      });
                                                  }];
     [fetchDirectionsTask resume];
@@ -2117,7 +2123,125 @@
 
 }
 
+-(void)appBecomeActive: (NSNotification *)notification
+{
+    
+    NSDictionary* info = [notification userInfo];
+    
+    NSLog(@"ride info %@",info);
+    
+    NSLog(@"app become active");
+    int status = [[info objectForKey:@"status"]intValue];
+    
+    if (status == 2) {
+        
+        self.whereToButton.hidden = YES;
+        
+        rideId = [[info objectForKey:@"data"]objectForKey:@"id"];
+        
+        NSLog(@"rider coming");
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_address"] forKey:@"pickup_address"];
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] forKey:@"pickup_latitude"];
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_longitude"] forKey:@"pickup_longitude"];
 
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_address"]forKey:@"destination_address"];
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_latitude"] forKey:@"destination_latitude"];
+        [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_longitude"] forKey:@"destination_longitude"];
+        
+        NSLog(@"ride info in when status 2 %@",rideInfo);
+        
+        
+        
+     if (self.driverSuggestionView.isHidden) {
+        
+         isCalculateFare = 0;
+         
+         pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
+         destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
+         
+         NSLog(@"pickupPoint %@",pickupPoint);
+         
+         //set picup marker
+         
+         if (pickUpMarker) {
+             
+             pickUpMarker.map = nil;
+         }
+         pickUpMarker = [[GMSMarker alloc] init];
+         
+         pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
+         
+         pickUpMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]];
+         
+         pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+         
+         pickUpMarker.map = self.googleMapView;
+         
+         // set destination pin
+         if (destinationMarker) {
+             
+             destinationMarker.map = nil;
+         }
+         
+         destinationMarker= [[GMSMarker alloc] init];
+         
+         destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
+         
+         destinationMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]];
+         
+         destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+         
+         destinationMarker.map = self.googleMapView;
+         
+         [self drawpoliline:pickupPoint destination:destinationPoint];
+         
+         
+         
+        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
+        
+        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
+        
+        NSString * riderlat =[[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
+        NSString * riderlong = [[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
+        
+        self.timerSupewView.hidden = YES;
+        
+        
+        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+        
+        CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] floatValue] longitude:[[[info objectForKey:@"data"]objectForKey:@"pickup_longitude"] floatValue]];
+        CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
+        
+       
+        
+        CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
+        
+        GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
+        
+        riderMarker.icon = [UIImage imageNamed:@"bike.png"];
+        
+        riderMarker.map = self.googleMapView;
+        
+        
+        isUpdateCameraPosition = 0;
+        isPolyLineBlue = 0;
+        
+        
+         
+         [self drawpoliline:passengerLocation destination:riderLocation];
+      }
+        
+    }else if (status == 3){
+        
+        
+        
+    }else if (status == 4){
+        
+        
+        
+    }
+    
+}
 
 
 - (IBAction)backButtonAction:(id)sender {

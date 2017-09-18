@@ -35,6 +35,9 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //get current user info
 - (void)getUserInfoWithCompletion:(api_Completion_Handler_Data)completion;
 
+//get background scenario
+- (void)getBackgroundScenarioWithCompletion:(api_Completion_Handler_Data)completion;
+
 //update userInfo
 
 -(void) updateUserDetailsWithData:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Status)completion;
