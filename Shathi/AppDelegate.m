@@ -225,7 +225,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     
     
       NSLog(@"app become active applicationDidBecomeActive ");
-    
+   
     [[ServerManager sharedManager] getBackgroundScenarioWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
         
         

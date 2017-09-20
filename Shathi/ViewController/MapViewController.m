@@ -54,7 +54,7 @@
     GMSMarker *pickUpMarker;
     GMSMarker *destinationMarker;
     
-    NSString* totalRating;
+    double totalRating;
     
     float estimatedTime;
     float totalDistance;
@@ -826,7 +826,7 @@
                      
                      
                      
-                     if (self.pickUpTextView.text.length > 0) {
+                     if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
                          
                          [self getPositionOfTheMarkerForIndex:indexPath.row];
                          
@@ -941,8 +941,10 @@
         
         destinationMarker.map = self.googleMapView;
         
+        isCalculateFare = 1;
+        isPolyLineBlue = 1;
         
-        [self drawpoliline:pickupPoint destination:destinationPoint];
+        [self drawpoliline:pickupPoint destination:destinationPoint isfor:0];
         
     }else
     {
@@ -970,7 +972,7 @@
 
 }
 
--(void)drawpoliline:(CLLocation *)origin destination:(CLLocation *)destination{
+-(void)drawpoliline:(CLLocation *)origin destination:(CLLocation *)destination isfor:(BOOL)isForRider{
 
 
     //draw poliline
@@ -980,7 +982,7 @@
     
     
     
-    [self fetchPolylineWithOrigin:origin destination:destination completionHandler:^(GMSPolyline *polyline)
+    [self fetchPolylineWithOrigin:origin destination:destination isfor:isForRider completionHandler:^(GMSPolyline *polyline)
      {
          
          
@@ -1012,7 +1014,7 @@
 
 }
 
-- (void)fetchPolylineWithOrigin:(CLLocation *)origin destination:(CLLocation *)destination completionHandler:(void (^)(GMSPolyline *))completionHandler
+- (void)fetchPolylineWithOrigin:(CLLocation *)origin destination:(CLLocation *)destination isfor:(BOOL)isForRider completionHandler:(void (^)(GMSPolyline *))completionHandler
 {
     
     
@@ -1051,17 +1053,24 @@
                                                          NSString *points = [routeOverviewPolyline objectForKey:@"points"];
                                                          GMSPath *path = [GMSPath pathFromEncodedPath:points];
                                                          
-                                                         if (isCalculateFare) {
+                                                         if (isForRider) {
+                                                             
+                                                             NSLog(@"driverPolylinePolyLine");
+                                                             
+                                                             driverPolyline = [GMSPolyline polylineWithPath:path];
+                                                             driverPolyline.strokeWidth = 3.f;
+                                                             driverPolyline.strokeColor = [UIColor redColor];
+                                                             
+                                                         }else{
+                                                             
+                                                             NSLog(@"ridePolyLine");
                                                              
                                                              ridePolyline = [GMSPolyline polylineWithPath:path];
                                                              ridePolyline.strokeWidth = 3.f;
                                                              ridePolyline.strokeColor = [UIColor hx_colorWithHexString:@"262C4E"];
                                                              
-                                                         }else{
                                                              
-                                                             driverPolyline = [GMSPolyline polylineWithPath:path];
-                                                             driverPolyline.strokeWidth = 3.f;
-                                                             driverPolyline.strokeColor = [UIColor blueColor];
+                                                             
                                                          }
                                                          
                                                              
@@ -1089,25 +1098,28 @@
                                                      // run completionHandler on main thread                                           
                                                      dispatch_sync(dispatch_get_main_queue(), ^{
                                                         
-                                                         if (isCalculateFare) {
+                                                         if (isForRider) {
+                                                             
+                                                             if(completionHandler)
+                                                                 
+                                                                 completionHandler(driverPolyline);
+                                                             
+                                                         }else{
                                                              
                                                              if(completionHandler)
                                                                  
                                                                  completionHandler(ridePolyline);
                                                              
-                                                             NSLog(@"totalDistance main thread %.1f",totalDistance);
-                                                             NSLog(@"estimatedTime main thread %.1f",estimatedTime);
-                                                             
-                                                                 [self calculateFare];
-                                                                 NSLog(@"calculateFare");
+                                                         }
+                                                         
+                                                         if (isCalculateFare) {
+                                                         
+                                                             [self calculateFare];
+                                                              NSLog(@"calculateFare");
                                                                  
                                                           }else{
-                                                                 
-                                                                 if(completionHandler)
-                                                                     
-                                                                     completionHandler(driverPolyline);
-                                                                 
-                                                                     NSLog(@"not calculateFare");
+                                                         
+                                                             NSLog(@"not calculateFare");
                                                            }
                                                       
 
@@ -1235,9 +1247,10 @@
             
             destinationMarker.map = self.googleMapView;
             
+            isCalculateFare = 1;
+            isPolyLineBlue =1;
             
-            
-            [self drawpoliline:pickupPoint destination:destinationPoint];
+            [self drawpoliline:pickupPoint destination:destinationPoint isfor:0];
             
         }else
         {
@@ -1701,18 +1714,18 @@
 
         //driver found or driver accept
         
-        self.driverNameLabel.text = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"name"];
+        [countDown invalidate];
+        self.timerSupewView.hidden = YES;
         
-        phoneNo = [[jsonDict objectForKey:@"rider_info" ] objectForKey:@"phone"];
+        self.driverNameLabel.text = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"name"];
+        
+        self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        
+        phoneNo = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"phone"];
         
         NSString * riderlat =[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
         NSString * riderlong = [[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
-        
-        self.timerSupewView.hidden = YES;
-        
-        
-        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
-        
+
         CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
         CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
         
@@ -1730,8 +1743,12 @@
         isUpdateCameraPosition = 0;
         isPolyLineBlue = 0;
         isCalculateFare = 0;
+        NSLog(@"notif 2");
         
-        [self drawpoliline:passengerLocation destination:riderLocation];
+        [self drawpoliline:passengerLocation destination:riderLocation isfor:1];
+        
+       [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+        
         
     }else if (notificationType == 3){
         
@@ -1783,6 +1800,10 @@
         
     }else if (notificationType == 6){
         
+        self.driverNameLabel.text = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"name"];
+        
+        self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        
         [self showSubmitFareView];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
@@ -1795,6 +1816,8 @@
         NSLog(@"trip end");
         
     }else if (notificationType == 7){
+        
+        [driverPolyline setMap:nil];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Rider arrived"
@@ -1882,7 +1905,6 @@
                          
                      }];
     
-    self.driverNameLabelInSubmitFareView.text = self.driverNameLabel.text;
     
     self.rateView.notSelectedImage = [UIImage imageNamed:@"Star_deactive.png"];
     self.rateView.halfSelectedImage = [UIImage imageNamed:@"Star_active_half.png"];
@@ -1899,9 +1921,9 @@
     
     
     
-    totalRating =[NSString stringWithFormat:@"%.1f", rating];
+    totalRating = rating;
     
-    NSLog(@"RATING is :)%@",totalRating);
+    NSLog(@"RATING is :)%f",totalRating);
     
 }
 
@@ -1931,12 +1953,18 @@
     
     if([[UIDevice currentDevice].systemVersion floatValue] >= 10.0){
         
+       
+         
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNo]] options:@{} completionHandler:^(BOOL success) {
             if (success) {
                 
                 NSLog(@"Opened url");
             }
+            else {
+                NSLog(@"cancel");
+            }
         }];
+        
     }else{
     
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@", phoneNo]]];
@@ -2072,7 +2100,7 @@
     NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
     
     [postData setObject:[NSString stringWithFormat:@"%@",rideId] forKey:@"ride_id"];
-    [postData setObject:[NSString stringWithFormat:@"%@",totalRating] forKey:@"rating"];
+    [postData setObject:[NSString stringWithFormat:@"%.1f",totalRating] forKey:@"rating"];
     
     [[ServerManager sharedManager] patchRating:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
         
@@ -2092,6 +2120,7 @@
                              }
                              completion:^(BOOL finished){
                                  
+                                 self.whereToButton.hidden = NO;
                                  
                                  self.submitFareView.hidden = YES;
                                  
@@ -2135,7 +2164,7 @@
     
     if (status == 2) {
         
-        [self reSetViewWhenActive:info];
+        
         
         NSString * riderlat =[[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
         NSString * riderlong = [[[[info objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
@@ -2157,16 +2186,32 @@
         
         isUpdateCameraPosition = 0;
         isPolyLineBlue = 0;
+        isCalculateFare = 0;
         
-        [self drawpoliline:passengerLocation destination:riderLocation];
-      
+        [self drawpoliline:passengerLocation destination:riderLocation isfor:1];
         
+        [self reSetViewWhenActive:info];
+        
+        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
+       // self.ratingInDriverSuggestionView.text = [[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"];
+        
+        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
+        
+        
+        
+        self.timerSupewView.hidden = YES;
+        
+       if (self.driverSuggestionView.isHidden) {
+           
+         [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+           
+       }
     }else if (status == 3){
         
-        if (driverPolyline) {
+       
             
-            [driverPolyline setMap:nil];
-        }
+        [driverPolyline setMap:nil];
+        
         [self reSetViewWhenActive:info];
         
         NSLog(@"ride info in when status 3 %@",rideInfo);
@@ -2174,6 +2219,24 @@
         
     }else if (status == 4){
         
+        self.whereToButton.hidden = YES;
+        
+        [self reSetViewWhenActive:info];
+        
+        if(self.submitFareView.isHidden){
+            
+            self.driverSuggestionView.hidden = YES;
+            
+            self.driverNameLabelInSubmitFareView.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
+            self.bikeModelLabelInSubmitFareView.text = [[[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
+            self.rideCostLabel.text =[NSString stringWithFormat:@"%@", [[[info objectForKey:@"data" ]objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
+            self.ratingLabelInSubmitFareView.text = [NSString stringWithFormat:@"%@",[[[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"rating_avg"]];
+            
+            [self showSubmitFareView];
+            
+            
+        }
+            
         
         
     }
@@ -2196,13 +2259,13 @@
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_latitude"] forKey:@"destination_latitude"];
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_longitude"] forKey:@"destination_longitude"];
     
-    NSLog(@"ride info in when status 2 %@",rideInfo);
+    NSLog(@"ride info in when status  %@",rideInfo);
     
     
     
-    if (self.driverSuggestionView.isHidden) {
+    
         
-        isCalculateFare = 0;
+        
         
         pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
         destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
@@ -2241,22 +2304,13 @@
         
         destinationMarker.map = self.googleMapView;
         
-        [self drawpoliline:pickupPoint destination:destinationPoint];
+        isCalculateFare =0;
+        isPolyLineBlue = 1;
         
+        [self drawpoliline:pickupPoint destination:destinationPoint isfor:0];
         
-        
-        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
-        
-        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
-        
-        
-        
-        self.timerSupewView.hidden = YES;
-        
-        
-        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+
     
-    }
 }
 
 
