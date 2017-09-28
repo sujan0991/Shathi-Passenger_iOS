@@ -253,6 +253,7 @@
     //self.profilePicture.image=chosenImage;
     
     [[ServerManager sharedManager] postProfilePicture:chosenImage completion:^(BOOL success) {
+        
         if (success) {
             
             NSLog(@"successfully changed pro pic");

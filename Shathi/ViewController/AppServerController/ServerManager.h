@@ -65,4 +65,7 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //get fare info
 - (void)getFareInfoWithCompletion:(api_Completion_Handler_Data)completion;
 
+//get rider current position
+- (void)getRiderPosition:(NSDictionary*)dataDic WithCompletion:(api_Completion_Handler_Data)completion;
+
 @end

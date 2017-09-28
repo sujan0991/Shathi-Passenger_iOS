@@ -16,6 +16,9 @@
 #import "UserAccount.h"
 #import "CancelReasonTableViewCell.h"
 
+
+
+
 @interface MapViewController (){
 
     AKFAccountKit *_accountKit;
@@ -62,6 +65,8 @@
     NSString *phoneNo;
     
     NSTimer *countDown;
+    NSTimer* timerForRiderPosition;
+    int riderId;
     
     GMSPolyline *ridePolyline;
     GMSPolyline *driverPolyline;
@@ -107,8 +112,7 @@
     
     
     
-    
-    
+   
 }
 
 - (void)didReceiveMemoryWarning {
@@ -426,52 +430,53 @@
 - (IBAction)whereToButtonAction:(id)sender {
     
 
+
     [UIView animateWithDuration:0.2
                           delay:0.2
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
                          self.whereToButton.frame = CGRectMake(20, 15 ,self.whereToButton.frame.size.width, self.whereToButton.frame.size.height);
-                         
+
                                             }
                      completion:^(BOOL finished){
-                         
+
 
                          self.whereToButton.hidden = YES;
                          self.backButton.hidden = NO;
-                         
+
                          self.locationView.hidden = NO;
                          self.searchLocationTableView.hidden = NO;
-                         
+
                          self.destinationTextView.text = nil;
                          [searchResults removeAllObjects];
-                         
+
                          if([CLLocationManager locationServicesEnabled]){
-                             
-                             
+
+
                              [[GMSGeocoder geocoder] reverseGeocodeCoordinate:CLLocationCoordinate2DMake(currentLocation.latitude,currentLocation.longitude) completionHandler:^(GMSReverseGeocodeResponse* response, NSError* error) {
-                                 
-                                 
+
+
                                  GMSAddress* firstaddressObj = [response firstResult];
-                                 
+
                                  self.pickUpTextView.text = [NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare];
 //                                 NSLog(@"coordinate.latitude=%f", firstaddressObj.coordinate.latitude);
 //                                 NSLog(@"coordinate.longitude=%f", firstaddressObj.coordinate.longitude);
-                                 
+
                                  [rideInfo setObject:[NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare] forKey:@"pickup_address"];
                                  [rideInfo setObject:[NSString stringWithFormat:@"%f",firstaddressObj.coordinate.latitude] forKey:@"pickup_latitude"];
                                  [rideInfo setObject:[NSString stringWithFormat:@"%f", firstaddressObj.coordinate.longitude] forKey:@"pickup_longitude"];
-                                 
-                                
+
+
                              }];
-                             
-                             
+
+
                              [self.destinationTextView becomeFirstResponder];
-                             
+
                          }else
                          {
-                             
+
                              [self.pickUpTextView becomeFirstResponder];
-                             
+
                          }
                          [self.searchLocationTableView reloadData];
                      }];
@@ -1594,6 +1599,8 @@
     NSLog(@"ride info in request ride %@",rideInfo);
     
     
+    
+    
     [[ServerManager sharedManager] postRequestRideWithInfo:rideInfo completion:^(BOOL success, NSMutableDictionary *responseObject) {
         
         
@@ -1749,6 +1756,11 @@
         
        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
         
+        riderId = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_id"]intValue];
+        
+        timerForRiderPosition = [NSTimer scheduledTimerWithTimeInterval: 60.0 target: self
+                                                        selector: @selector(driverCurrentPosition) userInfo: nil repeats: YES];
+        
         
     }else if (notificationType == 3){
         
@@ -1800,11 +1812,14 @@
         
     }else if (notificationType == 6){
         
-        self.driverNameLabel.text = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"name"];
-        
+        self.driverNameLabel.text = [[[jsonDict objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"name"];
+        //self.bikeModelLabelInSubmitFareView.text =[[[[jsonDict objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
         self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        self.rideCostLabel.text =[NSString stringWithFormat:@"%@", [[[jsonDict objectForKey:@"data" ]objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
         
-        [self showSubmitFareView];
+        [self performSelector:@selector(showSubmitFareView) withObject:self afterDelay:1.0 ];
+        
+       
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Trip ended"
@@ -1816,6 +1831,9 @@
         NSLog(@"trip end");
         
     }else if (notificationType == 7){
+        
+        [timerForRiderPosition invalidate];
+        
         
         [driverPolyline setMap:nil];
         
@@ -1854,6 +1872,41 @@
         NSLog(@"generic");
     }
     
+}
+
+-(void)driverCurrentPosition{
+    
+    NSLog(@"driverCurrentPosition");
+    
+    NSMutableDictionary* dataDic=[[NSMutableDictionary alloc] init];
+    
+    [dataDic setObject:[NSString stringWithFormat:@"%d", riderId] forKey:@"rider_id"];
+    
+    [[ServerManager sharedManager] getRiderPosition:dataDic WithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            
+            NSMutableDictionary *userInfo;
+            
+            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+            
+            NSLog(@"rider position %@",userInfo);
+            
+            
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
 }
 
 
