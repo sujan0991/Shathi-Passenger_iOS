@@ -57,7 +57,7 @@
     GMSMarker *pickUpMarker;
     GMSMarker *destinationMarker;
     
-    double totalRating;
+    float totalRating;
     
     float estimatedTime;
     float totalDistance;
@@ -256,6 +256,7 @@
                                                object:nil];
     
  
+    totalRating = 0;
     
 }
 
@@ -1974,7 +1975,7 @@
     
     
     
-    totalRating = rating;
+    totalRating =  rating;
     
     NSLog(@"RATING is :)%f",totalRating);
     
