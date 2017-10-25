@@ -14,6 +14,8 @@
 		6435E2851EE5376200EE93FE /* EditProfileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 6435E2841EE5376200EE93FE /* EditProfileTableViewCell.m */; };
 		643D36E41F6A5ECE001066D9 /* UIView+SimpleRipple.m in Sources */ = {isa = PBXBuildFile; fileRef = 643D36E31F6A5ECE001066D9 /* UIView+SimpleRipple.m */; };
 		64615ED51F29B3EB00984685 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 64615ED41F29B3EB00984685 /* GoogleService-Info.plist */; };
+		647E32A71F9DC676008AB0AD /* JTMaterialSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 647E32A61F9DC675008AB0AD /* JTMaterialSpinner.m */; };
+		647E32AE1F9F162F008AB0AD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 647E32B01F9F162F008AB0AD /* Localizable.strings */; };
 		6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */; };
 		648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 648733F81EE9370900D42237 /* PromotionsViewController.m */; };
 		648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */; };
@@ -79,6 +81,12 @@
 		643D36E31F6A5ECE001066D9 /* UIView+SimpleRipple.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+SimpleRipple.m"; sourceTree = "<group>"; };
 		64615ED41F29B3EB00984685 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		64615ED61F29C2CA00984685 /* Shathi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shathi.entitlements; sourceTree = "<group>"; };
+		647E32A51F9DC675008AB0AD /* JTMaterialSpinner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JTMaterialSpinner.h; sourceTree = "<group>"; };
+		647E32A61F9DC675008AB0AD /* JTMaterialSpinner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JTMaterialSpinner.m; sourceTree = "<group>"; };
+		647E32AC1F9F14C9008AB0AD /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/Main.strings"; sourceTree = "<group>"; };
+		647E32AD1F9F14C9008AB0AD /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		647E32AF1F9F162F008AB0AD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		647E32B11F9F1651008AB0AD /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		6482F6B61EDEA77800506B72 /* EditPrifileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPrifileViewController.h; sourceTree = "<group>"; };
 		6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPrifileViewController.m; sourceTree = "<group>"; };
 		648733F71EE9370900D42237 /* PromotionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromotionsViewController.h; sourceTree = "<group>"; };
@@ -220,6 +228,15 @@
 			path = SimpleRipple;
 			sourceTree = "<group>";
 		};
+		647E32A41F9DC675008AB0AD /* JTMaterialSpinner */ = {
+			isa = PBXGroup;
+			children = (
+				647E32A51F9DC675008AB0AD /* JTMaterialSpinner.h */,
+				647E32A61F9DC675008AB0AD /* JTMaterialSpinner.m */,
+			);
+			path = JTMaterialSpinner;
+			sourceTree = "<group>";
+		};
 		649738E11EE40F4A00062A4B /* SDWebImage */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +325,7 @@
 		64B4781D1EDC7695006C6301 /* Helper Classes */ = {
 			isa = PBXGroup;
 			children = (
+				647E32A41F9DC675008AB0AD /* JTMaterialSpinner */,
 				643D36E11F6A5ECE001066D9 /* SimpleRipple */,
 				64DD5FD11F3C56A100650E3E /* RateView */,
 				649738E11EE40F4A00062A4B /* SDWebImage */,
@@ -362,6 +380,7 @@
 		64C4D4861EC99DAF00A3C119 = {
 			isa = PBXGroup;
 			children = (
+				647E32B01F9F162F008AB0AD /* Localizable.strings */,
 				64C4D4911EC99DAF00A3C119 /* Shathi */,
 				64C4D4901EC99DAF00A3C119 /* Products */,
 				E222A1FD5A7C58026E4C5575 /* Pods */,
@@ -519,6 +538,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"ne-NP",
 			);
 			mainGroup = 64C4D4861EC99DAF00A3C119;
 			productRefGroup = 64C4D4901EC99DAF00A3C119 /* Products */;
@@ -536,6 +556,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64C4D4A21EC99DAF00A3C119 /* LaunchScreen.storyboard in Resources */,
+				647E32AE1F9F162F008AB0AD /* Localizable.strings in Resources */,
 				64C4D49F1EC99DAF00A3C119 /* Assets.xcassets in Resources */,
 				64615ED51F29B3EB00984685 /* GoogleService-Info.plist in Resources */,
 				64C4D49D1EC99DAF00A3C119 /* Main.storyboard in Resources */,
@@ -624,6 +645,7 @@
 				6497392E1EE40F4A00062A4B /* UIImage+RoundedCorner.m in Sources */,
 				6497392A1EE40F4A00062A4B /* UIImage+WebP.m in Sources */,
 				6497392F1EE40F4A00062A4B /* UIImageView+HighlightedWebCache.m in Sources */,
+				647E32A71F9DC676008AB0AD /* JTMaterialSpinner.m in Sources */,
 				649739201EE40F4A00062A4B /* SDImageCacheConfig.m in Sources */,
 				649739211EE40F4A00062A4B /* SDWebImageCompat.m in Sources */,
 				649739191EE40F4A00062A4B /* FLAnimatedImage.m in Sources */,
@@ -651,10 +673,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		647E32B01F9F162F008AB0AD /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				647E32AF1F9F162F008AB0AD /* en */,
+				647E32B11F9F1651008AB0AD /* ne-NP */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		64C4D49B1EC99DAF00A3C119 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				64C4D49C1EC99DAF00A3C119 /* Base */,
+				647E32AC1F9F14C9008AB0AD /* ne-NP */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -663,6 +695,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				64C4D4A11EC99DAF00A3C119 /* Base */,
+				647E32AD1F9F14C9008AB0AD /* ne-NP */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -674,6 +707,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -722,6 +756,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";

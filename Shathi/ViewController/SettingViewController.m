@@ -154,16 +154,34 @@
     }else if (indexPath.row ==7)
     {
     
-       [accountKit logOut];
+        [[ServerManager sharedManager] postLogOutWithCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+            
+            if (resultDataDictionary!=nil) {
+                
+                [accountKit logOut];
+                
+                
+                [UserAccount sharedManager].accessToken= @"" ;
+                
+                [self.navigationController popToRootViewControllerAnimated:YES];
+                
+                
+            }else{
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    NSLog(@"no user info");
+                    
+                    
+                });
+                
+            }
+            
+        }];
         
+      
         
-        [UserAccount sharedManager].accessToken= @"" ;
-        
-         [self.navigationController popToRootViewControllerAnimated:YES];
-        
-//        LandingViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"LandingViewController"];
-//        
-//        [self.navigationController pushViewController:vc animated:YES];
+
     
     }
     

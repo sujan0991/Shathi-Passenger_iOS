@@ -10,7 +10,9 @@
 
 @interface DetailHistoryViewController : UIViewController
 
-@property (nonatomic,strong) NSMutableDictionary* rideInfo;
+//@property (nonatomic,strong) NSMutableDictionary* rideInfo;
+
+@property (nonatomic,strong) NSString* rideId;
 
 @property (weak, nonatomic) IBOutlet UILabel *navtitleLabel;
 

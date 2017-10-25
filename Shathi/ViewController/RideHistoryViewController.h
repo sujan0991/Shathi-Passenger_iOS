@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UIImageView+WebCache.h"
 
-@interface RideHistoryViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
+@interface RideHistoryViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,SDWebImageManagerDelegate>
 
 
 

@@ -70,6 +70,8 @@
     
     GMSPolyline *ridePolyline;
     GMSPolyline *driverPolyline;
+    
+    GMSMarker *riderMarker;
 }
 
 
@@ -87,6 +89,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    
     //[self timer];
     
     [[NSNotificationCenter defaultCenter ]addObserver:self selector:@selector(rideInfo:) name:@"rideNotification" object:nil];
@@ -110,7 +113,7 @@
     homeWorkArray = [[NSMutableArray alloc]init];
     rideInfo = [[NSMutableDictionary alloc]init];
     
-    
+
     
    
 }
@@ -161,6 +164,7 @@
 
 -(void) firstViewSetUp{
 
+    
 
     self.searchLocationTableView.delegate = self;
     self.searchLocationTableView.dataSource = self;
@@ -1731,17 +1735,21 @@
         
         phoneNo = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"phone"];
         
-        NSString * riderlat =[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
-        NSString * riderlong = [[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
+        NSString * riderlat =[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
+        NSString * riderlong = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
+        
+         NSLog(@"rider_metadata %@",[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]);
 
         CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
         CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
+        
+        NSLog(@"riderLocation %@",riderLocation);
         
         //GMSMarker *riderMarker = [[GMSMarker alloc] init];
         
         CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
         
-        GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
+        riderMarker = [GMSMarker markerWithPosition:position];
         
         riderMarker.icon = [UIImage imageNamed:@"bike.png"];
         
@@ -1757,7 +1765,7 @@
         
        [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
         
-        riderId = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_id"]intValue];
+        riderId = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"id"]intValue];
         
         timerForRiderPosition = [NSTimer scheduledTimerWithTimeInterval: 60.0 target: self
                                                         selector: @selector(driverCurrentPosition) userInfo: nil repeats: YES];
@@ -1766,8 +1774,25 @@
     }else if (notificationType == 3){
         
         self.whereToButton.hidden = NO;
-        self.driverSuggestionView.hidden = YES;
+        //self.driverSuggestionView.hidden = YES;
         self.fareView.hidden = YES;
+        
+        [UIView animateWithDuration:.5
+                              delay:0
+                            options: UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             
+                             
+                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+                             
+                             
+                         }
+                         completion:^(BOOL finished){
+                             
+                             self.driverSuggestionView.hidden = YES;
+                             
+                         }];
+        
         
         [self.googleMapView clear];
         
@@ -1775,14 +1800,32 @@
         
         [self.googleMapView animateToCameraPosition:camera];
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                        message:@"Rider cancel the request"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
+
+        
+        
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                       message:@""
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        NSMutableAttributedString *alertMsg = [[NSMutableAttributedString alloc] initWithString:@"Rider cancel the request"];
+        [alertMsg addAttribute:NSFontAttributeName
+                      value:[UIFont systemFontOfSize:15.0]
+                      range:NSMakeRange(0, alertMsg.length)];
+        [alert setValue:alertMsg forKey:@"attributedTitle"];
+
+        
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        int duration = 2; // duration in seconds
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        });
         
         NSLog(@"Rider cancel the request");
+        
+        [timerForRiderPosition invalidate];
         
     }else if (notificationType == 5){
         
@@ -1802,14 +1845,30 @@
    
                          }];
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                        message:@"Trip started"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
+      
+        
+      
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                       message:@""
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        NSMutableAttributedString *alertMsg = [[NSMutableAttributedString alloc] initWithString:@"Trip started"];
+        [alertMsg addAttribute:NSFontAttributeName
+                         value:[UIFont systemFontOfSize:15.0]
+                         range:NSMakeRange(0, alertMsg.length)];
+        [alert setValue:alertMsg forKey:@"attributedTitle"];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        int duration = 2; // duration in seconds
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        });
         
         NSLog(@"ride steat");
+        
+        
         
     }else if (notificationType == 6){
         
@@ -1820,14 +1879,27 @@
         
         [self performSelector:@selector(showSubmitFareView) withObject:self afterDelay:1.0 ];
         
-       
+   
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                        message:@"Trip ended"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
+
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                       message:@""
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        NSMutableAttributedString *alertMsg = [[NSMutableAttributedString alloc] initWithString:@"Trip ended"];
+        [alertMsg addAttribute:NSFontAttributeName
+                         value:[UIFont systemFontOfSize:15.0]
+                         range:NSMakeRange(0, alertMsg.length)];
+        [alert setValue:alertMsg forKey:@"attributedTitle"];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        int duration = 2; // duration in seconds
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        });
         
         NSLog(@"trip end");
         
@@ -1847,17 +1919,36 @@
         
         NSLog(@"rider arrived");
         
+        
+        
+        
     }else if (notificationType == 8){
         
         [countDown invalidate];
         self.timerSupewView.hidden = YES;
         
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                        message:@"No rider found"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles: nil];
-        [alert show];
+      
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
+                                                                       message:@""
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        NSMutableAttributedString *alertMsg = [[NSMutableAttributedString alloc] initWithString:@"No rider found"];
+        [alertMsg addAttribute:NSFontAttributeName
+                         value:[UIFont systemFontOfSize:15.0]
+                         range:NSMakeRange(0, alertMsg.length)];
+        [alert setValue:alertMsg forKey:@"attributedTitle"];
+        
+        
+        [self presentViewController:alert animated:YES completion:nil];
+        
+        int duration = 2; // duration in seconds
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            [alert dismissViewControllerAnimated:YES completion:nil];
+        });
+        
+       
         
         NSLog(@"rider not found");
         
@@ -1879,12 +1970,19 @@
     
     NSLog(@"driverCurrentPosition");
     
+    
+    
     NSMutableDictionary* dataDic=[[NSMutableDictionary alloc] init];
+    
+    
     
     [dataDic setObject:[NSString stringWithFormat:@"%d", riderId] forKey:@"rider_id"];
     
+    NSLog(@"dataDic %@",dataDic);
+    
     [[ServerManager sharedManager] getRiderPosition:dataDic WithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
         
+       // NSLog(@"responseObject %@",responseObject);
         
         if ( responseObject!=nil) {
             
@@ -1894,6 +1992,17 @@
             userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
             
             NSLog(@"rider position %@",userInfo);
+            
+            NSString * riderlat =[userInfo objectForKey:@"current_latitude"];
+            NSString * riderlong = [userInfo objectForKey:@"current_longitude"];
+            
+            CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
+            
+
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:2.0];
+            riderMarker.position = position;
+            [CATransaction commit];
             
             
             
@@ -2028,6 +2137,7 @@
 - (IBAction)cancelRideButtonAction:(id)sender {
     
     [countDown invalidate];
+    
     cancelReasonArray = [[NSMutableArray alloc]init];
     
     [[ServerManager sharedManager] getRideCancelReasosnsWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
@@ -2231,12 +2341,22 @@
         
         CLLocationCoordinate2D position = CLLocationCoordinate2DMake([riderlat floatValue], [riderlong floatValue]);
         
-        GMSMarker *riderMarker = [GMSMarker markerWithPosition:position];
+        if (riderMarker) {
+            
+
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:2.0];
+            riderMarker.position = position;
+            [CATransaction commit];
+            
+        }else{
+            
+            riderMarker = [GMSMarker markerWithPosition:position];
         
-        riderMarker.icon = [UIImage imageNamed:@"bike.png"];
+            riderMarker.icon = [UIImage imageNamed:@"bike.png"];
         
-        riderMarker.map = self.googleMapView;
-        
+            riderMarker.map = self.googleMapView;
+        }
         
         isUpdateCameraPosition = 0;
         isPolyLineBlue = 0;
@@ -2251,9 +2371,18 @@
         
         phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
         
+        riderId = [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"id"]intValue];
+        
+        [timerForRiderPosition invalidate];
+        
+        timerForRiderPosition = [NSTimer scheduledTimerWithTimeInterval: 60.0 target: self
+                                                               selector: @selector(driverCurrentPosition) userInfo: nil repeats: YES];
+        
         
         
         self.timerSupewView.hidden = YES;
+        
+
         
        if (self.driverSuggestionView.isHidden) {
            
@@ -2304,6 +2433,7 @@
     
     rideId = [[info objectForKey:@"data"]objectForKey:@"id"];
     
+
     NSLog(@"rider coming");
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_address"] forKey:@"pickup_address"];
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"pickup_latitude"] forKey:@"pickup_latitude"];

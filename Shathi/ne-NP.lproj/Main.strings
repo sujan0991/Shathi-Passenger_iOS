@@ -1,0 +1,165 @@
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "0Ry-mW-1gW"; */
+"0Ry-mW-1gW.text" = "Label";
+
+/* Class = "UILabel"; text = "Dropoff"; ObjectID = "2T4-UG-FJD"; */
+"2T4-UG-FJD.text" = "Dropoff";
+
+/* Class = "UILabel"; text = "23.05.2017"; ObjectID = "3Ks-i4-CrI"; */
+"3Ks-i4-CrI.text" = "23.05.2017";
+
+/* Class = "UILabel"; text = "Other reasons"; ObjectID = "3cU-gr-6FU"; */
+"3cU-gr-6FU.text" = "Other reasons";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "6Ht-NN-EFg"; */
+"6Ht-NN-EFg.text" = "Label";
+
+/* Class = "UILabel"; text = "Hafiz"; ObjectID = "6wu-gK-CjY"; */
+"6wu-gK-CjY.text" = "Hafiz";
+
+/* Class = "UILabel"; text = "Pickup"; ObjectID = "8Rq-Sx-2lo"; */
+"8Rq-Sx-2lo.text" = "Pickup";
+
+/* Class = "UILabel"; text = "Edit Profile"; ObjectID = "A2j-kS-8Re"; */
+"A2j-kS-8Re.text" = "Edit Profile";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Aay-MV-iHA"; */
+"Aay-MV-iHA.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "BOq-fJ-LMQ"; */
+"BOq-fJ-LMQ.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "Submit"; ObjectID = "Bg6-fW-0j8"; */
+"Bg6-fW-0j8.normalTitle" = "Submit";
+
+/* Class = "UIButton"; normalTitle = "Done"; ObjectID = "COo-XB-NbB"; */
+"COo-XB-NbB.normalTitle" = "Done";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "F8W-aS-bvi"; */
+"F8W-aS-bvi.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "FJK-66-Tz1"; */
+"FJK-66-Tz1.text" = "Label";
+
+/* Class = "UILabel"; text = "Promotions"; ObjectID = "G9D-FT-6Cp"; */
+"G9D-FT-6Cp.text" = "Promotions";
+
+/* Class = "UIButton"; normalTitle = "Submit"; ObjectID = "GBh-44-UE2"; */
+"GBh-44-UE2.normalTitle" = "Submit";
+
+/* Class = "UIButton"; normalTitle = "TURN ON LOCATION SERVICE"; ObjectID = "H5Y-aM-LKT"; */
+"H5Y-aM-LKT.normalTitle" = "TURN ON LOCATION SERVICE";
+
+/* Class = "UIButton"; normalTitle = "Apply Code"; ObjectID = "HPR-wg-PLR"; */
+"HPR-wg-PLR.normalTitle" = "Apply Code";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Hxb-7d-DFR"; */
+"Hxb-7d-DFR.text" = "Label";
+
+/* Class = "UILabel"; text = "Fare Estimate"; ObjectID = "K0O-UE-gwC"; */
+"K0O-UE-gwC.text" = "Fare Estimate";
+
+/* Class = "UILabel"; text = "Pickup Location"; ObjectID = "KFe-m3-bJN"; */
+"KFe-m3-bJN.text" = "Pickup Location";
+
+/* Class = "UILabel"; text = "Destination Location"; ObjectID = "Lgo-ID-UYB"; */
+"Lgo-ID-UYB.text" = "Destination Location";
+
+/* Class = "UIButton"; normalTitle = "Remove"; ObjectID = "OOE-85-qGC"; */
+"OOE-85-qGC.normalTitle" = "Remove";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "OoN-sv-gM9"; */
+"OoN-sv-gM9.text" = "Name";
+
+/* Class = "UILabel"; text = "Hero"; ObjectID = "Ooj-3k-GVI"; */
+"Ooj-3k-GVI.text" = "Hero";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "QZS-VD-y2k"; */
+"QZS-VD-y2k.text" = "Label";
+
+/* Class = "UIButton"; normalTitle = "ENTER PICKUP ADDRESS"; ObjectID = "Tzs-jc-X3h"; */
+"Tzs-jc-X3h.normalTitle" = "ENTER PICKUP ADDRESS";
+
+/* Class = "UILabel"; text = "Bike Model :"; ObjectID = "VE4-yn-Syp"; */
+"VE4-yn-Syp.text" = "Bike Model :";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "VaK-2A-0Ki"; */
+"VaK-2A-0Ki.normalTitle" = "Cancel";
+
+/* Class = "UIButton"; normalTitle = "Change Photo"; ObjectID = "WG2-3N-f25"; */
+"WG2-3N-f25.normalTitle" = "Change Photo";
+
+/* Class = "UILabel"; text = "Book Ride"; ObjectID = "WZL-tA-bZ3"; */
+"WZL-tA-bZ3.text" = "Book Ride";
+
+/* Class = "UIButton"; normalTitle = "Invite Friends"; ObjectID = "Y8x-Oa-NGC"; */
+"Y8x-Oa-NGC.normalTitle" = "Invite Friends";
+
+/* Class = "UIButton"; normalTitle = "Where to?"; ObjectID = "a2N-xz-pRf"; */
+"a2N-xz-pRf.normalTitle" = "Where to?";
+
+/* Class = "UILabel"; text = "Tk.150"; ObjectID = "a6O-7e-tP3"; */
+"a6O-7e-tP3.text" = "Tk.150";
+
+/* Class = "UILabel"; text = "150"; ObjectID = "bpv-lM-Yya"; */
+"bpv-lM-Yya.text" = "150";
+
+/* Class = "UILabel"; text = "01678452017"; ObjectID = "gAZ-cR-5B3"; */
+"gAZ-cR-5B3.text" = "01678452017";
+
+/* Class = "UILabel"; text = "Driver"; ObjectID = "gHI-ao-YN8"; */
+"gHI-ao-YN8.text" = "Driver";
+
+/* Class = "UILabel"; text = "Trip has been successful"; ObjectID = "hLo-u9-qb4"; */
+"hLo-u9-qb4.text" = "Trip has been successful";
+
+/* Class = "UILabel"; text = "History"; ObjectID = "hYI-XL-SAy"; */
+"hYI-XL-SAy.text" = "History";
+
+/* Class = "UIButton"; normalTitle = "Connect with facebook"; ObjectID = "kHQ-pg-2Xv"; */
+"kHQ-pg-2Xv.normalTitle" = "Connect with facebook";
+
+/* Class = "UILabel"; text = "Location Services"; ObjectID = "lox-aA-FQb"; */
+"lox-aA-FQb.text" = "Location Services";
+
+/* Class = "UILabel"; text = "Ashif"; ObjectID = "nrH-U6-Tyr"; */
+"nrH-U6-Tyr.text" = "Ashif";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "ocZ-IE-MMF"; */
+"ocZ-IE-MMF.text" = "Label";
+
+/* Class = "UILabel"; text = "Hafiz"; ObjectID = "p4Z-f7-j0M"; */
+"p4Z-f7-j0M.text" = "Hafiz";
+
+/* Class = "UILabel"; text = "Please enable location services in order to create a ride request more easily"; ObjectID = "pUl-Vt-lpU"; */
+"pUl-Vt-lpU.text" = "Please enable location services in order to create a ride request more easily";
+
+/* Class = "UILabel"; text = "Total Cost :"; ObjectID = "pV7-gP-fl4"; */
+"pV7-gP-fl4.text" = "Total Cost :";
+
+/* Class = "UIButton"; normalTitle = "Set Pin Point"; ObjectID = "u7e-dQ-z1M"; */
+"u7e-dQ-z1M.normalTitle" = "Set Pin Point";
+
+/* Class = "UILabel"; text = "Payment"; ObjectID = "uBb-yD-dtW"; */
+"uBb-yD-dtW.text" = "Payment";
+
+/* Class = "UILabel"; text = "Setting"; ObjectID = "umK-e6-E91"; */
+"umK-e6-E91.text" = "Setting";
+
+/* Class = "UILabel"; text = "4.5"; ObjectID = "wih-LH-jur"; */
+"wih-LH-jur.text" = "4.5";
+
+/* Class = "UILabel"; text = "History"; ObjectID = "wtO-1a-Dpd"; */
+"wtO-1a-Dpd.text" = "History";
+
+/* Class = "UILabel"; text = "Ride Cost"; ObjectID = "xFX-Na-uud"; */
+"xFX-Na-uud.text" = "Ride Cost";
+
+/* Class = "UILabel"; text = "Pickup time"; ObjectID = "yte-6J-JmN"; */
+"yte-6J-JmN.text" = "Pickup time";
+
+/* Class = "UILabel"; text = "Enter Promo Code"; ObjectID = "zL6-je-fIq"; */
+"zL6-je-fIq.text" = "Enter Promo Code";
+
+/* Class = "UIButton"; normalTitle = "Request Ride"; ObjectID = "zXM-dv-yGR"; */
+"zXM-dv-yGR.normalTitle" = "Request Ride";

@@ -11,8 +11,11 @@
 #import "RideHistoryTableViewCell.h"
 #import "NSDictionary+NullReplacement.h"
 #import "DetailHistoryViewController.h"
+#import "JTMaterialSpinner.h"
 
 @interface RideHistoryViewController (){
+    
+    JTMaterialSpinner *spinner;
 
     NSMutableArray *historyArray;
     NSMutableArray *mapArray;
@@ -29,7 +32,15 @@
     self.historyTableView.delegate = self;
     self.historyTableView.dataSource = self;
     
-    [self apiCallForHistory];
+   
+    
+    spinner=[[JTMaterialSpinner alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 17, self.view.frame.size.height/2 - 17, 35, 35)];
+    [self.view bringSubviewToFront:spinner];
+    [self.view addSubview:spinner];
+    spinner.hidden =YES;
+    
+     [self apiCallForHistory];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,12 +50,16 @@
 
 -(void) apiCallForHistory{
     
+    spinner.hidden =NO;
+    [spinner beginRefreshing];
     
     [[ServerManager sharedManager] getHistoryInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
         
         
         if ( responseObject!=nil) {
             
+            spinner.hidden =YES;
+            [spinner endRefreshing];
             
             NSMutableDictionary *userInfo;
             
@@ -63,6 +78,9 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 
                 NSLog(@"no user info");
+                
+                spinner.hidden =YES;
+                [spinner endRefreshing];
                 
                 
             });
@@ -131,7 +149,25 @@
     
     NSLog(@"static map url  %@",mapUrl);
     
-    cell.rideStaticMap.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:mapUrl]]];
+    [cell.rideStaticMap sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",mapUrl]]];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSDateFormatter *serverDateFormatter = [[NSDateFormatter alloc] init];
+
+    NSString* formatString = [[historyArray objectAtIndex:indexPath.section] objectForKey:@"created_at"];
+
+    [serverDateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    NSDate *ridedate = [serverDateFormatter dateFromString:formatString];
+
+    [dateFormatter setDateFormat:@"dd-MM-yyyy"];
+    
+ 
+    cell.rideDate.text = [ dateFormatter stringFromDate:ridedate];
+    
+    cell.totalCost.text =[NSString stringWithFormat:@"%@",[[[historyArray objectAtIndex:indexPath.section] objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
+    
+  
     
     
     return cell;
@@ -149,7 +185,7 @@
     
     singleRide = [historyArray objectAtIndex:indexPath.section];
     
-    vc.rideInfo = singleRide;
+    vc.rideId = [singleRide objectForKey:@"id"];
     
     //NSLog(@"single ride  %@",singleRide);
     
