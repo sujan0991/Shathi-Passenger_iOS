@@ -103,15 +103,15 @@
                                     <action selector="myLocationButtonAction:" destination="Zsl-tQ-y6f" eventType="touchUpInside" id="Chl-qY-hGp"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u7e-dQ-z1M">
-                                <rect key="frame" x="1000" y="617" width="375" height="50"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u7e-dQ-z1M">
+                                <rect key="frame" x="0.0" y="518" width="320" height="50"/>
                                 <color key="backgroundColor" red="0.14901960780000001" green="0.17254901959999999" blue="0.30588235289999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                 <state key="normal" title="Set Pin Point">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="setPinPointButtonAction:" destination="Zsl-tQ-y6f" eventType="touchUpInside" id="vTd-un-9wa"/>
+                                    <action selector="setPinPointButtonAction:" destination="Zsl-tQ-y6f" eventType="touchUpInside" id="wK1-0w-yEn"/>
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Pin" translatesAutoresizingMaskIntoConstraints="NO" id="iy1-VH-Lde">
@@ -590,7 +590,7 @@
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hhg-de-Uh0">
-                                <rect key="frame" x="46" y="124" width="283" height="420"/>
+                                <rect key="frame" x="1046" y="124" width="283" height="420"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="61" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hab-sz-f9c">
                                         <rect key="frame" x="0.0" y="0.0" width="228" height="253"/>
@@ -684,7 +684,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F0E-3f-pzh">
-                                <rect key="frame" x="20" y="427" width="335" height="220"/>
+                                <rect key="frame" x="1020" y="427" width="335" height="220"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hafiz" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6wu-gK-CjY">
                                         <rect key="frame" x="120.5" y="40" width="39" height="20"/>
@@ -786,6 +786,20 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mbV-vW-z6X">
+                                <rect key="frame" x="0.0" y="518" width="320" height="50"/>
+                                <color key="backgroundColor" red="0.14901960780000001" green="0.17254901959999999" blue="0.30588235289999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="N0C-mU-2P4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="Done">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="setPinPointDoneButtonAction:" destination="Zsl-tQ-y6f" eventType="touchUpInside" id="o1V-4Y-cYj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="a2N-xz-pRf" secondAttribute="trailing" constant="20" id="0ZG-2r-due"/>
@@ -809,6 +823,7 @@
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="u7e-dQ-z1M" secondAttribute="bottom" id="Mkq-OU-cNh"/>
                             <constraint firstItem="1fu-x5-rEk" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" id="OsV-Ju-OLL"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="aWp-Gh-ZZn" secondAttribute="bottom" id="PMg-54-Y9g"/>
+                            <constraint firstItem="mbV-vW-z6X" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" id="PiI-g4-XaP"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="Psq-QU-RRs" secondAttribute="bottom" constant="20" id="QAx-O1-MhX"/>
                             <constraint firstItem="a2N-xz-pRf" firstAttribute="top" secondItem="xJI-JM-MCV" secondAttribute="bottom" constant="20" id="VMy-1a-VgI"/>
                             <constraint firstItem="iy1-VH-Lde" firstAttribute="centerX" secondItem="X3D-1X-vT3" secondAttribute="centerX" id="VUB-vi-76E"/>
@@ -816,6 +831,7 @@
                             <constraint firstItem="hhg-de-Uh0" firstAttribute="height" secondItem="eGe-HQ-dmP" secondAttribute="height" multiplier="420:667" id="Wx1-Qa-57h"/>
                             <constraint firstItem="xJI-JM-MCV" firstAttribute="top" secondItem="eGe-HQ-dmP" secondAttribute="top" id="XIy-av-81t"/>
                             <constraint firstItem="HJ7-8o-0UL" firstAttribute="top" secondItem="eGe-HQ-dmP" secondAttribute="top" id="Xga-Xz-A60"/>
+                            <constraint firstAttribute="bottom" secondItem="mbV-vW-z6X" secondAttribute="bottom" id="ZaH-RA-Le6"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="DBf-qs-JsA" secondAttribute="bottom" constant="200" id="avR-Cl-iXm"/>
                             <constraint firstItem="D9i-Uz-cbI" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" id="b2G-bg-6BT"/>
                             <constraint firstItem="q2p-MX-Kg1" firstAttribute="top" secondItem="xJI-JM-MCV" secondAttribute="bottom" constant="20" id="c4n-rP-KUL"/>
@@ -838,6 +854,7 @@
                             <constraint firstItem="hhg-de-Uh0" firstAttribute="centerY" secondItem="eGe-HQ-dmP" secondAttribute="centerY" id="rRj-9L-hmJ"/>
                             <constraint firstAttribute="trailing" secondItem="HJ7-8o-0UL" secondAttribute="trailing" id="st0-9v-wKB"/>
                             <constraint firstAttribute="trailing" secondItem="aWp-Gh-ZZn" secondAttribute="trailing" id="sub-Md-S7c"/>
+                            <constraint firstAttribute="trailing" secondItem="mbV-vW-z6X" secondAttribute="trailing" id="thx-IL-c5F"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="F0E-3f-pzh" secondAttribute="bottom" constant="20" id="y3Q-WR-4Vy"/>
                         </constraints>
                     </view>
@@ -880,6 +897,7 @@
                         <outlet property="rideCostLabel" destination="qt7-Gm-JBP" id="fRo-WX-b5i"/>
                         <outlet property="searchLocationTableView" destination="DBf-qs-JsA" id="OWu-dw-wCZ"/>
                         <outlet property="setPinPointButton" destination="u7e-dQ-z1M" id="zKi-xl-h2P"/>
+                        <outlet property="setPinPointDoneButton" destination="mbV-vW-z6X" id="vum-Fk-sfh"/>
                         <outlet property="settingButton" destination="G6E-SY-4Tg" id="0tn-re-zXs"/>
                         <outlet property="shadeView" destination="HJ7-8o-0UL" id="lPI-Vy-k4B"/>
                         <outlet property="staticPin" destination="iy1-VH-Lde" id="r5e-E7-XkG"/>

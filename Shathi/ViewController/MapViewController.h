@@ -36,6 +36,7 @@
 
 
 @property (weak, nonatomic) IBOutlet UIButton *setPinPointButton;
+@property (weak, nonatomic) IBOutlet UIButton *setPinPointDoneButton;
 
 @property (weak, nonatomic) IBOutlet UIView *locationServiceView;
 @property (weak, nonatomic) IBOutlet UIButton *tuenOnLocationButton;
