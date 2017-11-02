@@ -46,6 +46,9 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 
 -(void) updateUserDetailsWithData:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion;
 
+//update users home and work
+-(void)patchUpdateHomeAndWork:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion;
+
 //ride request
 -(void) postRequestRideWithInfo:(NSMutableDictionary*)rideInfo completion:(api_Completion_Handler_Data)completion;
 

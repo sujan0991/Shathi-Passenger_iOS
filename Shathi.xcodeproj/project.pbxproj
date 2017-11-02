@@ -61,6 +61,7 @@
 		64C4D4AE1EC9AE6200A3C119 /* AccountKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64C4D4AD1EC9AE6200A3C119 /* AccountKit.framework */; };
 		64C4D4B01EC9AE7E00A3C119 /* AccountKitStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 64C4D4AF1EC9AE7E00A3C119 /* AccountKitStrings.bundle */; };
 		64CDA1351ED5A22200229274 /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64CDA1341ED5A22200229274 /* SettingViewController.m */; };
+		64D99C3F1FA5E25600698A90 /* SetHomeAndWorkViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64D99C3E1FA5E25600698A90 /* SetHomeAndWorkViewController.m */; };
 		64DD5FD41F3C56A100650E3E /* RateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 64DD5FD31F3C56A100650E3E /* RateView.m */; };
 		64FD0CAA1EDEB2E400070F0F /* HexColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 64FD0CA91EDEB2E400070F0F /* HexColors.m */; };
 		BBD7834094A05C78EE5722A3 /* libPods-Shathi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D3B4BD7376AAB2BA77D3CCC /* libPods-Shathi.a */; };
@@ -176,6 +177,8 @@
 		64C4D4AF1EC9AE7E00A3C119 /* AccountKitStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AccountKitStrings.bundle; sourceTree = "<group>"; };
 		64CDA1331ED5A22200229274 /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
 		64CDA1341ED5A22200229274 /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		64D99C3D1FA5E25600698A90 /* SetHomeAndWorkViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SetHomeAndWorkViewController.h; sourceTree = "<group>"; };
+		64D99C3E1FA5E25600698A90 /* SetHomeAndWorkViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SetHomeAndWorkViewController.m; sourceTree = "<group>"; };
 		64DD5FD21F3C56A100650E3E /* RateView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RateView.h; sourceTree = "<group>"; };
 		64DD5FD31F3C56A100650E3E /* RateView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RateView.m; sourceTree = "<group>"; };
 		64FD0CA81EDEB2E400070F0F /* HexColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HexColors.h; sourceTree = "<group>"; };
@@ -453,6 +456,8 @@
 				643106981F4985FE00F6C4D0 /* RideHistoryViewController.m */,
 				6431069D1F498AB800F6C4D0 /* DetailHistoryViewController.h */,
 				6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */,
+				64D99C3D1FA5E25600698A90 /* SetHomeAndWorkViewController.h */,
+				64D99C3E1FA5E25600698A90 /* SetHomeAndWorkViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -666,6 +671,7 @@
 				648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */,
 				64B478661EDC7695006C6301 /* Reachability.m in Sources */,
 				6497391F1EE40F4A00062A4B /* SDImageCache.m in Sources */,
+				64D99C3F1FA5E25600698A90 /* SetHomeAndWorkViewController.m in Sources */,
 				6435E2851EE5376200EE93FE /* EditProfileTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

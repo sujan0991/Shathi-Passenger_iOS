@@ -52,7 +52,9 @@
     BOOL isPolyLineBlue;
     BOOL isCalculateFare;
     BOOL isEditPictupText;
-    
+    BOOL isSaveHomeAddress;
+    BOOL isSaveWorkAddress;
+
     NSString* cancelReasonId;
     NSString* rideId;
     
@@ -786,7 +788,7 @@
         cancelReasonId = [[cancelReasonArray objectAtIndex:indexPath.row] objectForKey:@"id"];
         
         NSLog(@"cancelReasonId  %@",cancelReasonId);
-        NSLog(@"selected index  %u",(cancelReasonArray.count - 1));
+        NSLog(@"selected index  %lu",(cancelReasonArray.count - 1));
         
         if (indexPath.row == (cancelReasonArray.count - 1)) {
             
@@ -815,6 +817,9 @@
            {
              if (indexPath.row == 0) {
                 
+                 isSaveHomeAddress = 0;
+                 isSaveWorkAddress = 0;
+                 
                 NSLog(@"set pin for picup");
                 
                 self.staticPin.hidden = NO;
@@ -826,13 +831,88 @@
              else if (indexPath.row == 1){
                 
                  
+                     
+                     NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]];
+                     
+                     if ([homeAddress length] > 0) {
+                         
+                         self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]];
+                         
+                         [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
+                         [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]] forKey:@"pickup_latitude"];
+                         [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_longitude"]] forKey:@"pickup_longitude"];
+                         
+                         if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
+                             
+                             // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                             
+                             self.setPinPointDoneButton.hidden = NO;
+                             
+                         }else{
+                             
+                             [self.pickUpTextView becomeFirstResponder];
+                             
+                         }
+                         
+                     }
+                     else
+                     {
+                         
+                         isSaveHomeAddress = 1;
+                         isSaveWorkAddress = 0;
+                         
+                         NSLog(@"set pin for home");
+                         
+                         self.staticPin.hidden = NO;
+                         [self.pickUpTextView resignFirstResponder];
+                         //self.setPinPointButton.hidden = NO;
+                         self.setPinPointDoneButton.hidden = YES;
+                         
+                     }
                  
                 NSLog(@"Home ");
                 
              }
              else if (indexPath.row == 2){
                 
-                NSLog(@"work");
+                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
+                 
+                 if ([workAddress length] > 0) {
+                     
+                     self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
+                     
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]] forKey:@"pickup_latitude"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_longitude"]] forKey:@"pickup_longitude"];
+                     
+                     if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
+                         
+                         // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                         
+                         self.setPinPointDoneButton.hidden = NO;
+                         
+                     }else{
+                         
+                         [self.destinationTextView becomeFirstResponder];
+                         
+                     }
+                     
+                 }
+                 else
+                 {
+                     
+                      isSaveWorkAddress = 1;
+                      isSaveHomeAddress = 0;
+                     
+                     NSLog(@"set pin for work");
+                     
+                     self.staticPin.hidden = NO;
+                     [self.destinationTextView resignFirstResponder];
+                     //self.setPinPointButton.hidden = NO;
+                     self.setPinPointDoneButton.hidden = YES;
+                     
+                 }
+                    NSLog(@"work");
                 
              }
             
@@ -900,6 +980,9 @@
            
               if (indexPath.row == 0) {
                  
+                  isSaveHomeAddress = 0;
+                  isSaveWorkAddress = 0;
+                  
                  NSLog(@"set pin for des");
                  
                  self.staticPin.hidden = NO;
@@ -910,41 +993,87 @@
              }
              else if (indexPath.row == 1){
                  
+                 NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]];
+                 
+                 if ([homeAddress length] > 0) {
+                     
+                     self.destinationTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]];
+                     
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]] forKey:@"destination_latitude"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_longitude"]] forKey:@"destination_longitude"];
+                     
+                     if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
+                         
+                         // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                         
+                         self.setPinPointDoneButton.hidden = NO;
+                         
+                     }else{
+                         
+                         [self.pickUpTextView becomeFirstResponder];
+                         
+                     }
+                     
+                 }
+                 else
+                 {
+                     
+                      isSaveHomeAddress = 1;
+                     
+                      isSaveWorkAddress = 0;
+                     NSLog(@"set pin for home");
+                     
+                     self.staticPin.hidden = NO;
+                     [self.pickUpTextView resignFirstResponder];
+                     //self.setPinPointButton.hidden = NO;
+                     self.setPinPointDoneButton.hidden = YES;
+                     
+                 }
+
                  NSLog(@"Home in destination");
                  
              }
              else if (indexPath.row == 2){
                  
-//                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
-//
-//                 if ([workAddress length] > 0) {
-//
-//                     self.destinationTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
-//
-//                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
-//                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]] forKey:@"destination_latitude"];
-//                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_longitude"]] forKey:@"destination_longitude"];
-//
-//                        if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
-//
-//                            // [self getPositionOfTheMarkerForIndex:indexPath.row];
-//
-//                            self.setPinPointDoneButton.hidden = NO;
-//
-//                        }else{
-//
-//                            [self.pickUpTextView becomeFirstResponder];
-//
-//                        }
-//
-//                 }
-//                 else
-//                 {
-//
-//
-//
-//                 }
-//
+                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
+
+                 if ([workAddress length] > 0) {
+
+                     self.destinationTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
+
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]] forKey:@"destination_latitude"];
+                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_longitude"]] forKey:@"destination_longitude"];
+
+                        if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
+
+                            // [self getPositionOfTheMarkerForIndex:indexPath.row];
+
+                            self.setPinPointDoneButton.hidden = NO;
+
+                        }else{
+
+                            [self.pickUpTextView becomeFirstResponder];
+
+                        }
+
+                 }
+                 else
+                 {
+                     
+                      isSaveWorkAddress = 1;
+                      isSaveHomeAddress = 0;
+                     
+                     NSLog(@"set pin for work");
+                     
+                     self.staticPin.hidden = NO;
+                     [self.destinationTextView resignFirstResponder];
+                     //self.setPinPointButton.hidden = NO;
+                     self.setPinPointDoneButton.hidden = YES;
+
+                 }
+
                  NSLog(@"work in destination");
              }
 
@@ -1347,14 +1476,29 @@
     }
     
 }
+
+
 - (IBAction)setPinPointButtonAction:(id)sender {
     
      if (isEditPictupText) {
          
+         if (isSaveHomeAddress) {
+             
+             NSLog(@"api call for home in pickup");
+             
+             [self saveHomeAndWorkAddress];
+             
+         }else if (isSaveWorkAddress){
+             
+             NSLog(@"api call for work in pickup");
+             
+             [self saveHomeAndWorkAddress];
+         }
+         
          if (self.destinationTextView.text.length > 0 && [[rideInfo objectForKey:@"destination_latitude"]floatValue] != 0.000000) {
              
              self.setPinPointDoneButton.hidden = NO;
-             
+           
          }else{
              
              [self.destinationTextView becomeFirstResponder];
@@ -1363,11 +1507,26 @@
          }
      }else{
          
+         if (isSaveHomeAddress) {
+             
+             NSLog(@"api call for home in des");
+             
+             [self saveHomeAndWorkAddress];
+             
+         }else if (isSaveWorkAddress){
+             
+             [self saveHomeAndWorkAddress];
+             
+             NSLog(@"api call for work in des");
+         }
+         
          if (self.pickUpTextView.text.length > 0 && [[rideInfo objectForKey:@"pickup_latitude"]floatValue] != 0.000000) {
              
              self.staticPin.hidden = YES;
              self.setPinPointButton.hidden = YES;
              self.setPinPointDoneButton.hidden = NO;
+             
+             
              
          }else{
              
@@ -1475,6 +1634,78 @@
         }
     
     }
+}
+-(void) saveHomeAndWorkAddress{
+    
+    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+    
+    if (isSaveHomeAddress) {
+        
+        if (isEditPictupText) {
+          
+            NSLog(@"Pp");
+            
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]] forKey:@"home_address_title"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_latitude"]] forKey:@"home_latitude"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_longitude"]] forKey:@"home_longitude"];
+            
+        }else{
+            
+            NSLog(@"Pd");
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]] forKey:@"home_address_title"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_latitude"]] forKey:@"home_latitude"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_longitude"]] forKey:@"home_longitude"];
+        }
+        
+        
+        
+    }else if (isSaveWorkAddress)
+    {
+        if (isEditPictupText) {
+            
+            NSLog(@"dp");
+            
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]] forKey:@"work_address_title"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_latitude"]] forKey:@"work_latitude"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_longitude"]] forKey:@"work_longitude"];
+            
+        }else
+        {
+            NSLog(@"dd");
+            
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]] forKey:@"work_address_title"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_latitude"]] forKey:@"work_latitude"];
+            [postData setObject:[NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_longitude"]] forKey:@"work_longitude"];
+            
+        }
+    }
+    
+    
+    [[ServerManager sharedManager] patchUpdateHomeAndWork:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+    
+        if ( resultDataDictionary!=nil) {
+    
+            NSLog(@"  info  %@",resultDataDictionary);
+            
+    
+            ;
+    
+    
+        }else{
+    
+            dispatch_async(dispatch_get_main_queue(), ^{
+    
+                NSLog(@"no  info");
+    
+    
+            });
+    
+        }
+    
+    
+    
+    }];
+    
 }
 -(void)calculateFare{
 
@@ -2756,6 +2987,7 @@
 - (IBAction)settingButtonAction:(id)sender {
     
     SettingViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SettingViewController"];
+    
     
     [self.navigationController pushViewController:vc animated:YES];
     
