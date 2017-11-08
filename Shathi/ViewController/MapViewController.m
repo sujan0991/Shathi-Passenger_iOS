@@ -54,6 +54,7 @@
     BOOL isEditPictupText;
     BOOL isSaveHomeAddress;
     BOOL isSaveWorkAddress;
+    BOOL isComeFromBackground;
 
     NSString* cancelReasonId;
     NSString* rideId;
@@ -74,6 +75,11 @@
     
     GMSPolyline *ridePolyline;
     GMSPolyline *driverPolyline;
+    GMSPolyline *polylineGreen;
+    int i;
+    GMSMutablePath *path2;
+    NSMutableArray *arrayPolylineGreen;
+    NSTimer *animationTimer;
     
     GMSMarker *riderMarker;
     
@@ -96,6 +102,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    arrayPolylineGreen = [[NSMutableArray alloc] init];
+    path2 = [[GMSMutablePath alloc]init];
+    i = 0;
     
     //[self timer];
     
@@ -105,6 +114,7 @@
     isUpdateCameraPosition = 1;
     isPolyLineBlue = 1;
     isCalculateFare = 1;
+    isComeFromBackground = 0;
     
     [self checkLocationService];
     
@@ -478,10 +488,11 @@
 
 
     [UIView animateWithDuration:0.2
-                          delay:0.2
+                          delay:0
                         options: UIViewAnimationOptionCurveEaseOut
                      animations:^{
-                         self.whereToButton.frame = CGRectMake(20, 15 ,self.whereToButton.frame.size.width, self.whereToButton.frame.size.height);
+                         
+                         self.whereToButton.frame = CGRectMake(20,-45 ,self.whereToButton.frame.size.width, self.whereToButton.frame.size.height);
 
                                             }
                      completion:^(BOOL finished){
@@ -847,6 +858,20 @@
                              // [self getPositionOfTheMarkerForIndex:indexPath.row];
                              
                              self.setPinPointDoneButton.hidden = NO;
+                             [UIView animateWithDuration:1.0
+                                                   delay:0
+                                                 options: UIViewAnimationOptionCurveEaseIn
+                                              animations:^{
+                                                  
+                                                  
+                                                  self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                                  
+                                                  
+                                              }
+                                              completion:^(BOOL finished){
+                                                  
+                                                  
+                                              }];
                              
                          }else{
                              
@@ -890,6 +915,22 @@
                          // [self getPositionOfTheMarkerForIndex:indexPath.row];
                          
                          self.setPinPointDoneButton.hidden = NO;
+                         
+                         [UIView animateWithDuration:1.0
+                                               delay:0
+                                             options: UIViewAnimationOptionCurveEaseIn
+                                          animations:^{
+                                              
+                                              
+                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                              
+                                              
+                                          }
+                                          completion:^(BOOL finished){
+                                              
+                                              
+                                          }];
+                         
                          
                      }else{
                          
@@ -948,8 +989,23 @@
                     if (self.destinationTextView.text.length > 0) {
                         
                        // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                        
                         self.setPinPointDoneButton.hidden = NO;
+                        
+                        [UIView animateWithDuration:1.0
+                                              delay:0
+                                            options: UIViewAnimationOptionCurveEaseIn
+                                         animations:^{
+                                             
+                                             
+                                             self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                             
+                                             
+                                         }
+                                         completion:^(BOOL finished){
+                                             
+                                             
+                                         }];
+                        
                         
                         
                     }else{
@@ -1009,6 +1065,22 @@
                          
                          self.setPinPointDoneButton.hidden = NO;
                          
+                         [UIView animateWithDuration:1.0
+                                               delay:0
+                                             options: UIViewAnimationOptionCurveEaseIn
+                                          animations:^{
+                                              
+                                              
+                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                              
+                                              
+                                          }
+                                          completion:^(BOOL finished){
+                                              
+                                              
+                                          }];
+                         
+                         
                      }else{
                          
                          [self.pickUpTextView becomeFirstResponder];
@@ -1051,6 +1123,21 @@
                             // [self getPositionOfTheMarkerForIndex:indexPath.row];
 
                             self.setPinPointDoneButton.hidden = NO;
+                            
+                            [UIView animateWithDuration:1.0
+                                                  delay:0
+                                                options: UIViewAnimationOptionCurveEaseIn
+                                             animations:^{
+                                                 
+                                                 
+                                                 self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                                 
+                                                 
+                                             }
+                                             completion:^(BOOL finished){
+                                                 
+                                                 
+                                             }];
 
                         }else{
 
@@ -1111,6 +1198,21 @@
                         // [self getPositionOfTheMarkerForIndex:indexPath.row];
                          
                          self.setPinPointDoneButton.hidden = NO;
+                         
+                         [UIView animateWithDuration:1.0
+                                               delay:0
+                                             options: UIViewAnimationOptionCurveEaseIn
+                                          animations:^{
+                                              
+                                              
+                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                              
+                                              
+                                          }
+                                          completion:^(BOOL finished){
+                                              
+                                              
+                                          }];
                          
                      }else{
                          
@@ -1286,6 +1388,8 @@
         
         [self updateCameraPosition:path];
         
+        
+        
     }else
     {
         isUpdateCameraPosition = 1;
@@ -1324,6 +1428,7 @@
                                                      
                                                      ridePolyline = nil;
                                                      driverPolyline = nil;
+                                                     GMSPath *path;
                                                      
                                                      if ([routesArray count] > 0)
                                                      {
@@ -1333,7 +1438,7 @@
                                                          
                                                          NSDictionary *routeOverviewPolyline = [routeDict objectForKey:@"overview_polyline"];
                                                          NSString *points = [routeOverviewPolyline objectForKey:@"points"];
-                                                         GMSPath *path = [GMSPath pathFromEncodedPath:points];
+                                                         path = [GMSPath pathFromEncodedPath:points];
                                                          
                                                          if (isForRider) {
                                                              
@@ -1350,9 +1455,7 @@
                                                              ridePolyline = [GMSPolyline polylineWithPath:path];
                                                              ridePolyline.strokeWidth = 3.f;
                                                              ridePolyline.strokeColor = [UIColor hx_colorWithHexString:@"262C4E"];
-                                                             
-                                                             
-                                                             
+                                                            
                                                          }
                                                          
                                                              
@@ -1392,6 +1495,23 @@
                                                                  
                                                                  completionHandler(ridePolyline);
                                                              
+                                                             NSLog(@"path.count  %lu",(unsigned long)path.count);
+                                                             
+                                                             if (isComeFromBackground) {
+                                                             
+                                                                 NSLog(@"come from background");
+                                                                 isComeFromBackground = 0;
+                                                                 
+                                                             }else{
+                                                               
+                                                                 // animate green path with timer
+                                                                 animationTimer =  [NSTimer scheduledTimerWithTimeInterval:0.04 repeats:true block:^(NSTimer * _Nonnull timer) {
+                                                                     
+                                                                                                   [self animate:path];
+                                                                 
+                                                                                     }];
+                                                             }
+                                                             
                                                          }
                                                          
                                                          if (isCalculateFare) {
@@ -1410,16 +1530,53 @@
     [fetchDirectionsTask resume];
 }
 
+-(void)animate:(GMSPath *)path {
+
+    NSLog(@"i  %d",i);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (i < path.count) {
+            [path2 addCoordinate:[path coordinateAtIndex:i]];
+            polylineGreen = [GMSPolyline polylineWithPath:path2];
+            polylineGreen.strokeColor = [UIColor lightGrayColor];
+            polylineGreen.strokeWidth = 3;
+            polylineGreen.map = self.googleMapView;
+            [arrayPolylineGreen addObject:polylineGreen];
+            i++;
+            
+            
+        }else  {
+            
+            NSLog(@"path no animation");
+           
+           
+
+            i = 0;
+            path2 = [[GMSMutablePath alloc] init];
+            
+           // polylineGreen.map = nil;
+            
+            
+            for (GMSPolyline *line in arrayPolylineGreen) {
+
+                line.map = nil;
+                arrayPolylineGreen = [[NSMutableArray alloc] init];
+            }
+            
+        }
+    });
+}
+
+
 -(void)updateCameraPosition:(GMSMutablePath*)path {
     
-    
+   
     
     GMSCoordinateBounds *bounds =[[GMSCoordinateBounds alloc] initWithPath:path];
     
-    GMSCameraUpdate *update = [GMSCameraUpdate fitBounds:bounds
-                                             withPadding:100.0f];
+    GMSCameraUpdate *update = [GMSCameraUpdate fitBounds:bounds withEdgeInsets:UIEdgeInsetsMake(200.0, 50.0, 200.0, 50.0)];
     [self.googleMapView moveCamera:update];
-    [self.googleMapView animateToZoom:14];
+    //[self.googleMapView animateToZoom:12];
     [self.googleMapView animateToViewingAngle:35];
     
     
@@ -1567,7 +1724,21 @@
     
         self.staticPin.hidden = YES;
         self.setPinPointDoneButton.hidden = YES;
-        self.locationView.hidden = YES;
+        self.locationView.hidden = NO;
+        
+        if (animationTimer) {
+
+            [animationTimer invalidate];
+            animationTimer = nil;
+            [polylineGreen setMap:nil];
+        }
+
+        if (!self.fareView.isHidden) {
+
+            self.fareView.hidden = YES;
+        }
+        
+        [self.googleMapView clear];
         
         pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
         destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
@@ -1607,6 +1778,16 @@
             
             isCalculateFare = 1;
             isPolyLineBlue =1;
+            
+            arrayPolylineGreen = [[NSMutableArray alloc] init];
+            
+            if (animationTimer) {
+                
+                [animationTimer invalidate];
+                animationTimer = nil;
+                [polylineGreen setMap:nil];
+            }
+            
             
             [self drawpoliline:pickupPoint destination:destinationPoint isfor:0];
             
@@ -1955,6 +2136,21 @@
 
 
 - (void)keyboardDidShow: (NSNotification *) notif{
+    
+    if (animationTimer) {
+        
+        [animationTimer invalidate];
+        animationTimer = nil;
+        [polylineGreen setMap:nil];
+    }
+    
+    [self.googleMapView clear];
+    
+    if (!self.fareView.isHidden) {
+
+        self.fareView.hidden = YES;
+    }
+    
    
     if (!self.cancelReasonView.isHidden) {
         
@@ -2196,6 +2392,8 @@
         
     }else if (notificationType == 3){
         
+        NSLog(@"Rider cancel the request");
+        
         self.whereToButton.hidden = NO;
         //self.driverSuggestionView.hidden = YES;
         self.fareView.hidden = YES;
@@ -2246,11 +2444,25 @@
             [alert dismissViewControllerAnimated:YES completion:nil];
         });
         
-        NSLog(@"Rider cancel the request");
+        
         
         [timerForRiderPosition invalidate];
         
     }else if (notificationType == 5){
+        
+        NSLog(@"ride steat");
+        
+        [timerForRiderPosition invalidate];
+        
+        
+        [driverPolyline setMap:nil];
+        
+        if (animationTimer) {
+            
+            [animationTimer invalidate];
+            animationTimer = nil;
+            [polylineGreen setMap:nil];
+        }
         
         [UIView animateWithDuration:.5
                               delay:0
@@ -2289,11 +2501,12 @@
             [alert dismissViewControllerAnimated:YES completion:nil];
         });
         
-        NSLog(@"ride steat");
-        
         
         
     }else if (notificationType == 6){
+        
+         NSLog(@"trip end");
+        
         
         self.driverNameLabel.text = [[[jsonDict objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"name"];
         //self.bikeModelLabelInSubmitFareView.text =[[[[jsonDict objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
@@ -2324,14 +2537,14 @@
             [alert dismissViewControllerAnimated:YES completion:nil];
         });
         
-        NSLog(@"trip end");
+       
         
     }else if (notificationType == 7){
         
-        [timerForRiderPosition invalidate];
-        
-        
-        [driverPolyline setMap:nil];
+//        [timerForRiderPosition invalidate];
+//
+//
+//        [driverPolyline setMap:nil];
         
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                         message:@"Rider arrived"
@@ -2340,10 +2553,7 @@
                                               otherButtonTitles: nil];
         [alert show];
         
-        NSLog(@"rider arrived");
-        
-        
-        
+       
         
     }else if (notificationType == 8){
         
@@ -2713,6 +2923,13 @@
                                  
                                  [self.googleMapView clear];
                                  
+                                 if (animationTimer) {
+                                     
+                                     [animationTimer invalidate];
+                                     animationTimer = nil;
+                                     [polylineGreen setMap:nil];
+                                 }
+                                 
                                  GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
                                  
                                  [self.googleMapView animateToCameraPosition:camera];
@@ -2818,9 +3035,19 @@
             
         [driverPolyline setMap:nil];
         
+        isComeFromBackground = 1;
+        
+        
         [self reSetViewWhenActive:info];
         
         NSLog(@"ride info in when status 3 %@",rideInfo);
+        
+//        if (animationTimer) {
+//
+//            [animationTimer invalidate];
+//            animationTimer = nil;
+//            [polylineGreen setMap:nil];
+//        }
         
         
     }else if (status == 4){
@@ -2922,6 +3149,13 @@
 
 
 - (IBAction)backButtonAction:(id)sender {
+    
+    if (animationTimer) {
+        
+        [animationTimer invalidate];
+        animationTimer = nil;
+        [polylineGreen setMap:nil];
+    }
     
     self.backButton.hidden= YES;
     self.staticPin.hidden =YES;

@@ -92,8 +92,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X3D-1X-vT3" customClass="GMSMapView">
-                                <rect key="frame" x="1000" y="64" width="375" height="603"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X3D-1X-vT3" customClass="GMSMapView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cAq-qL-t2s">
@@ -115,7 +115,7 @@
                                 </connections>
                             </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Pin" translatesAutoresizingMaskIntoConstraints="NO" id="iy1-VH-Lde">
-                                <rect key="frame" x="150" y="296" width="20" height="20"/>
+                                <rect key="frame" x="150" y="264" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="CbH-Zz-13r"/>
                                     <constraint firstAttribute="height" constant="20" id="rDJ-0T-TWl"/>
@@ -242,11 +242,11 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a2N-xz-pRf">
-                                <rect key="frame" x="1020" y="84" width="335" height="45"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a2N-xz-pRf">
+                                <rect key="frame" x="20" y="84" width="280" height="50"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="Scc-dF-VBM"/>
+                                    <constraint firstAttribute="height" constant="50" id="Scc-dF-VBM"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                 <inset key="contentEdgeInsets" minX="20" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -801,6 +801,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <color key="backgroundColor" red="0.14901960780000001" green="0.17254901959999999" blue="0.30588235289999999" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="a2N-xz-pRf" secondAttribute="trailing" constant="20" id="0ZG-2r-due"/>
                             <constraint firstAttribute="trailing" secondItem="D9i-Uz-cbI" secondAttribute="trailing" id="0sy-Ce-eQf"/>
@@ -818,7 +819,6 @@
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="D9i-Uz-cbI" secondAttribute="bottom" id="EtS-5f-Wcg"/>
                             <constraint firstItem="a2N-xz-pRf" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" constant="20" id="Fqa-7q-WmP"/>
                             <constraint firstItem="iy1-VH-Lde" firstAttribute="centerY" secondItem="X3D-1X-vT3" secondAttribute="centerY" constant="-10" id="G6Q-TK-cXY"/>
-                            <constraint firstItem="X3D-1X-vT3" firstAttribute="top" secondItem="xJI-JM-MCV" secondAttribute="bottom" id="GmF-ej-95X"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="HJ7-8o-0UL" secondAttribute="bottom" id="IHa-6J-DuN"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="u7e-dQ-z1M" secondAttribute="bottom" id="Mkq-OU-cNh"/>
                             <constraint firstItem="1fu-x5-rEk" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" id="OsV-Ju-OLL"/>
@@ -826,6 +826,7 @@
                             <constraint firstItem="mbV-vW-z6X" firstAttribute="leading" secondItem="eGe-HQ-dmP" secondAttribute="leading" id="PiI-g4-XaP"/>
                             <constraint firstItem="MnL-ey-g4s" firstAttribute="top" secondItem="Psq-QU-RRs" secondAttribute="bottom" constant="20" id="QAx-O1-MhX"/>
                             <constraint firstItem="a2N-xz-pRf" firstAttribute="top" secondItem="xJI-JM-MCV" secondAttribute="bottom" constant="20" id="VMy-1a-VgI"/>
+                            <constraint firstItem="X3D-1X-vT3" firstAttribute="top" secondItem="eGe-HQ-dmP" secondAttribute="top" id="VT3-bX-cgn"/>
                             <constraint firstItem="iy1-VH-Lde" firstAttribute="centerX" secondItem="X3D-1X-vT3" secondAttribute="centerX" id="VUB-vi-76E"/>
                             <constraint firstAttribute="trailing" secondItem="1fu-x5-rEk" secondAttribute="trailing" id="WXt-zV-bol"/>
                             <constraint firstItem="hhg-de-Uh0" firstAttribute="height" secondItem="eGe-HQ-dmP" secondAttribute="height" multiplier="420:667" id="Wx1-Qa-57h"/>
