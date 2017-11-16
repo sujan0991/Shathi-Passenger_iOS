@@ -17,6 +17,7 @@
 		647E32A71F9DC676008AB0AD /* JTMaterialSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 647E32A61F9DC675008AB0AD /* JTMaterialSpinner.m */; };
 		647E32AE1F9F162F008AB0AD /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 647E32B01F9F162F008AB0AD /* Localizable.strings */; };
 		6482F6B81EDEA77800506B72 /* EditPrifileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */; };
+		6484D38C1FB2E98200224914 /* SearchLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6484D38B1FB2E98200224914 /* SearchLocationViewController.m */; };
 		648733F91EE9370900D42237 /* PromotionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 648733F81EE9370900D42237 /* PromotionsViewController.m */; };
 		648F61781F31D9660057EAB6 /* CancelReasonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 648F61771F31D9660057EAB6 /* CancelReasonTableViewCell.m */; };
 		649739191EE40F4A00062A4B /* FLAnimatedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = 649738E41EE40F4A00062A4B /* FLAnimatedImage.m */; };
@@ -90,6 +91,8 @@
 		647E32B11F9F1651008AB0AD /* ne-NP */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "ne-NP"; path = "ne-NP.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		6482F6B61EDEA77800506B72 /* EditPrifileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditPrifileViewController.h; sourceTree = "<group>"; };
 		6482F6B71EDEA77800506B72 /* EditPrifileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditPrifileViewController.m; sourceTree = "<group>"; };
+		6484D38A1FB2E98200224914 /* SearchLocationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchLocationViewController.h; sourceTree = "<group>"; };
+		6484D38B1FB2E98200224914 /* SearchLocationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SearchLocationViewController.m; sourceTree = "<group>"; };
 		648733F71EE9370900D42237 /* PromotionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PromotionsViewController.h; sourceTree = "<group>"; };
 		648733F81EE9370900D42237 /* PromotionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PromotionsViewController.m; sourceTree = "<group>"; };
 		648F61761F31D9660057EAB6 /* CancelReasonTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CancelReasonTableViewCell.h; sourceTree = "<group>"; };
@@ -458,6 +461,8 @@
 				6431069E1F498AB800F6C4D0 /* DetailHistoryViewController.m */,
 				64D99C3D1FA5E25600698A90 /* SetHomeAndWorkViewController.h */,
 				64D99C3E1FA5E25600698A90 /* SetHomeAndWorkViewController.m */,
+				6484D38A1FB2E98200224914 /* SearchLocationViewController.h */,
+				6484D38B1FB2E98200224914 /* SearchLocationViewController.m */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -657,6 +662,7 @@
 				64CDA1351ED5A22200229274 /* SettingViewController.m in Sources */,
 				6497391E1EE40F4A00062A4B /* NSImage+WebCache.m in Sources */,
 				649739231EE40F4A00062A4B /* SDWebImageDownloader.m in Sources */,
+				6484D38C1FB2E98200224914 /* SearchLocationViewController.m in Sources */,
 				64B478641EDC7695006C6301 /* NSDate+SameDay.m in Sources */,
 				6497391A1EE40F4A00062A4B /* FLAnimatedImageView+WebCache.m in Sources */,
 				649739291EE40F4A00062A4B /* UIImage+MultiFormat.m in Sources */,

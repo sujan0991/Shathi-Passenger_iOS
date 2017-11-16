@@ -51,6 +51,9 @@
     [self.view addSubview:spinner];
     spinner.hidden =YES;
     
+    self.settingTableView.estimatedRowHeight = 50.0;
+    self.settingTableView.rowHeight = UITableViewAutomaticDimension;
+    
     
 
 }
@@ -207,8 +210,11 @@
     if (indexPath.section == 0)
     {
         
+        settingIcon.image = [UIImage imageNamed:@"home.png"];
+        
     }else if (indexPath.section == 1){
         
+        settingIcon.image = [UIImage imageNamed:@"work.png"];
         
     }else{
         
@@ -267,19 +273,19 @@
         {
             
             
-        }else if (indexPath.row ==2)
-        {
-            PromotionsViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"PromotionsViewController"];
-            
-            [self presentViewController:vc animated:YES completion:nil];
-            
-        }else if (indexPath.row ==5)
+//        }else if (indexPath.row ==2)
+//        {
+//            PromotionsViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"PromotionsViewController"];
+//
+//            [self presentViewController:vc animated:YES completion:nil];
+//
+          }else if (indexPath.row ==1)
         {
             RideHistoryViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"RideHistoryViewController"];
             
             [self.navigationController pushViewController:vc animated:YES];
             
-        }else if (indexPath.row ==7)
+        }else if (indexPath.row ==3)
         {
             
             [[ServerManager sharedManager] postLogOutWithCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {

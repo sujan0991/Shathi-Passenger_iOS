@@ -15,6 +15,7 @@
 #import "NSDictionary+NullReplacement.h"
 #import "UserAccount.h"
 #import "CancelReasonTableViewCell.h"
+#import "SearchLocationViewController.h"
 
 
 
@@ -75,15 +76,15 @@
     
     GMSPolyline *ridePolyline;
     GMSPolyline *driverPolyline;
-    GMSPolyline *polylineGreen;
+    GMSPolyline *polylineGray;
     int i;
     GMSMutablePath *path2;
-    NSMutableArray *arrayPolylineGreen;
+    NSMutableArray *arrayPolylineGray;
     NSTimer *animationTimer;
     
     GMSMarker *riderMarker;
     
-    NSDictionary * userInfo;
+   
     
 }
 
@@ -102,7 +103,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    arrayPolylineGreen = [[NSMutableArray alloc] init];
+    arrayPolylineGray = [[NSMutableArray alloc] init];
     path2 = [[GMSMutablePath alloc]init];
     i = 0;
     
@@ -127,7 +128,7 @@
     [self setMap];
     [self setGooglePlacefetcher];
     
-    [self getUserInfo];
+    //[self getUserInfo];
     
     homeWorkArray = [[NSMutableArray alloc]init];
     rideInfo = [[NSMutableDictionary alloc]init];
@@ -145,6 +146,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 
+    
 }
 
 
@@ -199,11 +201,9 @@
     self.crossButtonInDestinationTextField.hidden = YES;
     
     self.backButton.hidden = YES;
-    self.locationView.hidden = YES;
+    self.locationView.hidden = NO;
     self.searchLocationTableView.hidden = YES;
     
-    self.crossButtonInPicupTextField.hidden = YES;
-    self.crossButtonInDestinationTextField.hidden= YES;
     
 
     self.staticPin.hidden = YES;
@@ -220,10 +220,25 @@
     
     self.submitFareView.hidden = YES;
     
+    self.backButton.layer.cornerRadius = self.backButton.frame.size.width / 2;
+    self.backButton.clipsToBounds = YES;
+    
+    self.settingButton.layer.cornerRadius = self.settingButton.frame.size.width / 2;
+    self.settingButton.clipsToBounds = YES;
+    
+    self.phoneButtonInDriverSuggestionView.layer.cornerRadius = self.phoneButtonInDriverSuggestionView.frame.size.width / 2;
+    self.phoneButtonInDriverSuggestionView.clipsToBounds = YES;
+    
     self.driverPhoto.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
     self.driverPhoto.clipsToBounds = YES;
-    self.driverPhoto.layer.borderWidth = 5.0f;
-    self.driverPhoto.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
+//    self.driverPhoto.layer.borderWidth = 5.0f;
+//    self.driverPhoto.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
+    
+    self.bikeNoLabel.layer.cornerRadius = 5;
+    self.bikeNoLabel.clipsToBounds = YES;
+    self.bikeNoLabel.layer.borderWidth = 1.0f;
+    self.bikeNoLabel.layer.borderColor = [[UIColor hx_colorWithHexString:@"#262C4E"]CGColor];
+
     
 //    self.enterPicupButton.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
 //    self.driverPhoto.clipsToBounds = YES;
@@ -256,13 +271,32 @@
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
                          
-                         CGRect frame = self.whereToButton.frame;
+                         CGRect frame = self.locationView.frame;
                          frame.origin.y = self.view.frame.size.height - 20;
-                         self.whereToButton.frame = frame;
+                         self.locationView.frame = frame;
                          
                          
                      }
                      completion:^(BOOL finished){
+                         
+                           if([CLLocationManager locationServicesEnabled]){
+                         
+                         
+                                [[GMSGeocoder geocoder] reverseGeocodeCoordinate:CLLocationCoordinate2DMake(currentLocation.latitude,currentLocation.longitude) completionHandler:^(GMSReverseGeocodeResponse* response, NSError* error) {
+                         
+                         
+                                             GMSAddress* firstaddressObj = [response firstResult];
+                         
+                                              self.pickUpTextView.text = [NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare];
+                       
+                         
+                                               [rideInfo setObject:[NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare] forKey:@"pickup_address"];
+                                               [rideInfo setObject:[NSString stringWithFormat:@"%f",firstaddressObj.coordinate.latitude] forKey:@"pickup_latitude"];
+                                               [rideInfo setObject:[NSString stringWithFormat:@"%f", firstaddressObj.coordinate.longitude] forKey:@"pickup_longitude"];
+                         
+                         
+                                  }];
+                             }
                          
                      }];
     
@@ -281,37 +315,6 @@
     
  
     totalRating = 0;
-    
-}
-
--(void) getUserInfo{
-    
-    
-    [[ServerManager sharedManager] getUserInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
-        
-        
-        if ( responseObject!=nil) {
-            
-            
-            
-            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
-            
-            NSLog(@"user info %@",userInfo);
-            
-           
-            
-        }else{
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                NSLog(@"no user info");
-                
-                
-            });
-            
-        }
-    }];
-    
     
 }
 
@@ -349,38 +352,7 @@
         [locationManager requestWhenInUseAuthorization];
         [locationManager startUpdatingLocation];
     }
-    
-    
-//    self.googleMapView.settings.scrollGestures = YES;
-//    self.googleMapView.settings.zoomGestures = YES;
-    
-    
-//    currentLocation = locationManager.location.coordinate;
-//    
-//    if (locationManager.location == nil) {
-//        
-//         [locationManager startUpdatingLocation];
-//    }
-//    
-//    NSLog(@"Current Location = %f, %f",currentLocation.latitude,currentLocation.longitude);
-//    
-//    GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
-//    
-//    [self.googleMapView animateToCameraPosition:camera];
-//    
-//    self.googleMapView.settings.consumesGesturesInView = YES;
-    
-    
-    
 
-    
-    
-
-    
-    //Api Call
-    
-    
-    //[self makeRequest];
     
     
 }
@@ -463,11 +435,11 @@
         
         [searchResultsPlaceId addObject:prediction.placeID];
         
-//        NSLog(@"searchResults place ID ::::: %@",prediction.placeID);
+
     }
 
     
-   // NSLog(@"searchResults place ID ::::: %@",predictions.);
+  
     
     [self.searchLocationTableView reloadData];
     
@@ -475,7 +447,7 @@
 
 - (void)didFailAutocompleteWithError:(NSError *)error {
     
-    //_resultText.text = [NSString stringWithFormat:@"%@", error.localizedDescription];
+   
     
     NSLog(@"didFailAutocompleteWithError %@",error.localizedDescription);
     
@@ -486,58 +458,59 @@
 - (IBAction)whereToButtonAction:(id)sender {
     
 
-
-    [UIView animateWithDuration:0.2
-                          delay:0
-                        options: UIViewAnimationOptionCurveEaseOut
-                     animations:^{
-                         
-                         self.whereToButton.frame = CGRectMake(20,-45 ,self.whereToButton.frame.size.width, self.whereToButton.frame.size.height);
-
-                                            }
-                     completion:^(BOOL finished){
-
-
-                         self.whereToButton.hidden = YES;
-                         self.backButton.hidden = NO;
-
-                         self.locationView.hidden = NO;
-                         self.searchLocationTableView.hidden = NO;
-
-                         self.destinationTextView.text = nil;
-                         [searchResults removeAllObjects];
-
-                         if([CLLocationManager locationServicesEnabled]){
-
-
-                             [[GMSGeocoder geocoder] reverseGeocodeCoordinate:CLLocationCoordinate2DMake(currentLocation.latitude,currentLocation.longitude) completionHandler:^(GMSReverseGeocodeResponse* response, NSError* error) {
-
-
-                                 GMSAddress* firstaddressObj = [response firstResult];
-
-                                 self.pickUpTextView.text = [NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare];
-//                                 NSLog(@"coordinate.latitude=%f", firstaddressObj.coordinate.latitude);
-//                                 NSLog(@"coordinate.longitude=%f", firstaddressObj.coordinate.longitude);
-
-                                 [rideInfo setObject:[NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare] forKey:@"pickup_address"];
-                                 [rideInfo setObject:[NSString stringWithFormat:@"%f",firstaddressObj.coordinate.latitude] forKey:@"pickup_latitude"];
-                                 [rideInfo setObject:[NSString stringWithFormat:@"%f", firstaddressObj.coordinate.longitude] forKey:@"pickup_longitude"];
-
-
-                             }];
-
-
-                             [self.destinationTextView becomeFirstResponder];
-
-                         }else
-                         {
-
-                             [self.pickUpTextView becomeFirstResponder];
-
-                         }
-                         [self.searchLocationTableView reloadData];
-                     }];
     
+    
+//    [UIView animateWithDuration:0.2
+//                          delay:0
+//                        options: UIViewAnimationOptionCurveEaseOut
+//                     animations:^{
+//
+//                         self.whereToButton.frame = CGRectMake(20,-45 ,self.whereToButton.frame.size.width, self.whereToButton.frame.size.height);
+//
+//                                            }
+//                     completion:^(BOOL finished){
+//
+//
+//                         self.whereToButton.hidden = YES;
+//                         self.backButton.hidden = NO;
+//
+//                         self.locationView.hidden = NO;
+//                         self.searchLocationTableView.hidden = NO;
+//
+//                         self.destinationTextView.text = nil;
+//                         [searchResults removeAllObjects];
+//
+//                         if([CLLocationManager locationServicesEnabled]){
+//
+//
+//                             [[GMSGeocoder geocoder] reverseGeocodeCoordinate:CLLocationCoordinate2DMake(currentLocation.latitude,currentLocation.longitude) completionHandler:^(GMSReverseGeocodeResponse* response, NSError* error) {
+//
+//
+//                                 GMSAddress* firstaddressObj = [response firstResult];
+//
+//                                 self.pickUpTextView.text = [NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare];
+////                                 NSLog(@"coordinate.latitude=%f", firstaddressObj.coordinate.latitude);
+////                                 NSLog(@"coordinate.longitude=%f", firstaddressObj.coordinate.longitude);
+//
+//                                 [rideInfo setObject:[NSString stringWithFormat:@"%@", firstaddressObj.thoroughfare] forKey:@"pickup_address"];
+//                                 [rideInfo setObject:[NSString stringWithFormat:@"%f",firstaddressObj.coordinate.latitude] forKey:@"pickup_latitude"];
+//                                 [rideInfo setObject:[NSString stringWithFormat:@"%f", firstaddressObj.coordinate.longitude] forKey:@"pickup_longitude"];
+//
+//
+//                             }];
+//
+//
+//                             [self.destinationTextView becomeFirstResponder];
+//
+//                         }else
+//                         {
+//
+//                             [self.pickUpTextView becomeFirstResponder];
+//
+//                         }
+//                         [self.searchLocationTableView reloadData];
+//                     }];
+//
     
 
     
@@ -552,41 +525,6 @@
         
         return cancelReasonArray.count;
         
-    }else if(tableView == self.searchLocationTableView){
-        
-        if ([self.pickUpTextView isFirstResponder] ) {
-            
-           // NSLog(@"self.pickUpTextView.text.length %u %u",self.pickUpTextView.text.length,homeWorkArray.count);
-            
-            if(self.pickUpTextView.text.length == 0 )
-            {
-                //return homeWorkArray.count + 1;
-                return 3;
-            }
-                else{
-                //    NSLog(@"searchResults %lu",(unsigned long)searchResults.count);
-                 return searchResults.count;
-            }
-        }
-        else if ([self.destinationTextView isFirstResponder]){
-           // NSLog(@"destinationTextView %u %u",self.destinationTextView.text.length,homeWorkArray.count);
-            
-            if(self.destinationTextView.text.length == 0 )
-            {
-                
-                //return homeWorkArray.count + 1;
-                  return 3;
-            }
-            else{
-              //  NSLog(@"searchResults  destinationTextView %lu",(unsigned long)searchResults.count);
-                
-                return searchResults.count;
-            }
-        
-         }
-        else
-            return 0;
-
     }else
         return 0;
  
@@ -611,178 +549,6 @@
         return cell;
         
         
-    }else{
-        
-      if ([self.pickUpTextView isFirstResponder] ) {
-        
-          static NSString *CellIdentifier = @"Cell";
-          UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-          
-          if (!cell)
-              cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-          
-           cell.textLabel.font = [UIFont systemFontOfSize:13.0];
-          
-          if(self.pickUpTextView.text.length == 0 )
-          {
-             if(indexPath.row == 0){
-                
-                
-                
-                
-                cell.textLabel.text = @"Set pin Location";
-                
-                cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                
-                return cell;
-                
-            }else if(indexPath.row == 1){
-                
-                NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"] ];
-                
-                if ([homeAddress length] > 0) {
-                    
-                    cell.textLabel.text = @"Home";
-                    
-                }
-                else
-                {
-                    cell.textLabel.text = @"Add Home Address";
-                    
-                    
-                }
-                //cell.detailTextLabel.text = @"Malibahg";
-               
-                cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                
-                return cell;
-                
-            }else if(indexPath.row == 2){
-                
-                NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"] ];
-                
-                if ([workAddress length] > 0) {
-                    
-                    cell.textLabel.text = @"Work";
-                    
-                }
-                else
-                {
-                    cell.textLabel.text = @"Add Work Address";
-                    
-                    
-                }
-                //cell.detailTextLabel.text = @"Malibahg";
-               
-                cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                
-                return cell;
-            }
-         } else
-         {
-//            static NSString *CellIdentifier = @"Cell";
-//            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-//
-            
-            cell.textLabel.text = [searchResults objectAtIndex:indexPath.row];
-           // cell.textLabel.font = [UIFont systemFontOfSize:13.0];
-            cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-            
-            
-            return cell;
-         }
-
-
-      }
-      else if ([self.destinationTextView isFirstResponder]){
-          
-          static NSString *CellIdentifier = @"Cell";
-          UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-          
-          if (!cell)
-              cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        
-          cell.textLabel.font = [UIFont systemFontOfSize:13.0];
-          
-         if(self.destinationTextView.text.length == 0 )
-         {
-             if(indexPath.row == 0){
-                
-
-                cell.textLabel.text = @"Set pin Location";
-                
-                cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                
-                return cell;
-                
-             }else if(indexPath.row == 1){
-                 
-                 NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]];
-                 
-                 if ([homeAddress length] > 0) {
-                     
-                     cell.textLabel.text = @"Home";
-                     
-                 }
-                 else
-                 {
-                     cell.textLabel.text = @"Add Home Address";
-                     
-                     
-                 }
-                 //cell.detailTextLabel.text = @"Malibahg";
-                 
-                 cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                 
-                 return cell;
-                 
-             }else if(indexPath.row == 2){
-                 
-                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
-                 
-                 if ([workAddress length] > 0) {
-                     
-                     cell.textLabel.text = @"Work";
-                     
-                 }
-                 else
-                 {
-                     cell.textLabel.text = @"Add Work Address";
-                     
-                     
-                 }
-                 //cell.detailTextLabel.text = @"Malibahg";
-                 
-                 cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-                 
-                 return cell;
-             }
-            
-        } else
-        {
-//            static NSString *CellIdentifier = @"Cell";
-//            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-            
-            
-            cell.textLabel.text = [searchResults objectAtIndex:indexPath.row];
-            //cell.textLabel.font = [UIFont systemFontOfSize:13.0];
-            cell.imageView.image = [UIImage imageNamed:@"Location.png"];
-            
-            
-            return cell;
-        }
-
-
-        
-    }
-    else
-    {
-        static NSString *CellIdentifier = @"Cell";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-      
-        return cell;
-    }
-    
     }
     
     return nil;
@@ -812,438 +578,7 @@
         
         
     }
-    else{
-        
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-        
-        self.searchLocationTableView.hidden = YES;
     
-        if ([self.pickUpTextView isFirstResponder]) {
-        
-          [self.pickUpTextView resignFirstResponder];
-        
-        
-        
-           if(self.pickUpTextView.text.length == 0 )
-           {
-             if (indexPath.row == 0) {
-                
-                 isSaveHomeAddress = 0;
-                 isSaveWorkAddress = 0;
-                 
-                NSLog(@"set pin for picup");
-                
-                self.staticPin.hidden = NO;
-                 [self.pickUpTextView resignFirstResponder];
-                 //self.setPinPointButton.hidden = NO;
-                 self.setPinPointDoneButton.hidden = YES;
-                
-             }
-             else if (indexPath.row == 1){
-                
-                 
-                     
-                     NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]];
-                     
-                     if ([homeAddress length] > 0) {
-                         
-                         self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]];
-                         
-                         [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
-                         [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]] forKey:@"pickup_latitude"];
-                         [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_longitude"]] forKey:@"pickup_longitude"];
-                         
-                         if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
-                             
-                             // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                             
-                             self.setPinPointDoneButton.hidden = NO;
-                             [UIView animateWithDuration:1.0
-                                                   delay:0
-                                                 options: UIViewAnimationOptionCurveEaseIn
-                                              animations:^{
-                                                  
-                                                  
-                                                  self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                                  
-                                                  
-                                              }
-                                              completion:^(BOOL finished){
-                                                  
-                                                  
-                                              }];
-                             
-                         }else{
-                             
-                             [self.pickUpTextView becomeFirstResponder];
-                             
-                         }
-                         
-                     }
-                     else
-                     {
-                         
-                         isSaveHomeAddress = 1;
-                         isSaveWorkAddress = 0;
-                         
-                         NSLog(@"set pin for home");
-                         
-                         self.staticPin.hidden = NO;
-                         [self.pickUpTextView resignFirstResponder];
-                         //self.setPinPointButton.hidden = NO;
-                         self.setPinPointDoneButton.hidden = YES;
-                         
-                     }
-                 
-                NSLog(@"Home ");
-                
-             }
-             else if (indexPath.row == 2){
-                
-                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
-                 
-                 if ([workAddress length] > 0) {
-                     
-                     self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
-                     
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]] forKey:@"pickup_latitude"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_longitude"]] forKey:@"pickup_longitude"];
-                     
-                     if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
-                         
-                         // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                         
-                         self.setPinPointDoneButton.hidden = NO;
-                         
-                         [UIView animateWithDuration:1.0
-                                               delay:0
-                                             options: UIViewAnimationOptionCurveEaseIn
-                                          animations:^{
-                                              
-                                              
-                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                              
-                                              
-                                          }
-                                          completion:^(BOOL finished){
-                                              
-                                              
-                                          }];
-                         
-                         
-                     }else{
-                         
-                         [self.destinationTextView becomeFirstResponder];
-                         
-                     }
-                     
-                 }
-                 else
-                 {
-                     
-                      isSaveWorkAddress = 1;
-                      isSaveHomeAddress = 0;
-                     
-                     NSLog(@"set pin for work");
-                     
-                     self.staticPin.hidden = NO;
-                     [self.destinationTextView resignFirstResponder];
-                     //self.setPinPointButton.hidden = NO;
-                     self.setPinPointDoneButton.hidden = YES;
-                     
-                 }
-                    NSLog(@"work");
-                
-             }
-            
-            
-
-         }else
-         {
-            
-            self.setPinPointButton.hidden = YES;
-             self.setPinPointDoneButton.hidden = YES;
-             
-            self.pickUpTextView.text=[NSString stringWithFormat:@"%@",[searchResults objectAtIndex:indexPath.row]];
-            
-            GMSPlacesClient *placesClient = [[GMSPlacesClient alloc]init];
-            
-            [placesClient lookUpPlaceID:[searchResultsPlaceId objectAtIndex:indexPath.row] callback:^(GMSPlace *place, NSError *error) {
-                if (error != nil) {
-                    NSLog(@"Place Details error %@", [error localizedDescription]);
-                    return;
-                }
-                
-                if (place != nil) {
-                    
-                    [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
-                    [rideInfo setObject:[NSString stringWithFormat:@"%f",place.coordinate.latitude] forKey:@"pickup_latitude"];
-                    [rideInfo setObject:[NSString stringWithFormat:@"%f", place.coordinate.longitude] forKey:@"pickup_longitude"];
-                   
-
-                    
-                    
-                    //remove after home /work integration
-                    
-                    if (self.destinationTextView.text.length > 0) {
-                        
-                       // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                        self.setPinPointDoneButton.hidden = NO;
-                        
-                        [UIView animateWithDuration:1.0
-                                              delay:0
-                                            options: UIViewAnimationOptionCurveEaseIn
-                                         animations:^{
-                                             
-                                             
-                                             self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                             
-                                             
-                                         }
-                                         completion:^(BOOL finished){
-                                             
-                                             
-                                         }];
-                        
-                        
-                        
-                    }else{
-                        
-                        [self.destinationTextView becomeFirstResponder];
-                        
-                    }
-                    
-                    //
-                    
-                    
-                } else {
-                    NSLog(@"No place details for ");
-                }
-             }];
-
-          
-            
-          }
-        
-        
-       }
-       else if([self.destinationTextView isFirstResponder])
-       {
-          [self.destinationTextView resignFirstResponder];
-        
-          if(self.destinationTextView.text.length == 0) {
-           
-              if (indexPath.row == 0) {
-                 
-                  isSaveHomeAddress = 0;
-                  isSaveWorkAddress = 0;
-                  
-                 NSLog(@"set pin for des");
-                 
-                 self.staticPin.hidden = NO;
-                 [self.destinationTextView resignFirstResponder];
-                 //self.setPinPointButton.hidden = NO;
-                  self.setPinPointDoneButton.hidden = YES;
-                 
-             }
-             else if (indexPath.row == 1){
-                 
-                 NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]];
-                 
-                 if ([homeAddress length] > 0) {
-                     
-                     self.destinationTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]];
-                     
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_latitude"]] forKey:@"destination_latitude"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"home_longitude"]] forKey:@"destination_longitude"];
-                     
-                     if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
-                         
-                         // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                         
-                         self.setPinPointDoneButton.hidden = NO;
-                         
-                         [UIView animateWithDuration:1.0
-                                               delay:0
-                                             options: UIViewAnimationOptionCurveEaseIn
-                                          animations:^{
-                                              
-                                              
-                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                              
-                                              
-                                          }
-                                          completion:^(BOOL finished){
-                                              
-                                              
-                                          }];
-                         
-                         
-                     }else{
-                         
-                         [self.pickUpTextView becomeFirstResponder];
-                         
-                     }
-                     
-                 }
-                 else
-                 {
-                     
-                      isSaveHomeAddress = 1;
-                     
-                      isSaveWorkAddress = 0;
-                     NSLog(@"set pin for home");
-                     
-                     self.staticPin.hidden = NO;
-                     [self.pickUpTextView resignFirstResponder];
-                     //self.setPinPointButton.hidden = NO;
-                     self.setPinPointDoneButton.hidden = YES;
-                     
-                 }
-
-                 NSLog(@"Home in destination");
-                 
-             }
-             else if (indexPath.row == 2){
-                 
-                 NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]];
-
-                 if ([workAddress length] > 0) {
-
-                     self.destinationTextView.text = [NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
-
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_latitude"]] forKey:@"destination_latitude"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", [[userInfo objectForKey:@"metadata"]objectForKey:@"work_longitude"]] forKey:@"destination_longitude"];
-
-                        if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
-
-                            // [self getPositionOfTheMarkerForIndex:indexPath.row];
-
-                            self.setPinPointDoneButton.hidden = NO;
-                            
-                            [UIView animateWithDuration:1.0
-                                                  delay:0
-                                                options: UIViewAnimationOptionCurveEaseIn
-                                             animations:^{
-                                                 
-                                                 
-                                                 self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                                 
-                                                 
-                                             }
-                                             completion:^(BOOL finished){
-                                                 
-                                                 
-                                             }];
-
-                        }else{
-
-                            [self.pickUpTextView becomeFirstResponder];
-
-                        }
-
-                 }
-                 else
-                 {
-                     
-                      isSaveWorkAddress = 1;
-                      isSaveHomeAddress = 0;
-                     
-                     NSLog(@"set pin for work");
-                     
-                     self.staticPin.hidden = NO;
-                     [self.destinationTextView resignFirstResponder];
-                     //self.setPinPointButton.hidden = NO;
-                     self.setPinPointDoneButton.hidden = YES;
-
-                 }
-
-                 NSLog(@"work in destination");
-             }
-
-          }else
-          {
-              self.setPinPointButton.hidden = YES;
-              self.setPinPointDoneButton.hidden = YES;
-              
-             self.destinationTextView.text=[NSString stringWithFormat:@"%@",[searchResults objectAtIndex:indexPath.row]];
-             
-             NSLog(@"[searchResults objectAtIndex:indexPath.row] %@",[searchResults objectAtIndex:indexPath.row]);
-             
-             NSLog(@" select destination place id %@   ",[searchResultsPlaceId objectAtIndex:indexPath.row]);
-             
-             GMSPlacesClient *placesClient = [[GMSPlacesClient alloc]init];
-             
-             [placesClient lookUpPlaceID:[searchResultsPlaceId objectAtIndex:indexPath.row] callback:^(GMSPlace *place, NSError *error) {
-                 if (error != nil) {
-                     NSLog(@"Place Details error %@", [error localizedDescription]);
-                     return;
-                 }
-                 
-                 if (place != nil) {
-                     
-                     NSLog(@"got destination");
-                     
-                     [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%f",place.coordinate.latitude] forKey:@"destination_latitude"];
-                     [rideInfo setObject:[NSString stringWithFormat:@"%f", place.coordinate.longitude] forKey:@"destination_longitude"];
-                     
-                     
-                     
-                     if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
-                         
-                        // [self getPositionOfTheMarkerForIndex:indexPath.row];
-                         
-                         self.setPinPointDoneButton.hidden = NO;
-                         
-                         [UIView animateWithDuration:1.0
-                                               delay:0
-                                             options: UIViewAnimationOptionCurveEaseIn
-                                          animations:^{
-                                              
-                                              
-                                              self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
-                                              
-                                              
-                                          }
-                                          completion:^(BOOL finished){
-                                              
-                                              
-                                          }];
-                         
-                     }else{
-                         
-                         [self.pickUpTextView becomeFirstResponder];
-                         
-                     }
-                     
-                     
-                 } else {
-                     
-                     NSLog(@"No place details for ");
-                 }
-             }];
-             
-//             if (self.pickUpTextView.text.length > 0) {
-//                 
-//                 [self getPositionOfTheMarkerForIndex:indexPath.row];
-//                 
-//             }else{
-//                 
-//                 [self.pickUpTextView becomeFirstResponder];
-//                 
-//             }
-            
-             
-
-           }
-        
-        }
-    
-    }
     
 }
 
@@ -1258,103 +593,8 @@
     
 }
 
--(void) getPositionOfTheMarkerForIndex:(NSInteger) index
-{
-    
-    if (![self.staticPin isHidden]) {
-        
-        self.staticPin.hidden = YES;
-    }
-    
-    NSLog(@"ride info array %@",rideInfo);
-    
-    
-    self.locationView.hidden = YES;
-    self.searchLocationTableView.hidden = YES;
-    
-    pickupPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
-    destinationPoint = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"destination_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"destination_longitude"] floatValue]];
-    
-   
-//    NSString *bal = @"%7C";
-//    
-//    NSString *urlString =[NSString stringWithFormat:@"http://maps.google.com/maps/api/staticmap?size=350x200&maptype=roadmap&markers=size:mid%@color:purple%@label:P%@%f,%f&markers=size:mid%@color:red%@label:D%@%f,%f",bal,bal,bal,[[rideInfo objectForKey:@"pickup_latitude"] floatValue],[[rideInfo objectForKey:@"pickup_longitude"] floatValue],bal,bal,bal,[[rideInfo objectForKey:@"destination_latitude"] floatValue], [[rideInfo objectForKey:@"destination_longitude"] floatValue]];
-//    
-//    urlString = [urlString stringByAppendingString:@"&key=AIzaSyDh0V-13fNhKpvJaMF-kvfTFEE-tpOZJJk"];
-//    
-//    NSLog(@"static map url  %@",urlString);
-//    
-//    self.testStaticMap.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]]];
-    
-    
-    if ((pickupPoint.coordinate.latitude != 0.0 || pickupPoint.coordinate.longitude != 0.0) && (destinationPoint.coordinate.latitude != 0.0 || destinationPoint.coordinate.longitude != 0.0)) {
-        
-        NSLog(@"rpickupPoint %@",pickupPoint);
- 
-        NSLog(@"destinationPoint %@",destinationPoint);
 
-        //set picup marker
-        
-        if (pickUpMarker) {
-            
-            pickUpMarker.map = nil;
-        }
-        pickUpMarker = [[GMSMarker alloc] init];
-        
-        pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
-        
-        pickUpMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"pickup_address"]];
-        
-        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
-        
-        pickUpMarker.map = self.googleMapView;
-        
-        // set destination pin
-        if (destinationMarker) {
-            
-            destinationMarker.map = nil;
-        }
-        
-        destinationMarker= [[GMSMarker alloc] init];
-        
-        destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-        
-        destinationMarker.title = [NSString stringWithFormat:@"%@",[rideInfo objectForKey:@"destination_address"]];
-        
-        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
-        
-        destinationMarker.map = self.googleMapView;
-        
-        isCalculateFare = 1;
-        isPolyLineBlue = 1;
-        
-        [self drawpoliline:pickupPoint destination:destinationPoint isfor:0];
-        
-    }else
-    {
-    
-    
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"Please give valid address." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
-        
-        [alert show];
-        
-        self.backButton.hidden= YES;
-        self.staticPin.hidden =YES;
-        self.setPinPointButton.hidden = YES;
-        
-        //self.fareView.hidden = YES;
-        
-        self.whereToButton.hidden = NO;
-        
-        self.locationView.hidden = YES;
-        self.searchLocationTableView.hidden = YES;
-        
-        [self.googleMapView clear];
-    
-    
-    }
 
-}
 
 -(void)drawpoliline:(CLLocation *)origin destination:(CLLocation *)destination isfor:(BOOL)isForRider{
 
@@ -1504,9 +744,10 @@
                                                                  
                                                              }else{
                                                                
-                                                                 // animate green path with timer
+                                                                 // animate gray path with timer
                                                                  animationTimer =  [NSTimer scheduledTimerWithTimeInterval:0.04 repeats:true block:^(NSTimer * _Nonnull timer) {
                                                                      
+                                                                                                   //arrayPolylineGray = [[NSMutableArray alloc] init];
                                                                                                    [self animate:path];
                                                                  
                                                                                      }];
@@ -1537,11 +778,11 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         if (i < path.count) {
             [path2 addCoordinate:[path coordinateAtIndex:i]];
-            polylineGreen = [GMSPolyline polylineWithPath:path2];
-            polylineGreen.strokeColor = [UIColor lightGrayColor];
-            polylineGreen.strokeWidth = 3;
-            polylineGreen.map = self.googleMapView;
-            [arrayPolylineGreen addObject:polylineGreen];
+            polylineGray = [GMSPolyline polylineWithPath:path2];
+            polylineGray.strokeColor = [UIColor lightGrayColor];
+            polylineGray.strokeWidth = 3;
+            polylineGray.map = self.googleMapView;
+            [arrayPolylineGray addObject:polylineGray];
             i++;
             
             
@@ -1557,10 +798,10 @@
            // polylineGreen.map = nil;
             
             
-            for (GMSPolyline *line in arrayPolylineGreen) {
+            for (GMSPolyline *line in arrayPolylineGray) {
 
                 line.map = nil;
-                arrayPolylineGreen = [[NSMutableArray alloc] init];
+                arrayPolylineGray = [[NSMutableArray alloc] init];
             }
             
         }
@@ -1654,14 +895,33 @@
          
          if (self.destinationTextView.text.length > 0 && [[rideInfo objectForKey:@"destination_latitude"]floatValue] != 0.000000) {
              
-             self.setPinPointDoneButton.hidden = NO;
-           
-         }else{
-             
-             [self.destinationTextView becomeFirstResponder];
              self.staticPin.hidden = YES;
              self.setPinPointButton.hidden = YES;
+             self.setPinPointDoneButton.hidden = NO;
+
+         }else{
+             
+            // [self.destinationTextView becomeFirstResponder];
+             self.staticPin.hidden = YES;
+             self.setPinPointButton.hidden = YES;
+ 
          }
+         
+         //set picup marker
+         
+         if (pickUpMarker) {
+             
+             pickUpMarker.map = nil;
+         }
+         pickUpMarker = [[GMSMarker alloc] init];
+         
+         pickUpMarker.position = CLLocationCoordinate2DMake([[rideInfo objectForKey:@"pickup_latitude"] floatValue], [[rideInfo objectForKey:@"pickup_longitude"] floatValue]);
+         
+         pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+         
+         pickUpMarker.map = self.googleMapView;
+         
+         
      }else{
          
          if (isSaveHomeAddress) {
@@ -1682,17 +942,28 @@
              self.staticPin.hidden = YES;
              self.setPinPointButton.hidden = YES;
              self.setPinPointDoneButton.hidden = NO;
-             
-             
-             
+
          }else{
              
-             [self.pickUpTextView becomeFirstResponder];
+            // [self.pickUpTextView becomeFirstResponder];
              self.staticPin.hidden = YES;
              self.setPinPointButton.hidden = YES;
              self.setPinPointDoneButton.hidden = YES;
          }
          
+         // set destination pin
+         if (destinationMarker) {
+             
+             destinationMarker.map = nil;
+         }
+         
+         destinationMarker= [[GMSMarker alloc] init];
+         
+         destinationMarker.position = CLLocationCoordinate2DMake([[rideInfo objectForKey:@"destination_latitude"] floatValue], [[rideInfo objectForKey:@"destination_longitude"] floatValue]);
+         
+         destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+         
+         destinationMarker.map = self.googleMapView;
          
      }
     
@@ -1730,7 +1001,7 @@
 
             [animationTimer invalidate];
             animationTimer = nil;
-            [polylineGreen setMap:nil];
+            [polylineGray setMap:nil];
         }
 
         if (!self.fareView.isHidden) {
@@ -1749,43 +1020,43 @@
         if ((pickupPoint.coordinate.latitude != 0.0 || pickupPoint.coordinate.longitude != 0.0) && (destinationPoint.coordinate.latitude != 0.0 || destinationPoint.coordinate.longitude != 0.0)) {
             
             //set picup marker
-            
+
             if (pickUpMarker) {
-                
+
                 pickUpMarker.map = nil;
             }
             pickUpMarker = [[GMSMarker alloc] init];
-            
+
             pickUpMarker.position = CLLocationCoordinate2DMake(pickupPoint.coordinate.latitude, pickupPoint.coordinate.longitude);
-            
+
             pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
-            
+
             pickUpMarker.map = self.googleMapView;
             
             // set destination pin
             if (destinationMarker) {
-                
+
                 destinationMarker.map = nil;
             }
-            
+
             destinationMarker= [[GMSMarker alloc] init];
-            
+
             destinationMarker.position = CLLocationCoordinate2DMake(destinationPoint.coordinate.latitude, destinationPoint.coordinate.longitude);
-            
+
             destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
-            
+
             destinationMarker.map = self.googleMapView;
             
             isCalculateFare = 1;
             isPolyLineBlue =1;
             
-            arrayPolylineGreen = [[NSMutableArray alloc] init];
+            arrayPolylineGray = [[NSMutableArray alloc] init];
             
             if (animationTimer) {
                 
                 [animationTimer invalidate];
                 animationTimer = nil;
-                [polylineGreen setMap:nil];
+                [polylineGray setMap:nil];
             }
             
             
@@ -1805,9 +1076,9 @@
             
             //self.fareView.hidden = YES;
             
-            self.whereToButton.hidden = NO;
+            //self.whereToButton.hidden = NO;
             
-            self.locationView.hidden = YES;
+            self.locationView.hidden = NO;
             self.searchLocationTableView.hidden = YES;
             
             [self.googleMapView clear];
@@ -1902,7 +1173,7 @@
             
             NSLog(@"totalDistance in fareCalculation %f",totalDistance);
             
-            self.estimatedTimeLabel.text = [NSString stringWithFormat:@"Estimated time %.1f", estimatedTime ];
+            self.timeLabel.text = [NSString stringWithFormat:@"%.1f mins", estimatedTime ];
             
             float estimatedFare = [[userInfo objectForKey:@"base_fare"]floatValue] + ( [[userInfo objectForKey:@"per_kilometer_fare"]floatValue] * totalDistance )+ ([[userInfo objectForKey:@"per_minute_fare"]floatValue] * estimatedTime);
             
@@ -1927,9 +1198,15 @@
 }
 -(void) showFareView{
 
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.requestRideButton.bounds byRoundingCorners:( UIRectCornerBottomLeft | UIRectCornerBottomRight) cornerRadii:CGSizeMake(5.0, 5.0)];
+    
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.view.bounds;
+    maskLayer.path  = maskPath.CGPath;
+    self.requestRideButton.layer.mask = maskLayer;
 
     self.fareView.hidden = NO;
-    self.fareView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width,self.fareView.frame.size.height);
+    self.fareView.frame = CGRectMake(20,self.view.frame.size.height ,self.fareView.frame.size.width,self.fareView.frame.size.height);
     
 
     [UIView animateWithDuration:.5
@@ -1938,13 +1215,13 @@
                      animations:^{
                          
                          
-                         self.fareView.frame = CGRectMake(0,(self.view.frame.size.height - self.fareView.frame.size.height) ,self.fareView.frame.size.width,self.fareView.frame.size.height);
+                         self.fareView.frame = CGRectMake(20,(self.view.frame.size.height - self.fareView.frame.size.height-20) ,self.fareView.frame.size.width,self.fareView.frame.size.height);
                          
                          
                      }
                      completion:^(BOOL finished){
                          
-                        
+                         self.backButton.hidden = NO;
                          
                      }];
 
@@ -1953,116 +1230,33 @@
 
 - (IBAction)tapOnTextField:(UITextField*)sender {
     
+    SearchLocationViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SearchLocationViewController"];
+    
+      //vc.userInfo = userInfo;
+      vc.dataBackDelegate = self;
+    
+   
     
     if([sender isEqual:self.pickUpTextView])
     {
-        [self.destinationTextView resignFirstResponder];
-        self.crossButtonInDestinationTextField.hidden = YES;
-
         
-        if(self.pickUpTextView.text.length>0)
-        {
-            self.crossButtonInPicupTextField.hidden = NO;
-            
-        }
-        else
-            self.crossButtonInPicupTextField.hidden = YES;
+        [self.pickUpTextView resignFirstResponder];
+        isEditPictupText = 1;
         
     }
     else{
         
-        [self.pickUpTextView resignFirstResponder];
-        self.crossButtonInPicupTextField.hidden = YES;
-        
-        if(self.destinationTextView.text.length>0)
-        {
-            self.crossButtonInDestinationTextField.hidden = NO;
-            
-        }
-        else
-            self.crossButtonInDestinationTextField.hidden = YES;
-
+        [self.destinationTextView resignFirstResponder];
+        isEditPictupText = 0;
     }
-    [sender becomeFirstResponder];
-    
-    
 
-    [self.searchLocationTableView reloadData];
+    NSLog(@"isEditPictupText  %d",isEditPictupText);
+
+     [self.navigationController pushViewController:vc animated:YES];
    
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    
-    self.setPinPointButton.hidden = YES;
-    self.setPinPointDoneButton.hidden = YES;
-    
-    if ([textField isEqual:self.pickUpTextView]) {
-        
-        isEditPictupText = 1;
-        
-    }else if ([textField isEqual:self.destinationTextView])
-    {
-    
-        isEditPictupText = 0;
 
-    }
-    [self.searchLocationTableView reloadData];
-    
-    
-    NSLog(@"isEditPictupText  %hhd",isEditPictupText);
-    
-    return YES;
-}
-
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
-
-//    NSString *textString =[textField.text stringByReplacingCharactersInRange:range withString:string];
-// 
-//    if([textField isEqual:self.pickUpTextView] )
-//    {
-//        if(textString.length<=0)
-//        {
-//            self.crossButtonInPicupTextField.hidden = YES;
-//
-//        }
-//        else
-//        {
-//            self.crossButtonInPicupTextField.hidden = NO;
-//
-//        }
-//        
-//    }
-//    else if ([textField isEqual:self.destinationTextView])
-//    {
-//        if(textString.length <= 0)
-//        {
-//            self.crossButtonInDestinationTextField.hidden = YES;
-//        }
-//        else
-//        {
-//            self.crossButtonInDestinationTextField.hidden = NO;
-//        }
-//      
-//    }
-    self.searchLocationTableView.hidden = NO;
-    
-
-
-    
-    return YES;
-}
-
-
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    [self.pickUpTextView resignFirstResponder];
-    [self.destinationTextView resignFirstResponder];
-    
-    
-    return YES;
-}
 
 -(void)textViewDidBeginEditing:(UITextView *)textView{
  
@@ -2087,23 +1281,6 @@
 
 - (IBAction)textFieldCrossButtonAction:(UIButton*)sender {
     
-    //self.searchLocationTableView.hidden=YES;
-    
-    
-    if([sender isEqual:self.crossButtonInPicupTextField]){
-        
-        self.pickUpTextView.text = nil;
-       // self.customPicUpButton.hidden = NO;
-        
-    }else{
-        
-        self.destinationTextView.text =nil;
-        //self.customDestinationButton.hidden = NO;
-        
-    }
-    sender.hidden=YES;
-    [self.searchLocationTableView reloadData];
-
 }
 
 
@@ -2141,7 +1318,7 @@
         
         [animationTimer invalidate];
         animationTimer = nil;
-        [polylineGreen setMap:nil];
+        [polylineGray setMap:nil];
     }
     
     [self.googleMapView clear];
@@ -2210,7 +1387,7 @@
     self.locationView.hidden = NO;
     self.backButton.hidden = NO;
     
-    [self.pickUpTextView becomeFirstResponder];
+    //[self.pickUpTextView becomeFirstResponder];
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:23.8103 longitude:90.4125 zoom:16];
     
@@ -2348,6 +1525,26 @@
         [countDown invalidate];
         self.timerSupewView.hidden = YES;
         
+        self.bikeNoLabel.text = @"D-100357";
+        
+        //set label size
+        CGSize maximumLabelSize = CGSizeMake(100, FLT_MAX);
+        
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:self.bikeNoLabel.text attributes:@ {
+        NSFontAttributeName: self.bikeNoLabel.font
+        }];
+        CGRect expectedLabelSize = [attributedText boundingRectWithSize:maximumLabelSize
+                                                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                                context:nil];
+        
+        
+        CGRect newFrameforLabel=CGRectMake(0, 0, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+        
+        self.bikeNoLabel.frame=newFrameforLabel;
+        
+        //
+        
         self.driverNameLabel.text = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"name"];
         
         self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
@@ -2394,7 +1591,7 @@
         
         NSLog(@"Rider cancel the request");
         
-        self.whereToButton.hidden = NO;
+        //self.whereToButton.hidden = NO;
         //self.driverSuggestionView.hidden = YES;
         self.fareView.hidden = YES;
         
@@ -2461,24 +1658,27 @@
             
             [animationTimer invalidate];
             animationTimer = nil;
-            [polylineGreen setMap:nil];
+            [polylineGray setMap:nil];
         }
         
-        [UIView animateWithDuration:.5
-                              delay:0
-                            options: UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             
-                             
-                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
-                             
-                             
-                         }
-                         completion:^(BOOL finished){
-                             
-                             self.driverSuggestionView.hidden = YES;
-   
-                         }];
+       // self.cancelButtonHeight.constant = 0;
+        
+        
+//        [UIView animateWithDuration:.5
+//                              delay:0
+//                            options: UIViewAnimationOptionCurveEaseIn
+//                         animations:^{
+//
+//
+//                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+//
+//
+//                         }
+//                         completion:^(BOOL finished){
+//
+//                             self.driverSuggestionView.hidden = YES;
+//
+//                         }];
         
       
         
@@ -2838,10 +2038,20 @@
 
 - (IBAction)cancelReasonSubmitButtonAction:(id)sender {
     
-    self.whereToButton.hidden = NO;
+    if (animationTimer) {
+        
+        [animationTimer invalidate];
+        animationTimer = nil;
+        [polylineGray setMap:nil];
+    }
+    
+   // self.whereToButton.hidden = NO;
     self.cancelReasonView.hidden = YES;
     self.shadeView.hidden = YES;
     self.fareView.hidden = YES;
+    self.locationView.hidden = YES;
+    self.searchLocationTableView.hidden = YES;
+    
     [self.cancelReasonTextView resignFirstResponder];
     
     NSMutableDictionary* reasons=[[NSMutableDictionary alloc] init];
@@ -2917,7 +2127,7 @@
                              }
                              completion:^(BOOL finished){
                                  
-                                 self.whereToButton.hidden = NO;
+                                 //self.whereToButton.hidden = NO;
                                  
                                  self.submitFareView.hidden = YES;
                                  
@@ -2927,7 +2137,7 @@
                                      
                                      [animationTimer invalidate];
                                      animationTimer = nil;
-                                     [polylineGreen setMap:nil];
+                                     [polylineGray setMap:nil];
                                  }
                                  
                                  GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
@@ -3147,6 +2357,346 @@
     
 }
 
+-(void) dataFromSearchLocation:(NSMutableDictionary *)backDataDic{
+    
+    NSLog(@"backDataDic  %@",backDataDic);
+    
+    
+    
+    
+    if (isEditPictupText) {
+        
+        if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"0"]) {
+            
+            isSaveHomeAddress = 0;
+            isSaveWorkAddress = 0;
+            
+            NSLog(@"set pin for picup");
+            
+            self.staticPin.hidden = NO;
+            
+            self.setPinPointDoneButton.hidden = YES;
+            
+        }else if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"1"])
+        {
+            NSLog(@"home");
+            
+            NSString *homeAddress=[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]];
+            
+            if ([homeAddress length] > 0) {
+                
+                self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+                
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"pickup_latitude"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"pickup_longitude"];
+                
+                if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
+                    
+                    // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                    
+                    self.setPinPointDoneButton.hidden = NO;
+                    [UIView animateWithDuration:1.0
+                                          delay:0
+                                        options: UIViewAnimationOptionCurveEaseIn
+                                     animations:^{
+                                         
+                                         
+                                         self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                         
+                                         
+                                     }
+                                     completion:^(BOOL finished){
+                                         
+                                         
+                                     }];
+                    
+                }
+                
+            }else
+            {
+                isSaveHomeAddress = 1;
+                isSaveWorkAddress = 0;
+                
+                NSLog(@"set pin for home");
+                
+                self.staticPin.hidden = NO;
+                
+                self.setPinPointDoneButton.hidden = YES;
+                
+                
+            }
+            
+        }else if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"2"])
+        {
+            NSLog(@"work");
+            
+            NSString *workAddress=[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]];
+            
+            if ([workAddress length] > 0) {
+                
+                self.pickUpTextView.text = [NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+                
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"pickup_latitude"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"pickup_longitude"];
+                
+                if (self.destinationTextView.text.length > 0 && ![self.destinationTextView.text isEqualToString:@"(null)"]) {
+                    
+                    // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                    
+                    self.setPinPointDoneButton.hidden = NO;
+                    
+                    [UIView animateWithDuration:1.0
+                                          delay:0
+                                        options: UIViewAnimationOptionCurveEaseIn
+                                     animations:^{
+                                         
+                                         
+                                         self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                         
+                                         
+                                     }
+                                     completion:^(BOOL finished){
+                                         
+                                         
+                                     }];
+                    
+                    
+                }
+                
+            }else
+            {
+                
+                isSaveWorkAddress = 1;
+                isSaveHomeAddress = 0;
+                
+                NSLog(@"set pin for work");
+                
+                self.staticPin.hidden = NO;
+                
+                self.setPinPointDoneButton.hidden = YES;
+                
+            }
+            
+        }else{
+        
+            self.setPinPointButton.hidden = YES;
+            self.setPinPointDoneButton.hidden = YES;
+
+            
+            self.pickUpTextView.text =[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+            
+            [rideInfo setObject:[NSString stringWithFormat:@"%@", self.pickUpTextView.text] forKey:@"pickup_address"];
+            [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"pickup_latitude"];
+            [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"pickup_longitude"];
+            
+            if (self.destinationTextView.text.length > 0) {
+                
+                self.setPinPointDoneButton.hidden = NO;
+                
+                [UIView animateWithDuration:1.0
+                                      delay:0
+                                    options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
+                                     
+                                     
+                                     self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                     
+                                     
+                                 }
+                                 completion:^(BOOL finished){
+                                     
+                                     
+                                 }];
+                
+                
+                
+            }
+        }
+        
+        //set picup marker
+        
+//        if (pickUpMarker) {
+//
+//            pickUpMarker.map = nil;
+//        }
+//        pickUpMarker = [[GMSMarker alloc] init];
+//
+//        pickUpMarker.position = CLLocationCoordinate2DMake([[rideInfo objectForKey:@"pickup_latitude"] floatValue], [[rideInfo objectForKey:@"pickup_longitude"] floatValue]);
+//
+//        pickUpMarker.icon = [UIImage imageNamed:@"Pickup.png"];
+//
+//        pickUpMarker.map = self.googleMapView;
+        
+    }else{
+        
+        if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"0"]) {
+            
+            isSaveHomeAddress = 0;
+            isSaveWorkAddress = 0;
+            
+            NSLog(@"set pin for des");
+            
+            self.staticPin.hidden = NO;
+            
+            self.setPinPointDoneButton.hidden = YES;
+            
+        }else if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"1"])
+        {
+            NSLog(@"home");
+            
+
+            NSString *homeAddress=[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]];
+            
+            if ([homeAddress length] > 0) {
+                
+                self.destinationTextView.text = [NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+                
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"destination_latitude"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"destination_longitude"];
+                
+                if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
+                    
+                    // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                    
+                    self.setPinPointDoneButton.hidden = NO;
+                    [UIView animateWithDuration:1.0
+                                          delay:0
+                                        options: UIViewAnimationOptionCurveEaseIn
+                                     animations:^{
+                                         
+                                         
+                                         self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                         
+                                         
+                                     }
+                                     completion:^(BOOL finished){
+                                         
+                                         
+                                     }];
+                    
+                }
+                
+            }else
+            {
+                isSaveHomeAddress = 1;
+                isSaveWorkAddress = 0;
+                
+                NSLog(@"set pin for home");
+                
+                self.staticPin.hidden = NO;
+                
+                self.setPinPointDoneButton.hidden = YES;
+                
+            }
+            
+        }else if ([[backDataDic objectForKey:@"Index"] isEqualToString:@"2"]) {
+            
+            NSLog(@"work");
+            
+            NSString *workAddress=[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]];
+            
+            if ([workAddress length] > 0) {
+                
+                self.destinationTextView.text = [NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+                
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"destination_latitude"];
+                [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"destination_longitude"];
+                
+                if (self.pickUpTextView.text.length > 0 && ![self.pickUpTextView.text isEqualToString:@"(null)"]) {
+                    
+                    // [self getPositionOfTheMarkerForIndex:indexPath.row];
+                    
+                    self.setPinPointDoneButton.hidden = NO;
+                    
+                    [UIView animateWithDuration:1.0
+                                          delay:0
+                                        options: UIViewAnimationOptionCurveEaseIn
+                                     animations:^{
+                                         
+                                         
+                                         self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                         
+                                         
+                                     }
+                                     completion:^(BOOL finished){
+                                         
+                                         
+                                     }];
+                    
+                    
+                }
+            }else
+            {
+                
+                isSaveWorkAddress = 1;
+                isSaveHomeAddress = 0;
+                
+                NSLog(@"set pin for work");
+                
+                self.staticPin.hidden = NO;
+                
+                self.setPinPointDoneButton.hidden = YES;
+                
+            }
+            
+        }else{
+            
+           
+            
+            self.setPinPointButton.hidden = YES;
+            self.setPinPointDoneButton.hidden = YES;
+            
+            
+            self.destinationTextView.text =[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"address"]];
+            
+            [rideInfo setObject:[NSString stringWithFormat:@"%@", self.destinationTextView.text] forKey:@"destination_address"];
+            [rideInfo setObject:[NSString stringWithFormat:@"%@",[backDataDic objectForKey:@"latitude"]] forKey:@"destination_latitude"];
+            [rideInfo setObject:[NSString stringWithFormat:@"%@", [backDataDic objectForKey:@"longitude"]] forKey:@"destination_longitude"];
+            
+            if (self.pickUpTextView.text.length > 0) {
+                
+                self.setPinPointDoneButton.hidden = NO;
+                
+                [UIView animateWithDuration:1.0
+                                      delay:0
+                                    options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
+                                     
+                                     
+                                     self.setPinPointDoneButton.frame = CGRectMake(0,(self.view.frame.size.height - self.setPinPointDoneButton.frame.size.height) ,self.setPinPointDoneButton.frame.size.width,self.setPinPointDoneButton.frame.size.height);
+                                     
+                                     
+                                 }
+                                 completion:^(BOOL finished){
+                                     
+                                     
+                                 }];
+                
+                
+                
+            }
+        }
+        
+        // set destination pin
+//        if (destinationMarker) {
+//
+//            destinationMarker.map = nil;
+//        }
+//
+//        destinationMarker= [[GMSMarker alloc] init];
+//
+//        destinationMarker.position = CLLocationCoordinate2DMake([[rideInfo objectForKey:@"destination_latitude"] floatValue], [[rideInfo objectForKey:@"destination_longitude"] floatValue]);
+//
+//        destinationMarker.icon = [UIImage imageNamed:@"Destination.png"];
+//
+//        destinationMarker.map = self.googleMapView;
+    }
+    
+}
 
 - (IBAction)backButtonAction:(id)sender {
     
@@ -3154,7 +2704,7 @@
         
         [animationTimer invalidate];
         animationTimer = nil;
-        [polylineGreen setMap:nil];
+        [polylineGray setMap:nil];
     }
     
     self.backButton.hidden= YES;
@@ -3162,11 +2712,11 @@
     self.setPinPointButton.hidden = YES;
     self.setPinPointDoneButton.hidden = YES;
     
-    self.fareView.hidden = YES;
+    //self.fareView.hidden = YES;
     
-    self.whereToButton.hidden = NO;
+    //self.whereToButton.hidden = NO;
     
-    self.locationView.hidden = YES;
+    //self.locationView.hidden = YES;
     self.searchLocationTableView.hidden = YES;
     
     [self.googleMapView clear];
@@ -3174,6 +2724,7 @@
     [self.pickUpTextView resignFirstResponder];
     [self.destinationTextView resignFirstResponder];
     
+    self.destinationTextView.text = @"";
     
     GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
     
