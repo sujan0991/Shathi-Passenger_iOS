@@ -229,6 +229,10 @@
     self.phoneButtonInDriverSuggestionView.layer.cornerRadius = self.phoneButtonInDriverSuggestionView.frame.size.width / 2;
     self.phoneButtonInDriverSuggestionView.clipsToBounds = YES;
     
+    self.cameraButton.layer.cornerRadius = self.cameraButton.frame.size.width / 2;
+    self.cameraButton.clipsToBounds = YES;
+    
+    
     self.driverPhoto.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
     self.driverPhoto.clipsToBounds = YES;
 //    self.driverPhoto.layer.borderWidth = 5.0f;
@@ -239,6 +243,10 @@
     self.bikeNoLabel.layer.borderWidth = 1.0f;
     self.bikeNoLabel.layer.borderColor = [[UIColor hx_colorWithHexString:@"#262C4E"]CGColor];
 
+    self.bikeNoLabelInSibmitFareView.layer.cornerRadius = 5;
+    self.bikeNoLabelInSibmitFareView.clipsToBounds = YES;
+    self.bikeNoLabelInSibmitFareView.layer.borderWidth = 1.0f;
+    self.bikeNoLabelInSibmitFareView.layer.borderColor = [[UIColor hx_colorWithHexString:@"#262C4E"]CGColor];
     
 //    self.enterPicupButton.layer.cornerRadius = self.driverPhoto.frame.size.width / 2;
 //    self.driverPhoto.clipsToBounds = YES;
@@ -250,8 +258,7 @@
     
     self.driverPhotoInSubmitFareView.layer.cornerRadius = self.driverPhotoInSubmitFareView.frame.size.width / 2;
     self.driverPhotoInSubmitFareView.clipsToBounds = YES;
-    self.driverPhotoInSubmitFareView.layer.borderWidth = 5.0f;
-    self.driverPhotoInSubmitFareView.layer.borderColor = [[UIColor hx_colorWithHexString:@"#E9E9E9"]CGColor];
+    
     
     self.ratingLabelInSubmitFareView.layer.cornerRadius = self.ratingLabelInSubmitFareView.frame.size.width/2;
     self.ratingLabelInSubmitFareView.layer.masksToBounds= YES;
@@ -1520,15 +1527,31 @@
     
     if (notificationType == 2) {
 
+        self.cameraButton.hidden = YES;
+        self.onTripLabel.hidden = YES;
+        self.locationView.hidden = YES;
+        self.backButton.hidden = YES;
+        
         //driver found or driver accept
+        
+        if (animationTimer) {
+            
+            NSLog(@"[animationTimer invalidate]");
+            
+            [animationTimer invalidate];
+            animationTimer = nil;
+            [polylineGray setMap:nil];
+        }
+        
+        
         
         [countDown invalidate];
         self.timerSupewView.hidden = YES;
         
-        self.bikeNoLabel.text = @"D-100357";
+        self.bikeNoLabel.text = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
         
         //set label size
-        CGSize maximumLabelSize = CGSizeMake(100, FLT_MAX);
+        CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
         
         NSAttributedString *attributedText =
         [[NSAttributedString alloc] initWithString:self.bikeNoLabel.text attributes:@ {
@@ -1539,15 +1562,18 @@
                                                                 context:nil];
         
         
-        CGRect newFrameforLabel=CGRectMake(0, 0, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+        CGRect newFrameforLabel=CGRectMake(self.bikeNoLabel.frame.origin.x, self.bikeNoLabel.frame.origin.y, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
         
         self.bikeNoLabel.frame=newFrameforLabel;
+        
+        NSLog(@"self.bikeNoLabel %f",self.bikeNoLabel.frame.size.width);
         
         //
         
         self.driverNameLabel.text = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"name"];
         
         self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        self.bikeModelLabel.text = [NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
         
         phoneNo = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"phone"];
         
@@ -1594,6 +1620,8 @@
         //self.whereToButton.hidden = NO;
         //self.driverSuggestionView.hidden = YES;
         self.fareView.hidden = YES;
+        self.locationView.hidden = NO;
+        self.backButton.hidden = YES;
         
         [UIView animateWithDuration:.5
                               delay:0
@@ -1611,6 +1639,13 @@
                              
                          }];
         
+        
+        if (animationTimer) {
+            
+            [animationTimer invalidate];
+            animationTimer = nil;
+            [polylineGray setMap:nil];
+        }
         
         [self.googleMapView clear];
         
@@ -1647,7 +1682,7 @@
         
     }else if (notificationType == 5){
         
-        NSLog(@"ride steat");
+        NSLog(@"ride start");
         
         [timerForRiderPosition invalidate];
         
@@ -1661,27 +1696,13 @@
             [polylineGray setMap:nil];
         }
         
-       // self.cancelButtonHeight.constant = 0;
-        
-        
-//        [UIView animateWithDuration:.5
-//                              delay:0
-//                            options: UIViewAnimationOptionCurveEaseIn
-//                         animations:^{
-//
-//
-//                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
-//
-//
-//                         }
-//                         completion:^(BOOL finished){
-//
-//                             self.driverSuggestionView.hidden = YES;
-//
-//                         }];
-        
-      
-        
+
+        self.onTripLabel.hidden = NO;
+        self.cancelButtonHeight.constant = 0;
+        self.phoneButtonInDriverSuggestionView.hidden = YES;
+        self.cameraButton.hidden = NO;
+        self.locationView.hidden = YES;
+        self.backButton.hidden = YES;
       
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil
                                                                        message:@""
@@ -1698,8 +1719,10 @@
         int duration = 2; // duration in seconds
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            
             [alert dismissViewControllerAnimated:YES completion:nil];
         });
+        
         
         
         
@@ -1707,10 +1730,51 @@
         
          NSLog(@"trip end");
         
+                [UIView animateWithDuration:.5
+                                      delay:0
+                                    options: UIViewAnimationOptionCurveEaseIn
+                                 animations:^{
         
-        self.driverNameLabel.text = [[[jsonDict objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"name"];
-        //self.bikeModelLabelInSubmitFareView.text =[[[[jsonDict objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
-        self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        
+                                     self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+        
+        
+                                 }
+                                 completion:^(BOOL finished){
+        
+                                     self.driverSuggestionView.hidden = YES;
+        
+                                 }];
+        
+        self.destinationTextView.text = @"";
+        self.locationView.hidden = YES;
+        self.backButton.hidden = YES;
+        
+        self.bikeNoLabelInSibmitFareView.text = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+        
+        //set label size
+        CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
+        
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:self.bikeNoLabelInSibmitFareView.text attributes:@ {
+        NSFontAttributeName: self.bikeNoLabelInSibmitFareView.font
+        }];
+        CGRect expectedLabelSize = [attributedText boundingRectWithSize:maximumLabelSize
+                                                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                                context:nil];
+        
+        
+        CGRect newFrameforLabel=CGRectMake(self.bikeNoLabelInSibmitFareView.frame.origin.x, self.bikeNoLabelInSibmitFareView.frame.origin.y, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+        
+        self.bikeNoLabelInSibmitFareView.frame=newFrameforLabel;
+        
+        NSLog(@"self.bikeNoLabel %f",self.bikeNoLabel.frame.size.width);
+        
+        //
+        
+        self.driverNameLabelInSubmitFareView.text = [[[jsonDict objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"name"];
+        self.bikeModelLabelInSubmitFareView.text = [NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
+        self.ratingLabelInSubmitFareView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
         self.rideCostLabel.text =[NSString stringWithFormat:@"%@", [[[jsonDict objectForKey:@"data" ]objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
         
         [self performSelector:@selector(showSubmitFareView) withObject:self afterDelay:1.0 ];
@@ -1757,6 +1821,8 @@
         
     }else if (notificationType == 8){
         
+
+        
         [countDown invalidate];
         self.timerSupewView.hidden = YES;
         
@@ -1782,6 +1848,33 @@
         });
         
        
+        
+        if (animationTimer) {
+            
+            [animationTimer invalidate];
+            animationTimer = nil;
+            [polylineGray setMap:nil];
+        }
+        
+        self.backButton.hidden= YES;
+        self.staticPin.hidden =YES;
+        self.setPinPointButton.hidden = YES;
+        self.setPinPointDoneButton.hidden = YES;
+        self.locationView.hidden = NO;
+        
+        self.searchLocationTableView.hidden = YES;
+        
+        [self.googleMapView clear];
+        
+        [self.pickUpTextView resignFirstResponder];
+        [self.destinationTextView resignFirstResponder];
+        
+        self.destinationTextView.text = @"";
+        
+        GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
+        
+        [self.googleMapView animateToCameraPosition:camera];
+        
         
         NSLog(@"rider not found");
         
@@ -1967,6 +2060,11 @@
     
     }
 }
+- (IBAction)cameraButtonAction:(id)sender {
+    
+}
+
+
 - (IBAction)cancelRideButtonAction:(id)sender {
     
     [countDown invalidate];
@@ -2049,10 +2147,13 @@
     self.cancelReasonView.hidden = YES;
     self.shadeView.hidden = YES;
     self.fareView.hidden = YES;
-    self.locationView.hidden = YES;
+    
     self.searchLocationTableView.hidden = YES;
     
     [self.cancelReasonTextView resignFirstResponder];
+    
+    self.destinationTextView.text = @"";
+    
     
     NSMutableDictionary* reasons=[[NSMutableDictionary alloc] init];
     
@@ -2129,7 +2230,9 @@
                                  
                                  //self.whereToButton.hidden = NO;
                                  
+                                 self.locationView.hidden = NO;
                                  self.submitFareView.hidden = YES;
+                                 self.backButton.hidden = YES;
                                  
                                  [self.googleMapView clear];
                                  
@@ -2216,8 +2319,30 @@
         
         [self reSetViewWhenActive:info];
         
+        self.bikeNoLabel.text = [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+        
+        //set label size
+        CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
+        
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:self.bikeNoLabel.text attributes:@ {
+        NSFontAttributeName: self.bikeNoLabel.font
+        }];
+        CGRect expectedLabelSize = [attributedText boundingRectWithSize:maximumLabelSize
+                                                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                                context:nil];
+        
+        
+        CGRect newFrameforLabel=CGRectMake(self.bikeNoLabel.frame.origin.x, self.bikeNoLabel.frame.origin.y, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+        
+        self.bikeNoLabel.frame=newFrameforLabel;
+
+        //
+        
+        
         self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
-       // self.ratingInDriverSuggestionView.text = [[[[jsonDict objectForKey:@"rider_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"];
+        self.ratingInDriverSuggestionView.text =[NSString stringWithFormat:@"%@", [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        self.bikeModelLabel.text = [NSString stringWithFormat:@"%@",[[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
         
         phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
         
@@ -2236,6 +2361,19 @@
         
        if (self.driverSuggestionView.isHidden) {
            
+           self.onTripLabel.hidden = YES;
+           self.phoneButtonInDriverSuggestionView.hidden = NO;
+           self.cameraButton.hidden = YES;
+           self.locationView.hidden = YES;
+           self.backButton.hidden = YES;
+           
+           if (animationTimer) {
+               
+               [animationTimer invalidate];
+               animationTimer = nil;
+               [polylineGray setMap:nil];
+           }
+           
          [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
            
        }
@@ -2252,12 +2390,56 @@
         
         NSLog(@"ride info in when status 3 %@",rideInfo);
         
-//        if (animationTimer) {
-//
-//            [animationTimer invalidate];
-//            animationTimer = nil;
-//            [polylineGreen setMap:nil];
-//        }
+        self.bikeNoLabel.text = [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+
+        //set label size
+        CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
+
+        NSAttributedString *attributedText =
+        [[NSAttributedString alloc] initWithString:self.bikeNoLabel.text attributes:@ {
+        NSFontAttributeName: self.bikeNoLabel.font
+        }];
+        CGRect expectedLabelSize = [attributedText boundingRectWithSize:maximumLabelSize
+                                                                options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                                context:nil];
+
+
+        CGRect newFrameforLabel=CGRectMake(self.bikeNoLabel.frame.origin.x, self.bikeNoLabel.frame.origin.y, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+
+        self.bikeNoLabel.frame=newFrameforLabel;
+        
+        
+        
+        //
+        
+        self.driverNameLabel.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
+        self.ratingInDriverSuggestionView.text = [NSString stringWithFormat:@"%@", [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        self.bikeModelLabel.text = [NSString stringWithFormat:@"%@",[[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
+        
+        phoneNo = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"phone"];
+        
+        riderId = [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"id"]intValue];
+        
+        if (self.driverSuggestionView.isHidden) {
+            
+            self.onTripLabel.hidden = NO;
+            self.cancelButtonHeight.constant = 0;
+            self.phoneButtonInDriverSuggestionView.hidden = YES;
+            self.cameraButton.hidden = NO;
+            self.locationView.hidden = YES;
+            self.backButton.hidden = YES;
+            
+            if (animationTimer) {
+                
+                [animationTimer invalidate];
+                animationTimer = nil;
+                [polylineGray setMap:nil];
+            }
+            
+            [self performSelector:@selector(showDriverSuggestionView) withObject:self afterDelay:1.0 ];
+            
+        }
+        
         
         
     }else if (status == 4){
@@ -2268,7 +2450,30 @@
         
         if(self.submitFareView.isHidden){
             
+            self.bikeNoLabelInSibmitFareView.text = [[[[info objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+            
+            //set label size
+            CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
+            
+            NSAttributedString *attributedText =
+            [[NSAttributedString alloc] initWithString:self.bikeNoLabelInSibmitFareView.text attributes:@ {
+            NSFontAttributeName: self.bikeNoLabelInSibmitFareView.font
+            }];
+            CGRect expectedLabelSize = [attributedText boundingRectWithSize:maximumLabelSize
+                                                                    options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+                                                                    context:nil];
+            
+            
+            CGRect newFrameforLabel=CGRectMake(self.bikeNoLabelInSibmitFareView.frame.origin.x, self.bikeNoLabelInSibmitFareView.frame.origin.y, expectedLabelSize.size.width+20, expectedLabelSize.size.height);
+            
+            self.bikeNoLabelInSibmitFareView.frame=newFrameforLabel;
+            
+            NSLog(@"self.bikeNoLabel %f",self.bikeNoLabel.frame.size.width);
+            
+            //
+            
             self.driverSuggestionView.hidden = YES;
+            self.backButton.hidden = YES;
             
             self.driverNameLabelInSubmitFareView.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
             self.bikeModelLabelInSubmitFareView.text = [[[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
@@ -2716,7 +2921,7 @@
     
     //self.whereToButton.hidden = NO;
     
-    //self.locationView.hidden = YES;
+    self.locationView.hidden = NO;
     self.searchLocationTableView.hidden = YES;
     
     [self.googleMapView clear];

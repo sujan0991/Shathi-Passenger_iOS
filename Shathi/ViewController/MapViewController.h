@@ -62,6 +62,8 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *cancelButtonHeight;
 @property (weak, nonatomic) IBOutlet UILabel *estimatedTimeLabelInDriverView;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabelInDriverView;
+@property (weak, nonatomic) IBOutlet UIButton *cameraButton;
+@property (weak, nonatomic) IBOutlet UILabel *onTripLabel;
 
 
 @property (weak, nonatomic) IBOutlet UIView *submitFareView;
@@ -72,6 +74,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *rideCostLabel;
 @property (weak, nonatomic) IBOutlet UIButton *submitButton;
 @property (weak, nonatomic) IBOutlet UILabel *ratingLabelInSubmitFareView;
+@property (weak, nonatomic) IBOutlet UILabel *bikeNoLabelInSibmitFareView;
 
 
 

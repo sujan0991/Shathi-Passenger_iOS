@@ -92,11 +92,20 @@
     self.pickupLocationLabel.text = [singleRide objectForKey:@"pickup_address"];
     self.destinationLabel.text = [singleRide objectForKey:@"destination_address"];
 
+    NSMutableDictionary *detailDic = [[NSMutableDictionary alloc]init];
+    detailDic = [singleRide objectForKey:@"detail"];
+    
+    NSString *wayPoints = [detailDic objectForKey:@"encrypted_waypoints"];
+    
+    NSLog(@"encrypted_waypoints %@",wayPoints);
+    
     NSString *bal = @"%7C";
 
-    NSString *urlString =[NSString stringWithFormat:@"http://maps.google.com/maps/api/staticmap?size=350x200&maptype=roadmap&markers=size:mid%@color:purple%@label:P%@%f,%f&markers=size:mid%@color:red%@label:D%@%f,%f",bal,bal,bal,[[singleRide objectForKey:@"pickup_latitude"] floatValue],[[singleRide objectForKey:@"pickup_longitude"] floatValue],bal,bal,bal,[[singleRide objectForKey:@"destination_latitude"] floatValue], [[singleRide objectForKey:@"destination_longitude"] floatValue]];
+    NSString *urlString =[NSString stringWithFormat:@"http://maps.google.com/maps/api/staticmap?size=350x200&path=enc:%@&maptype=roadmap&markers=size:mid%@color:purple%@label:P%@%f,%f&markers=size:mid%@color:red%@label:D%@%f,%f",wayPoints,bal,bal,bal,[[singleRide objectForKey:@"pickup_latitude"] floatValue],[[singleRide objectForKey:@"pickup_longitude"] floatValue],bal,bal,bal,[[singleRide objectForKey:@"destination_latitude"] floatValue], [[singleRide objectForKey:@"destination_longitude"] floatValue]];
 
     urlString = [urlString stringByAppendingString:@"&key=AIzaSyDh0V-13fNhKpvJaMF-kvfTFEE-tpOZJJk"];
+    
+    NSLog(@"urlString %@",urlString);
 
     self.staticMap.image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:urlString]]];
 

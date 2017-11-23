@@ -55,6 +55,7 @@
     
     [[ServerManager sharedManager] getHistoryInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
         
+       
         
         if ( responseObject!=nil) {
             
@@ -100,6 +101,14 @@
     for (int i = 0; i<historyArray.count; i++) {
         
         singleRide = [historyArray objectAtIndex:i];
+        
+        NSMutableDictionary *detailDic = [[NSMutableDictionary alloc]init];
+        detailDic = [singleRide objectForKey:@"detail"];
+        
+        NSString *wayPoints = [detailDic objectForKey:@"encrypted_waypoints"];
+        
+        NSLog(@"encrypted_waypoints %@",wayPoints);
+        
         
         NSString *bal = @"%7C";
         
