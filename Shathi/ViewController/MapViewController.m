@@ -275,7 +275,7 @@
     
     [UIView animateWithDuration:2.5
                           delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionTransitionNone
                      animations:^{
                          
                          CGRect frame = self.locationView.frame;
@@ -764,8 +764,18 @@
                                                          
                                                          if (isCalculateFare) {
                                                          
-                                                             [self calculateFare];
-                                                              NSLog(@"calculateFare");
+                                                             if (totalDistance > 0) {
+                                                                 
+                                                                 [self calculateFare];
+                                                                 NSLog(@"calculateFare");
+                                                                 
+                                                             }else{
+                                                                 
+                                                                 NSLog(@"try again");
+                                                             }
+                                                             
+                                                             
+                                                             
                                                                  
                                                           }else{
                                                          
@@ -780,7 +790,7 @@
 
 -(void)animate:(GMSPath *)path {
 
-    NSLog(@"i  %d",i);
+   // NSLog(@"i  %d",i);
     
     dispatch_async(dispatch_get_main_queue(), ^{
         if (i < path.count) {
@@ -1218,7 +1228,7 @@
 
     [UIView animateWithDuration:.5
                           delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionTransitionNone
                      animations:^{
                          
                          
@@ -1437,30 +1447,36 @@
         }
     }];
     
-    [UIView animateWithDuration:.5
-                          delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         
-                         
-                         self.fareView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
-                         
-                         
-                     }
-                     completion:^(BOOL finished){
-                         
-                         self.fareView.hidden = YES;
-                         self.timerSupewView.hidden = NO;
-                         
-                         countDown =  [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(continuoousripples) userInfo:nil repeats:YES];
-                         
-                         self.endTime = [NSDate dateWithTimeIntervalSinceNow:60.0f];
-                         
-
-
-
-                         
-                     }];
+    self.timerSupewView.hidden = NO;
+    
+    countDown =  [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(continuoousripples) userInfo:nil repeats:YES];
+    
+    self.endTime = [NSDate dateWithTimeIntervalSinceNow:60.0f];
+    
+//    [UIView animateWithDuration:.5
+//                          delay:0
+//                        options: UIViewAnimationOptionTransitionNone
+//                     animations:^{
+//
+//
+//                         self.fareView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+//
+//
+//                     }
+//                     completion:^(BOOL finished){
+//
+//                         self.fareView.hidden = YES;
+//                         self.timerSupewView.hidden = NO;
+//
+//                         countDown =  [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(continuoousripples) userInfo:nil repeats:YES];
+//
+//                         self.endTime = [NSDate dateWithTimeIntervalSinceNow:60.0f];
+//
+//
+//
+//
+//
+//                     }];
     
 
     
@@ -1500,6 +1516,10 @@
             
             
             self.timerSupewView.hidden = YES;
+            
+            
+            
+            
         }
         
 
@@ -1622,14 +1642,15 @@
         self.fareView.hidden = YES;
         self.locationView.hidden = NO;
         self.backButton.hidden = YES;
+        self.destinationTextView.text = @"";
         
         [UIView animateWithDuration:.5
                               delay:0
-                            options: UIViewAnimationOptionCurveEaseIn
+                            options: UIViewAnimationOptionTransitionNone
                          animations:^{
                              
                              
-                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+                             self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, self.driverSuggestionView.frame.size.height);
                              
                              
                          }
@@ -1673,6 +1694,7 @@
         int duration = 2; // duration in seconds
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            
             [alert dismissViewControllerAnimated:YES completion:nil];
         });
         
@@ -1732,11 +1754,11 @@
         
                 [UIView animateWithDuration:.5
                                       delay:0
-                                    options: UIViewAnimationOptionCurveEaseIn
+                                    options: UIViewAnimationOptionTransitionNone
                                  animations:^{
         
         
-                                     self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
+                                     self.driverSuggestionView.frame = CGRectMake(0,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, self.driverSuggestionView.frame.size.height);
         
         
                                  }
@@ -1750,7 +1772,9 @@
         self.locationView.hidden = YES;
         self.backButton.hidden = YES;
         
-        self.bikeNoLabelInSibmitFareView.text = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+        self.bikeNoLabelInSibmitFareView.text = [[[[jsonDict objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_number"];
+        
+        NSLog(@"self.bikeNoLabelInSibmitFareView.text  %@",self.bikeNoLabelInSibmitFareView.text);
         
         //set label size
         CGSize maximumLabelSize = CGSizeMake(80, FLT_MAX);
@@ -1773,8 +1797,8 @@
         //
         
         self.driverNameLabelInSubmitFareView.text = [[[jsonDict objectForKey:@"data" ]objectForKey:@"rider" ] objectForKey:@"name"];
-        self.bikeModelLabelInSubmitFareView.text = [NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
-        self.ratingLabelInSubmitFareView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
+        self.bikeModelLabelInSubmitFareView.text = [NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"bike_model"]];
+        self.ratingLabelInSubmitFareView.text =[NSString stringWithFormat:@"%@",[[[[jsonDict objectForKey:@"data" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]objectForKey:@"rating_avg"]];
         self.rideCostLabel.text =[NSString stringWithFormat:@"%@", [[[jsonDict objectForKey:@"data" ]objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
         
         [self performSelector:@selector(showSubmitFareView) withObject:self afterDelay:1.0 ];
@@ -1856,7 +1880,7 @@
             [polylineGray setMap:nil];
         }
         
-        self.backButton.hidden= YES;
+        self.backButton.hidden= NO;
         self.staticPin.hidden =YES;
         self.setPinPointButton.hidden = YES;
         self.setPinPointDoneButton.hidden = YES;
@@ -1869,7 +1893,7 @@
         [self.pickUpTextView resignFirstResponder];
         [self.destinationTextView resignFirstResponder];
         
-        self.destinationTextView.text = @"";
+        //self.destinationTextView.text = @"";
         
         GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:currentLocation.latitude longitude:currentLocation.longitude zoom:16];
         
@@ -1955,7 +1979,7 @@
     
     [UIView animateWithDuration:.5
                           delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionTransitionNone
                      animations:^{
                          
                          
@@ -1980,7 +2004,7 @@
     
     [UIView animateWithDuration:.5
                           delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionTransitionNone
                      animations:^{
                          
                          
@@ -2107,11 +2131,11 @@
     
        [UIView animateWithDuration:.5
                           delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
+                        options: UIViewAnimationOptionTransitionNone
                      animations:^{
                          
                          
-                         self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, 0);
+                         self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, self.driverSuggestionView.frame.size.height);
                          
                          
                      }
@@ -2218,11 +2242,11 @@
             
             [UIView animateWithDuration:.5
                                   delay:0
-                                options: UIViewAnimationOptionCurveEaseIn
+                                options: UIViewAnimationOptionTransitionNone
                              animations:^{
                                  
                                  
-                                 self.submitFareView.frame = CGRectMake(20,self.view.frame.size.height ,self.submitFareView.frame.size.width, 0);
+                                 self.submitFareView.frame = CGRectMake(20,self.view.frame.size.height ,self.submitFareView.frame.size.width, self.submitFareView.frame.size.height);
                                  
                                  
                              }
@@ -2603,7 +2627,7 @@
                     self.setPinPointDoneButton.hidden = NO;
                     [UIView animateWithDuration:1.0
                                           delay:0
-                                        options: UIViewAnimationOptionCurveEaseIn
+                                        options: UIViewAnimationOptionTransitionNone
                                      animations:^{
                                          
                                          
@@ -2654,7 +2678,7 @@
                     
                     [UIView animateWithDuration:1.0
                                           delay:0
-                                        options: UIViewAnimationOptionCurveEaseIn
+                                        options: UIViewAnimationOptionTransitionNone
                                      animations:^{
                                          
                                          
@@ -2702,7 +2726,7 @@
                 
                 [UIView animateWithDuration:1.0
                                       delay:0
-                                    options: UIViewAnimationOptionCurveEaseIn
+                                    options: UIViewAnimationOptionTransitionNone
                                  animations:^{
                                      
                                      
@@ -2769,7 +2793,7 @@
                     self.setPinPointDoneButton.hidden = NO;
                     [UIView animateWithDuration:1.0
                                           delay:0
-                                        options: UIViewAnimationOptionCurveEaseIn
+                                        options: UIViewAnimationOptionTransitionNone
                                      animations:^{
                                          
                                          
@@ -2819,7 +2843,7 @@
                     
                     [UIView animateWithDuration:1.0
                                           delay:0
-                                        options: UIViewAnimationOptionCurveEaseIn
+                                        options: UIViewAnimationOptionTransitionNone
                                      animations:^{
                                          
                                          
@@ -2868,7 +2892,7 @@
                 
                 [UIView animateWithDuration:1.0
                                       delay:0
-                                    options: UIViewAnimationOptionCurveEaseIn
+                                    options: UIViewAnimationOptionTransitionNone
                                  animations:^{
                                      
                                      
@@ -2937,39 +2961,47 @@
    
     
     
+//    if (!self.fareView.isHidden) {
+//
+//        [UIView animateWithDuration:.5
+//                              delay:0
+//                            options: UIViewAnimationOptionTransitionNone
+//                         animations:^{
+//
+//
+//                             self.fareView.frame = CGRectMake(20,self.fareView.frame.size.height ,self.fareView.frame.size.width, 0);
+//
+//
+//                         }
+//                         completion:^(BOOL finished){
+    
+                             self.fareView.hidden = YES;
+                             
+                        // }];
+        
+//    }
     
     
-    [UIView animateWithDuration:.5
-                          delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         
-                         
-                         self.fareView.frame = CGRectMake(0,self.view.frame.size.height ,self.fareView.frame.size.width, 0);
-                         
-                         
-                     }
-                     completion:^(BOOL finished){
-                         
-                         self.fareView.hidden = YES;
-                         
-                     }];
+    if (!self.driverSuggestionView.isHidden) {
+        
+        [UIView animateWithDuration:.5
+                              delay:0
+                            options: UIViewAnimationOptionTransitionNone
+                         animations:^{
+                             
+                             
+                             self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, self.driverSuggestionView.frame.size.height);
+                             
+                             
+                         }
+                         completion:^(BOOL finished){
+                             
+                             self.driverSuggestionView.hidden = YES;
+                             
+                         }];
+    }
     
-    [UIView animateWithDuration:.5
-                          delay:0
-                        options: UIViewAnimationOptionCurveEaseIn
-                     animations:^{
-                         
-                         
-                         self.driverSuggestionView.frame = CGRectMake(20,self.view.frame.size.height ,self.driverSuggestionView.frame.size.width, 0);
-                         
-                         
-                     }
-                     completion:^(BOOL finished){
-                         
-                         self.driverSuggestionView.hidden = YES;
-                         
-                     }];
+   
     
     
 }

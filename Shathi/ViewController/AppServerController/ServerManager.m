@@ -361,7 +361,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
                         dispatch_async(dispatch_get_main_queue(), ^{
                             
 
-                            NSLog(@"requset ride return %@",responseDictionary);
+                           // NSLog(@"requset ride return %@",responseDictionary);
                             
                             completion(TRUE,[responseDictionary mutableCopy]);
                             
