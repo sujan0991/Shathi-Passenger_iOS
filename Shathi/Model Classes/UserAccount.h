@@ -14,7 +14,7 @@
 @interface UserAccount : NSObject
 
 @property (nonatomic) int userId;
-
+@property (nonatomic) int userStatus;
 
 @property (nonatomic,strong) NSString *name;
 @property (nonatomic, strong) NSString *lastName;

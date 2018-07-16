@@ -232,11 +232,14 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
         if ( responseObject!=nil) {
             
             
-            NSLog(@"user info %@",responseObject);
+            NSLog(@"user info applicationDidBecomeActive%@",responseObject);
             
             int status = [[responseObject objectForKey:@"status"]intValue];
             
-            NSLog(@"status %d",status);
+            
+            [UserAccount sharedManager].userStatus = status;
+            
+            NSLog(@"[UserAccount sharedManager].status %d",[UserAccount sharedManager].userStatus);
             
             if (status != 1) {
 

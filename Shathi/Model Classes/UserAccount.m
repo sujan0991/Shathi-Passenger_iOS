@@ -44,6 +44,18 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(UserAccount)
     [self.userDefaults synchronize];
 }
 
+-(int)userStatus{
+    
+    return [[self.userDefaults stringForKey:@"userStatus"] intValue];
+    
+}
+
+- (void)setUserStatus:(int)value
+{
+    [self.userDefaults setInteger:value forKey:@"userStatus"];
+    [self.userDefaults synchronize];
+}
+
 
 -(NSString*) isLoggedIn
 {

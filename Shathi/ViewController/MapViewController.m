@@ -146,6 +146,39 @@
 - (void)viewWillAppear:(BOOL)animated
 {
 
+    if ([UserAccount sharedManager].userStatus == 1) {
+        
+        NSMutableDictionary* dataDic=[[NSMutableDictionary alloc] init];
+        
+        
+        
+        [dataDic setObject:[NSString stringWithFormat:@"%f", currentLocation.latitude] forKey:@"current_latitude"];
+        [dataDic setObject:[NSString stringWithFormat:@"%f", currentLocation.longitude] forKey:@"current_longitude"];
+        
+        NSLog(@"dataDic %@",dataDic);
+
+        
+        [[ServerManager sharedManager] getAvailableRider:dataDic WithCompletion :^(BOOL success, NSMutableDictionary *responseObject) {
+            
+            
+            if ( responseObject!=nil) {
+                
+                NSLog(@"available rider  %@",responseObject);
+                
+                
+            }else{
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    NSLog(@"no user info");
+                    
+                    
+                });
+                
+            }
+        }];
+        
+    }
     
 }
 
@@ -1597,11 +1630,15 @@
         
         phoneNo = [[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"phone"];
         
+        
+        
         NSString * riderlat =[[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"current_latitude"];
         NSString * riderlong = [[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"current_longitude"];
         
          NSLog(@"rider_metadata %@",[[[jsonDict objectForKey:@"ride_info" ] objectForKey:@"rider"] objectForKey:@"rider_metadata"]);
 
+       // [self riderPositionWithLat:riderlat andLong:riderlong];
+        
         CLLocation *passengerLocation = [[CLLocation alloc] initWithLatitude:[[rideInfo objectForKey:@"pickup_latitude"] floatValue] longitude:[[rideInfo objectForKey:@"pickup_longitude"] floatValue]];
         CLLocation *riderLocation = [[CLLocation alloc] initWithLatitude:[riderlat floatValue] longitude:[riderlong floatValue]];
         
@@ -1915,6 +1952,8 @@
     }
     
 }
+
+
 
 -(void)driverCurrentPosition{
     
@@ -2498,7 +2537,7 @@
             
             self.driverSuggestionView.hidden = YES;
             self.backButton.hidden = YES;
-            
+            self.locationView.hidden = YES;
             self.driverNameLabelInSubmitFareView.text = [[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"name"];
             self.bikeModelLabelInSubmitFareView.text = [[[[info objectForKey:@"data" ]objectForKey:@"rider"] objectForKey:@"rider_metadata"] objectForKey:@"bike_model"];
             self.rideCostLabel.text =[NSString stringWithFormat:@"%@", [[[info objectForKey:@"data" ]objectForKey:@"detail"] objectForKey:@"total_payable_fare"]];
@@ -2532,7 +2571,7 @@
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_latitude"] forKey:@"destination_latitude"];
     [rideInfo setObject:[[info objectForKey:@"data"]objectForKey:@"destination_longitude"] forKey:@"destination_longitude"];
     
-    NSLog(@"ride info in when status  %@",rideInfo);
+    //NSLog(@"ride info in when status  %@",rideInfo);
     
     
     

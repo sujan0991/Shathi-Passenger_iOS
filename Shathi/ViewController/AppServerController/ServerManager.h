@@ -78,4 +78,9 @@ typedef void (^api_Completion_Handler_Status_String)(BOOL success, NSString* res
 //get rider current position
 - (void)getRiderPosition:(NSDictionary*)dataDic WithCompletion:(api_Completion_Handler_Data)completion;
 
+
+//get all available riders from a users location
+
+- (void)getAvailableRider:(NSDictionary*)dataDic WithCompletion:(api_Completion_Handler_Data)completion;
+
 @end
