@@ -12,15 +12,24 @@
 #import "EditPrifileViewController.h"
 #import "PromotionsViewController.h"
 #import "UserAccount.h"
+#import "ServerManager.h"
+#import "NSDictionary+NullReplacement.h"
+#import "Constants.h"
+#import "RideHistoryViewController.h"
+#import "JTMaterialSpinner.h"
+#import "SetHomeAndWorkViewController.h"
+
 
 @interface SettingViewController (){
 
+    JTMaterialSpinner *spinner;
+    
     AKFAccountKit *accountKit;
     
     NSArray *settingList;
     NSArray *imageArray;
 
-
+    NSDictionary * userInfo;
 }
 
 @end
@@ -36,10 +45,24 @@
     }
     [self setUpView];
     [self drawShadow:self.navView];
+    
+    spinner=[[JTMaterialSpinner alloc] initWithFrame:CGRectMake(self.view.frame.size.width/2 - 17, self.view.frame.size.height/2 - 17, 35, 35)];
+    [self.view bringSubviewToFront:spinner];
+    [self.view addSubview:spinner];
+    spinner.hidden =YES;
+    
+    self.settingTableView.estimatedRowHeight = 50.0;
+    self.settingTableView.rowHeight = UITableViewAutomaticDimension;
+    
+    
 
 }
 
-
+-(void) viewWillAppear:(BOOL)animated{
+    
+    [self getUserInfo];
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -62,18 +85,21 @@
     self.settingTableView.dataSource = self;
     
     
-    settingList = [[NSArray alloc] initWithObjects:@"Free Rides",@"Payment",@"Promotions",@"Language",@"Support",@"History",@"About",@"Logout", nil];
+//    settingList = [[NSArray alloc] initWithObjects:@"Free Rides",@"Payment",@"Promotions",@"Language",@"Support",@"History",@"About",@"Logout", nil];
     
-    UIImage *image1 = [UIImage imageNamed:@"free_ride"];
-    UIImage *image2 = [UIImage imageNamed:@"Payment"];
-    UIImage *image3 = [UIImage imageNamed:@"Promotions"];
+    settingList = [[NSArray alloc] initWithObjects:@"Language",@"History",@"About",@"Logout", nil];
+    
+//    UIImage *image1 = [UIImage imageNamed:@"free_ride"];
+//    UIImage *image2 = [UIImage imageNamed:@"Payment"];
+//    UIImage *image3 = [UIImage imageNamed:@"Promotions"];
     UIImage *image4 = [UIImage imageNamed:@"Language"];
-    UIImage *image5 = [UIImage imageNamed:@"Support"];
+   // UIImage *image5 = [UIImage imageNamed:@"Support"];
     UIImage *image6 = [UIImage imageNamed:@"History"];
     UIImage *image7 = [UIImage imageNamed:@"about"];
     UIImage *image8 = [UIImage imageNamed:@"logout"];
 
-    imageArray = [[NSArray alloc] initWithObjects:image1,image2,image3,image4,image5,image6,image7,image8, nil];
+    //imageArray = [[NSArray alloc] initWithObjects:image1,image2,image3,image4,image5,image6,image7,image8, nil];
+    imageArray = [[NSArray alloc] initWithObjects:image4,image6,image7,image8, nil];
 
 
 }
@@ -90,11 +116,83 @@
 }
 
 
+
+
+
 #pragma mark - UITableView DataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    
+    return 3;
+}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return settingList.count;
+    if (section == 0) {
+        
+        return 1;
+        
+    }else if (section == 1) {
+        
+        return 1;
+        
+    }else
+        
+        return settingList.count;
+        
+    
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 20.0f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    if (section == 2) {
+        
+        UIView *firstView = [[UIView  alloc] init];
+        
+        firstView.backgroundColor =[UIColor lightGrayColor];
+        
+        return firstView;
+        
+    }else{
+        
+        UIView *othersView = [[UIView  alloc] init];
+        othersView.backgroundColor =[UIColor lightGrayColor];
+        
+        
+        UILabel *headerLabel = [[UILabel alloc]initWithFrame:CGRectMake(30, 0, 300, 20)];
+        //headerLabel.font = [UIFont fontWithName:@"AzoSans-Regular" size:12];
+        headerLabel.numberOfLines = 1;
+        headerLabel.baselineAdjustment = UIBaselineAdjustmentAlignBaselines; // or UIBaselineAdjustmentAlignCenters, or UIBaselineAdjustmentNone
+        headerLabel.adjustsFontSizeToFitWidth = YES;
+        headerLabel.adjustsLetterSpacingToFitWidth = YES;
+        headerLabel.textColor = [UIColor blackColor];
+        
+        if (section == 0) {
+            
+            headerLabel.text = @"Home";
+            headerLabel.font = [UIFont systemFontOfSize:13.0];
+            
+        }else if (section == 1){
+            
+            headerLabel.text = @"Work";
+            headerLabel.font = [UIFont systemFontOfSize:13.0];
+            
+        }
+        
+        [othersView addSubview:headerLabel];
+        
+        return othersView;
+        
+    }
+    
+    return nil;
+    
+    
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -109,13 +207,37 @@
     
     UIImageView *settingIcon = (UIImageView*) [cell viewWithTag:1];
     
-    settingIcon.image=[imageArray objectAtIndex:indexPath.row];
-    
+    if (indexPath.section == 0)
+    {
+        
+        settingIcon.image = [UIImage imageNamed:@"home.png"];
+        
+    }else if (indexPath.section == 1){
+        
+        settingIcon.image = [UIImage imageNamed:@"work.png"];
+        
+    }else{
+        
+       settingIcon.image=[imageArray objectAtIndex:indexPath.row];
+    }
     
     UILabel *settingOption= (UILabel*) [cell viewWithTag:2];
     
-    
-    settingOption.text =[NSString stringWithFormat:@"%@",[settingList objectAtIndex:indexPath.row]];
+    if (indexPath.section == 0)
+    {
+        NSString *homeAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]];
+        settingOption.text =[ [userInfo objectForKey:@"metadata"]objectForKey:@"home_address_title"]? homeAddress : @"Home address"  ;
+        
+    }else if (indexPath.section == 1){
+        
+        NSString *workAddress=[NSString stringWithFormat:@"%@",[[userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]];
+        settingOption.text =[ [userInfo objectForKey:@"metadata"]objectForKey:@"work_address_title"]? workAddress : @"Work address"  ;
+        
+    }else{
+        
+        settingOption.text =[NSString stringWithFormat:@"%@",[settingList objectAtIndex:indexPath.row]];
+        
+    }
     
     
     
@@ -126,39 +248,124 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
-    if (indexPath.row == 0)
+    if (indexPath.section == 0)
     {
         
+        SetHomeAndWorkViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SetHomeAndWorkViewController"];
         
-    }else if (indexPath.row ==2)
-    {
-        PromotionsViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"PromotionsViewController"];
+        vc.isSaveHomeAddress = 1;
         
-        [self presentViewController:vc animated:YES completion:nil];
+        [self.navigationController pushViewController:vc animated:YES];
         
-    }else if (indexPath.row ==7)
-    {
-    
-       [accountKit logOut];
+    }else if (indexPath.section == 1){
         
+        SetHomeAndWorkViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"SetHomeAndWorkViewController"];
         
-        [UserAccount sharedManager].accessToken= @"" ;
+        vc.isSaveHomeAddress = 0;
         
-         [self.navigationController popToRootViewControllerAnimated:YES];
+        [self.navigationController pushViewController:vc animated:YES];
         
-//        LandingViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"LandingViewController"];
-//        
-//        [self.navigationController pushViewController:vc animated:YES];
-    
+    }else{
+        
+        if (indexPath.row == 0)
+        {
+            
+            
+//        }else if (indexPath.row ==2)
+//        {
+//            PromotionsViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"PromotionsViewController"];
+//
+//            [self presentViewController:vc animated:YES completion:nil];
+//
+          }else if (indexPath.row ==1)
+        {
+            RideHistoryViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"RideHistoryViewController"];
+            
+            [self.navigationController pushViewController:vc animated:YES];
+            
+        }else if (indexPath.row ==3)
+        {
+            
+            [[ServerManager sharedManager] postLogOutWithCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+                
+                if (resultDataDictionary!=nil) {
+                    
+                    [accountKit logOut];
+                    
+                    
+                    [UserAccount sharedManager].accessToken= @"" ;
+                    
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                    
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        NSLog(@"no user info");
+                        
+                        
+                    });
+                    
+                }
+                
+            }];
+            
+
+        }
     }
     
+    
+    
 }
+
+-(void) getUserInfo{
+    
+    spinner.hidden =NO;
+    [spinner beginRefreshing];
+    
+    [[ServerManager sharedManager] getUserInfoWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            spinner.hidden =YES;
+            [spinner endRefreshing];
+            
+            userInfo= [[NSMutableDictionary alloc] initWithDictionary:[responseObject dictionaryByReplacingNullsWithBlanks]];
+            
+            NSLog(@"user info %@",userInfo);
+            
+            [self.profilePicture sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@/%@",BASE_API_URL,[userInfo objectForKey:@"profile_picture"]]]];
+            self.userNameLabel.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"name"]];
+            self.phoneNoLabel.text = [NSString stringWithFormat:@"%@",[userInfo objectForKey:@"phone"]];
+           
+            [self.settingTableView reloadData];
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
+    
+    
+}
+
 
 - (IBAction)editProfileAction:(id)sender {
     
     
     EditPrifileViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"EditPrifileViewController"];
+    
+    vc.userInfo = userInfo;
     
     [self.navigationController pushViewController:vc animated:YES];
     

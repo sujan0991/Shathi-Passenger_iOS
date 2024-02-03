@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "UIImageView+WebCache.h"
 
-@interface SettingViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
+@interface SettingViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,SDWebImageManagerDelegate>
 
 
 @property (weak, nonatomic) IBOutlet UIView *navView;

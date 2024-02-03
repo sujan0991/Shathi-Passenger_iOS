@@ -27,12 +27,6 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 
-
-
-
-
-
-
-
+@property (strong,nonatomic) NSMutableDictionary *userInfo;
 
 @end

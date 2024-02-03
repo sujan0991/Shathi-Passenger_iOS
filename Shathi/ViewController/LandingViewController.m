@@ -32,12 +32,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-
-    
-    
-    
-
-    
+ 
 
 }
 
@@ -125,6 +120,8 @@
     
     NSLog(@"complete with access token: %@",accessToken.tokenString);
     
+    [UserAccount sharedManager].accessToken =accessToken.tokenString;
+    
     [self userLogin:accessToken.tokenString];
     
 }
@@ -148,13 +145,14 @@
         }
         else if (account.accountID !=nil){
             
+//            AppDelegate *appDelegateTemp = [[UIApplication sharedApplication]delegate];
+//            
+//            [appDelegateTemp askForNotificationPermission];
             
             [[ServerManager sharedManager] postLoginWithPhone:[account.phoneNumber stringRepresentation] accessToken:accessToken completion:^(BOOL success) {
                 
                
-                AppDelegate *appDelegateTemp = [[UIApplication sharedApplication]delegate];
                 
-                [appDelegateTemp askForNotificationPermission];
                 
                 
                 MapViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"MapViewController"];
@@ -200,18 +198,18 @@
 
 - (AKFTheme *)customTheme
 {
-    AKFTheme *theme = [AKFTheme outlineThemeWithPrimaryColor:[self _colorWithHex:0x262C4E]
+    AKFTheme *theme = [AKFTheme outlineThemeWithPrimaryColor:[self _colorWithHex:0x2c7bca]
                                             primaryTextColor:[UIColor whiteColor]
                                           secondaryTextColor:[UIColor whiteColor]
-                                              statusBarStyle:UIStatusBarStyleBlackOpaque];
+                                              statusBarStyle:UIStatusBarStyleLightContent];
     
     theme.backgroundImage = [UIImage imageNamed:@"OYE-Logo"];
-    theme.backgroundColor = [self _colorWithHex:0x262C4E];
-    theme.inputBackgroundColor = [self _colorWithHex:0x081029];
+    theme.backgroundColor = [self _colorWithHex:0x2c7bca];
+    theme.inputBackgroundColor = [self _colorWithHex:0x5382D3];
     theme.inputBorderColor = [UIColor whiteColor];
-    theme.buttonBackgroundColor = [self _colorWithHex:0x081029];
-    theme.buttonDisabledBackgroundColor = [self _colorWithHex:0x081029];
-    theme.headerBackgroundColor = [UIColor blackColor];
+    theme.buttonBackgroundColor = [self _colorWithHex:0x5382D3];
+    theme.buttonDisabledBackgroundColor = [self _colorWithHex:0x5382D3];
+    theme.headerBackgroundColor = [self _colorWithHex:0x2c7bca];
     
     
     return theme;

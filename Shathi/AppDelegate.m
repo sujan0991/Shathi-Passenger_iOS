@@ -11,7 +11,7 @@
 @import GooglePlaces;
 @import Firebase;
 #import "UserAccount.h"
-
+#import "ServerManager.h"
 
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
 @import UserNotifications;
@@ -20,7 +20,7 @@
 // Implement UNUserNotificationCenterDelegate to receive display notification via APNS for devices
 // running iOS 10 and above.
 #if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-@interface AppDelegate () <UNUserNotificationCenterDelegate>
+@interface AppDelegate () <UNUserNotificationCenterDelegate,FIRMessagingDelegate>
 @end
 #endif
 
@@ -39,6 +39,7 @@
     
     // Use Firebase library to configure APIs
     [FIRApp configure];
+    
     
     // Register for remote notifications. This shows a permission dialog on first run, to
     // show the dialog at a more appropriate time move this registration accordingly.
@@ -79,22 +80,25 @@
 
     }
     
-    return YES;
-}
-
--(void) askForNotificationPermission
-{
-    UIUserNotificationType allNotificationTypes =
-    (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
-    UIUserNotificationSettings *settings =
-    [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-    [[UIApplication sharedApplication] registerForRemoteNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
     
     
-    
+    return YES;
 }
+
+//-(void) askForNotificationPermission
+//{
+//    UIUserNotificationType allNotificationTypes =
+//    (UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+//    UIUserNotificationSettings *settings =
+//    [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+//    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+//    [[UIApplication sharedApplication] registerForRemoteNotifications];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tokenRefreshNotification:) name:kFIRInstanceIDTokenRefreshNotification object:nil];
+//    
+//    
+//    
+//}
 
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
@@ -114,10 +118,31 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"deviceToken %@",deviceTokenString);
     NSLog(@"refreshedToken %@",refreshedToken);
     
-   
+    
     
     [UserAccount sharedManager].gcmRegKey=refreshedToken;
     
+    if ([refreshedToken isEqualToString:@"<null>"] || [refreshedToken isEqualToString:@"(null)"] || [refreshedToken isEqual:[NSNull null]] || refreshedToken==nil ) {
+        
+        NSLog(@"refreshedToken is null");
+        
+    }else{
+        
+        [UserAccount sharedManager].gcmRegKey=refreshedToken;
+        
+        NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+        
+        [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
+        
+        
+        [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+            
+            
+            NSLog(@"didRegisterForRemoteNotificationsWithDeviceToken method");
+            
+        }];
+        
+    }
     
 }
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
@@ -131,9 +156,11 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 {
     NSLog(@"userInfo %@",userInfo);
     
+     [[NSNotificationCenter defaultCenter] postNotificationName:@"rideNotification" object:self userInfo:userInfo];
     
     completionHandler(UIBackgroundFetchResultNoData);
 }
+
 
 - (void)tokenRefreshNotification:(NSNotification *)notification {
     // Note that this callback will be fired everytime a new token is generated, including the first
@@ -143,13 +170,26 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"InstanceID token: %@", refreshedToken);
     
     
-    [UserAccount sharedManager].gcmRegKey=refreshedToken;
     
     
     // Connect to FCM since connection may have failed when attempted before having a token.
     [self connectToFcm];
     
     // TODO: If necessary send token to application server.
+    
+    
+    [UserAccount sharedManager].gcmRegKey=refreshedToken;
+    
+    NSMutableDictionary* postData=[[NSMutableDictionary alloc] init];
+    
+    [postData setObject:[NSString stringWithFormat:@"%@",[UserAccount sharedManager].gcmRegKey] forKey:@"gcm_registration_key"];
+    
+    
+    [[ServerManager sharedManager] patchUpdateGcmKey:postData withCompletion:^(BOOL success, NSMutableDictionary *resultDataDictionary) {
+        
+        
+    }];
+    
 }
 
 - (void)connectToFcm {
@@ -181,6 +221,42 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
+    
+    
+      NSLog(@"app become active applicationDidBecomeActive ");
+   
+    [[ServerManager sharedManager] getBackgroundScenarioWithCompletion:^(BOOL success, NSMutableDictionary *responseObject) {
+        
+        
+        if ( responseObject!=nil) {
+            
+            
+            NSLog(@"user info applicationDidBecomeActive%@",responseObject);
+            
+            int status = [[responseObject objectForKey:@"status"]intValue];
+            
+            
+            [UserAccount sharedManager].userStatus = status;
+            
+            NSLog(@"[UserAccount sharedManager].status %d",[UserAccount sharedManager].userStatus);
+            
+            if (status != 1) {
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"becomeActiveNotification" object:self userInfo:responseObject];
+            }
+            
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSLog(@"no user info");
+                
+                
+            });
+            
+        }
+    }];
 }
 
 

@@ -54,7 +54,8 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
         
         [parameterDic setObject:phone forKey:@"phone"];
         [parameterDic setObject:accesstoken forKey:@"social_media_access_token"];
-        [parameterDic setObject:@"2" forKey:@"user_type_id"];
+        [parameterDic setObject:[UserAccount sharedManager].gcmRegKey forKey:@"gcm_registration_key"];
+        [parameterDic setObject:@"3" forKey:@"user_type_id"];
 
        
         dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
@@ -95,7 +96,49 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
     
 }
 
-- (void)postProfilePicture:(UIImage*)image completion:(api_Completion_Handler_Status)completion{
+- (void)postLogOutWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        
+        dispatch_async(backgroundQueue, ^{
+            
+            [self postServerRequestWithParams:nil forUrl:[NSString stringWithFormat:@"%@/api/logout",BASE_API_URL] withResponseCallback:^(NSDictionary *responseDictionary) {
+                //[self validateResponseData:responseDictionary] &&
+                if ( responseDictionary!=nil) {
+                    //Valid Data From Server
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                    
+                }
+                
+            }];
+            
+            
+        });
+    }else{
+        
+        [self showAlertForNoInternet];
+    }
+    
+}
+
+
+- (void)postProfilePicture:(UIImage*)image completion:(api_Completion_Handler_Data)completion{
     
     if ([self checkForNetworkAvailability]) {
         
@@ -115,13 +158,14 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
                 if ( responseDictionary!=nil) {
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        completion(TRUE);
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
                     });
                     
                 }else{
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        completion(FALSE);
+                        completion(FALSE,nil);
                     });
                     
                 }
@@ -175,7 +219,82 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
     }
 }
 
--(void) updateUserDetailsWithData:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Status)completion
+-(void)patchUpdateHomeAndWork:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion{
+
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *urlString=[NSString stringWithFormat:@"%@/api/update-home-and-work",BASE_API_URL];
+        
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        
+        dispatch_async(backgroundQueue, ^{
+            
+            [self patchServerRequestWithParams:dataDic forUrl:urlString withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                if ( responseDictionary!=nil) {
+                    //Valid Data From Server
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                    
+                }
+            }];
+            
+        });
+    }else{
+        [self showAlertForNoInternet];
+    }
+    
+    
+}
+
+- (void)getBackgroundScenarioWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/user-app-background-scenario",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+-(void) updateUserDetailsWithData:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion
 {
     if ([self checkForNetworkAvailability]) {
         
@@ -193,13 +312,14 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
                     //Valid Data From Server
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        completion(TRUE);
+                        completion(TRUE,[responseDictionary mutableCopy]);
+
                     });
                     
                 }else{
                     
                     dispatch_async(dispatch_get_main_queue(), ^{
-                        completion(FALSE);
+                        completion(FALSE,nil);
                     });
                     
                 }
@@ -241,7 +361,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
                         dispatch_async(dispatch_get_main_queue(), ^{
                             
 
-                            NSLog(@"requset ride return %@",responseDictionary);
+                           // NSLog(@"requset ride return %@",responseDictionary);
                             
                             completion(TRUE,[responseDictionary mutableCopy]);
                             
@@ -270,6 +390,354 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
     
     
 }
+
+- (void)getRideCancelReasosnsWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/get-cancel-reasons",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        NSLog(@"reasons %@",responseDictionary);
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+
+-(void) cancelRideWithReason:(NSDictionary *)dataDic withCompletion:(api_Completion_Handler_Status)completion
+{
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *urlString=[NSString stringWithFormat:@"%@/api/cancel-ride",BASE_API_URL];
+        
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        
+        dispatch_async(backgroundQueue, ^{
+            
+            [self patchServerRequestWithParams:dataDic forUrl:urlString withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                if ( responseDictionary!=nil) {
+                    //Valid Data From Server
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(TRUE);
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE);
+                    });
+                    
+                }
+            }];
+            
+        });
+    }else{
+        [self showAlertForNoInternet];
+    }
+    
+    
+    
+}
+
+-(void)patchUpdateGcmKey:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion{
+    
+    
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *urlString=[NSString stringWithFormat:@"%@/api/update-gcm-registration-key",BASE_API_URL];
+        
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        
+        dispatch_async(backgroundQueue, ^{
+            
+            [self patchServerRequestWithParams:dataDic forUrl:urlString withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                if ( responseDictionary!=nil) {
+                    //Valid Data From Server
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                    
+                }
+            }];
+            
+        });
+    }else{
+        [self showAlertForNoInternet];
+    }
+    
+    
+}
+
+- (void)getHistoryInfoWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/ride-history",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+- (void)getSingleHistoryInfo:(NSDictionary*)dataDic  WithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/single-ride-history",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withparameters:dataDic  withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+
+-(void)patchRating:(NSDictionary*)dataDic withCompletion:(api_Completion_Handler_Data)completion{
+    
+    
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *urlString=[NSString stringWithFormat:@"%@/api/ride-rating",BASE_API_URL];
+        
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        
+        dispatch_async(backgroundQueue, ^{
+            
+            [self patchServerRequestWithParams:dataDic forUrl:urlString withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                if ( responseDictionary!=nil) {
+                    //Valid Data From Server
+                    
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                    
+                }
+            }];
+            
+        });
+    }else{
+        [self showAlertForNoInternet];
+    }
+    
+    
+}
+
+- (void)getFareInfoWithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/fare-settings",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        [self showAlertForNoInternet];
+    }
+}
+
+- (void)getRiderPosition:(NSDictionary*)dataDic WithCompletion:(api_Completion_Handler_Data)completion{
+    
+    
+        
+        if ([self checkForNetworkAvailability]) {
+            
+            
+            NSString *httpUrl=[NSString stringWithFormat:@"%@/api/rider-current-location",BASE_API_URL];
+            
+            dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+            dispatch_async(backgroundQueue, ^{
+                
+                [self getServerRequestForUrl:httpUrl withparameters:dataDic withResponseCallback:^(NSDictionary *responseDictionary) {
+                    
+                    
+                    if ( responseDictionary!=nil) {
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            
+                            
+                            
+                            completion(TRUE,[responseDictionary mutableCopy]);
+                            
+                        });
+                        
+                    }else{
+                        
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            completion(FALSE,nil);
+                        });
+                    }
+                }];
+            });
+            
+        }else{
+            [self showAlertForNoInternet];
+        }
+    
+}
+
+- (void)getAvailableRider:(NSDictionary*)dataDic WithCompletion:(api_Completion_Handler_Data)completion{
+    
+    if ([self checkForNetworkAvailability]) {
+        
+        
+        NSString *httpUrl=[NSString stringWithFormat:@"%@/api/all-available-rider",BASE_API_URL];
+        
+        dispatch_queue_t backgroundQueue = dispatch_queue_create("Background Queue", NULL);
+        dispatch_async(backgroundQueue, ^{
+            
+            [self getServerRequestForUrl:httpUrl withparameters:dataDic withResponseCallback:^(NSDictionary *responseDictionary) {
+                
+                
+                if ( responseDictionary!=nil) {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        
+                        
+                        
+                        completion(TRUE,[responseDictionary mutableCopy]);
+                        
+                    });
+                    
+                }else{
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        completion(FALSE,nil);
+                    });
+                }
+            }];
+        });
+        
+    }else{
+        
+        [self showAlertForNoInternet];
+    }
+}
+
+
 
 #pragma mark - Server Request
 -(void)postServerRequestWithParams:(NSDictionary*)params forUrl:(NSString*)url withResponseCallback:(void (^)(NSDictionary *responseDictionary))callback
@@ -300,6 +768,9 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
         
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         NSLog(@"error %@ error %@",operation.response,error);
+        
+        NSLog(@"operation  response %@",operation.response);
+        
         callback(nil);
     }];
     
@@ -343,6 +814,44 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
     }];
     
 
+}
+-(void)getServerRequestForUrl:(NSString*)url withparameters:(NSDictionary*)params withResponseCallback:(void (^)(NSDictionary *responseDictionary))callback
+{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    manager.responseSerializer.acceptableContentTypes=[NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", nil];
+    
+    
+    
+    
+    [manager.requestSerializer setValue:[NSString stringWithFormat:@"Bearer %@",[UserAccount sharedManager].accessToken] forHTTPHeaderField:@"Authorization"];
+    
+    [manager GET:[url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] parameters:params progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        
+        
+        NSLog(@"JSON: %@", responseObject);
+        
+        NSHTTPURLResponse *response = (NSHTTPURLResponse *) [task response];
+        
+        if ([response statusCode] == 200) {
+            
+            callback([responseObject dictionaryByReplacingNullsWithBlanks]);
+            
+        }
+        else{
+            callback(nil);
+        }
+        
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        
+        NSLog(@"error %@ ", operation.response);
+        
+        callback(nil);
+    }];
+    
+    
 }
 
 //-(void)deleteServerRequestForUrl:(NSString*)url withResponseCallback:(void (^)(NSDictionary *responseDictionary))callback
@@ -451,7 +960,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(ServerManager)
         
         [formData appendPartWithFileData:imageData
                                     name:keyName
-                                fileName:[NSString stringWithFormat:@"%@.jpg,",keyName ] mimeType:@"image/jpeg"];
+                                fileName:[NSString stringWithFormat:@"%@.jpg",keyName ] mimeType:@"image/jpeg"];
         
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         
